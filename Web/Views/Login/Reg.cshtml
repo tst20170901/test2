@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/main.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <script type="text/javascript">
+        function showToast(msg) {
+            new Toast({ context: $('body'), message: msg }).show();
+        }
+        function checkForm() {
+            if ($("#mobile").val() == "") {
+                showToast("手机号不能为空！");
+                return;
+            } else if ($("#code").val() == "") {
+                showToast("密码不能为空！");
+                return;
+            } else if ($("#recode").val() == "") {
+                showToast("重复密码不能为空！");
+                return;
+            } else {
+                $.post("/login/reg", { LoginID: $("#mobile").val(), password: $("#code").val(), repassword: $("#recode").val() }, function (data) {
+                    showToast(data.msg);
+                    if (data.msg == "注册成功") {
+                        location.href = data.url;
+                    } else {
+                        showToast(data.msg);
+                    }
+                });
+            }
+        }
+
+    </script>
+
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken();
+        <div class="logindv">
+            <div class="login_line"><span style="font-size:16px">小熊洗车承诺严格保密车主隐私</span></div>
+            <div class="login_line"><input type="tel" class="login_input" id="mobile" placeholder="请输入手机号" style="width:70%" /></div>
+            <div class="login_line"><input type="password" class="login_input" id="code" placeholder="请输入密码" style="width:70%" /></div>
+            <div class="login_line"><input type="password" class="login_input" id="recode" placeholder="请重复输入密码" style="width:70%" /></div>
+            <div class="login_line"><input type="text" class="login_btn" id="send" value="注册" readonly="readonly" onclick="checkForm()" style="width:70%" /></div>
+        </div>
+    }
+</body>
+</html>

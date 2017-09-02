@@ -1,0 +1,47 @@
+﻿@model Web.Areas.AliceChopper.Models.ChargeForOtherModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    赠送充值
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机号码
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Mobile, new { @class = "txt", style = "width:400px" }) 多个号码以英文逗号,隔开<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Mobile)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                充值金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Money, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Money)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(x => x.Content, new {style = "width:400px;height:100px"}) 【小熊洗车】不能删除，不允许手动换行。<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Content)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定"/>
+            </td>
+        </tr>
+    </table>}}

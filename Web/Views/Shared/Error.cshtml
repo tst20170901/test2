@@ -1,0 +1,57 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+@{Layout = null;}
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>@AliceDAL.IniHelper.GetValue("WebInfo", "WebName")</title>
+<meta name="keywords" content="@AliceDAL.IniHelper.GetValue("WebInfo", "KeyWords")" />
+<meta name="description" content="@AliceDAL.IniHelper.GetValue("WebInfo", "Description")" />
+<style type="text/css">
+body{margin:0;padding:0;font:14px/1.6 Arial,Sans-serif;background:#FFF repeat-x;}
+a:link,a:visited{color:#007ab7;text-decoration:none;}
+h1{
+	position:relative;
+	z-index:2;
+	width:540px;
+	height:0;
+	margin:110px auto 15px;
+	padding:230px 0 0;
+	overflow:hidden;
+	border:1px solid #505050;
+	background-image: url(/Content/images/404.jpg);
+	background-repeat: no-repeat;
+}
+.link a{margin-right:1em;}
+.link,.texts{width:540px;margin:0 auto 15px;color:#505050;}
+.texts{line-height:2;}
+.texts dd{margin:0;padding:0 0 0 15px;}
+.texts ul{margin:0;padding:0;}
+</style>
+<!--[if lte IE 8]>
+<style type="text/css">
+h2 em{color:#e4ebf8;}
+</style>
+<![endif]-->
+</head>
+
+<body>
+<h1></h1>
+    <p class="link">
+        <a href="/">&#9666;返回首页</a>
+        <a href="javascript:history.go(-1);">&#9666;返回上一页</a>
+    </p>
+    <dl class="texts">
+        <dt>我们正在联系火星总部查找您所需要的页面.请返回等待信息..</dt>
+<dd>
+            <ul>
+                <li>不要返回吗?</li>
+                <li>确定不要返回吗?</li>
+                <li>真的真的确定不要返回吗?</li>
+                <li>好吧.还是随便你要不要真的确定返回吧</li>
+            </ul>
+        </dd>
+    </dl>
+</body>
+</html>

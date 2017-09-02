@@ -1,0 +1,223 @@
+﻿@model Web.Areas.AliceChopper.Models.OrderInfoModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}@section header{
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    订单信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单号
+            </th>
+            <td>
+                @Model.OrderInfo.Osn
+            </td>
+            <th>
+                订单状态
+            </th>
+            <td>
+                @{Models.UserOrderState uos = (Models.UserOrderState)Model.OrderInfo.OrderState;
+                switch (uos)
+                {
+                    case Models.UserOrderState.Payed:
+                        @:支付成功
+                                    break;
+                    case Models.UserOrderState.Assigned:
+                    @:派单完成
+                                    break;
+                    case Models.UserOrderState.Started:
+                    @:开始洗车
+                                    break;
+                    case Models.UserOrderState.Finished:
+                    @:洗车完成
+                                    break;
+                    case Models.UserOrderState.Canceled:
+                    @:已取消
+                                    break;
+                    default:
+                                    break;
+                }
+                }
+            </td>
+            <th>
+                提交日期
+            </th>
+            <td>
+                @AliceDAL.DataType.ConvertToDateTimeStrAll(Model.OrderInfo.CDate)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    用户信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                用户姓名
+            </th>
+            <td>
+                @Model.OrderInfo.UserName
+            </td>
+            <th>
+                手机号
+            </th>
+            <td>
+                @Model.OrderInfo.Mobile
+            </td>
+            <th>
+                提交IP
+            </th>
+            <td>
+                @Model.OrderInfo.IP
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    车辆信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                品牌
+            </th>
+            <td>
+                @Model.OrderInfo.BrandShow
+            </td>
+            <th>
+                颜色
+            </th>
+            <td>
+                @Model.OrderInfo.Color
+            </td>
+            <th>
+                车牌号
+            </th>
+            <td>
+                @Model.OrderInfo.Plate
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    服务项目
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                服务项目
+            </th>
+            <td>
+                @if (Model.OrderItems != null)
+                {
+                    foreach (Models.Orders_Item item in Model.OrderItems)
+                    {
+                        <span>@item.ItemName</span>
+                    }
+                }
+            </td>
+            <th>
+                备注
+            </th>
+            <td colspan="3">
+                @Model.OrderInfo.Remark
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    清洁信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单处理
+            </th>
+            <td colspan="5">
+                @switch (uos)
+                {
+                    case Models.UserOrderState.Payed:
+                        <a href="@Url.Action("CancelOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString(),type=0 })">[取消]</a>
+
+                        <a href="@Url.Action("AssignOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[派单]</a>
+                        break;
+                    case Models.UserOrderState.Assigned:
+                    <a href="@Url.Action("CancelOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString(),type=1 })">[取消]</a>
+                    <a href="@Url.Action("StartOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[开始洗车]</a>
+                        break;
+                    case Models.UserOrderState.Started:
+                    <a href="@Url.Action("FinishOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[洗车完成]</a>
+                        break;
+                    case Models.UserOrderState.Finished:
+                        break;
+                    case Models.UserOrderState.Canceled:
+                        break;
+                    default:
+                        break;
+                }
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    位置信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                地址
+            </th>
+            <td colspan="5">
+                @Model.OrderInfo.Address
+            </td>
+        </tr>
+        <tr>
+            <th>
+                地图位置
+            </th>
+            <td colspan="5">
+                <div id="mapContainer" style="width:90%;height:300px"></div>
+                <input type="hidden" id="lng" name="lng" value="@Model.OrderInfo.Lng" />
+                <input type="hidden" id="lat" name="lat" value="@Model.OrderInfo.Lat" />
+                <script type="text/javascript">
+                    var map, geolocation;
+                    map = new AMap.Map('mapContainer', {
+                        resizeEnable: true,
+                        center: [@Model.OrderInfo.Lng, @Model.OrderInfo.Lat],
+                        zoom: 13
+                    });
+                    var marker = new AMap.Marker({
+                        position: map.getCenter(),
+                        draggable: false,
+                        raiseOnDrag: false
+                    });
+                    marker.setMap(map);
+                </script>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checkform();" />
+            </td>
+        </tr>
+    </table> }
+}

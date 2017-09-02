@@ -1,0 +1,62 @@
+﻿@model Models.BD_Branch
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276&plugin=AMap.MouseTool"></script>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />
+}
+@section body{
+    <div id="container"></div>
+    <script type="text/javascript">
+        var map, geolocation;
+        map = new AMap.Map('container', {
+            resizeEnable: true,@if (Model != null && !String.IsNullOrEmpty(Model.CenterLng) && !String.IsNullOrEmpty(Model.CenterLat)){@:center: [@Model.CenterLng, @Model.CenterLat],
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }zoom: 13
+        });
+        map.plugin(["AMap.ToolBar"], function () {
+            map.addControl(new AMap.ToolBar());
+        });
+        map.plugin('AMap.Geolocation', function () {
+            geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: false      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+            map.addControl(geolocation);
+            AMap.event.addListener(geolocation, 'complete', function (e) {
+                map.setCenter(e.position);
+            });//返回定位信息
+        });
+        @if (Model == null ||String.IsNullOrEmpty(Model.CenterLng) || String.IsNullOrEmpty(Model.CenterLat)){
+                        <text>
+        geolocation.getCurrentPosition();</text>}
+        @if (Model!=null&&!String.IsNullOrEmpty(Model.Points)&&Model.Points.Split(';').Length>=3)
+                    {
+                        <text>var polygonArr = new Array();</text>
+                        foreach (string item in Model.Points.Split(';'))
+                        {
+                            <text>polygonArr.push([@item]);</text>
+                        }
+                        <text>
+        var polygons = new AMap.Polygon({
+            path: polygonArr,//设置多边形边界路径
+            strokeColor: "#FF33FF", //线颜色
+            strokeOpacity: 1, //线透明度
+            strokeWeight: 1,    //线宽
+            fillColor: "#1791fc", //填充色
+            fillOpacity: 0.35//填充透明度
+        });
+        polygons.setMap(map);
+        </text>
+    }
+    </script>
+}

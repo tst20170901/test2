@@ -1,0 +1,61 @@
+﻿@model Web.Models.ProPayResultModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","BearMall")" class="back"></a><span>下单成功</span></div>
+    <div class="cirborder">
+        @if (Model.OrderInfo != null)
+        {
+            <div class="edocell4">
+                <div class="edo_hd">订单编号</div>
+                <div class="edo_bd">
+                    <p>@Model.OrderInfo.Osn</p>
+                </div>
+            </div>
+            <div class="edocell1">
+                <div class="edo_hd">实付金额</div>
+                <div class="edo_bd">
+                    <p>@Model.OrderInfo.Amount 元</p>
+                </div>
+            </div>
+            <div class="edocell1">
+                <div class="edo_hd">商品</div>
+                <div class="edo_bd">
+                    <p>
+                        @if (Model.Orders_Items != null)
+                        {
+                            foreach (Models.Pro_Orders_Item item in Model.Orders_Items)
+                            {
+                                <span>@item.ItemName (@item.Money 元) </span> <text>&nbsp;</text>
+                            }
+                        }
+                    </p>
+                </div>
+            </div>
+            <div class="edocell1">
+                <div class="edo_hd">支付方式</div>
+                <div class="edo_bd">
+                    <p>@Model.OrderInfo.PayName</p>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="edo_msg">
+        <div class="edo_text_area">
+            <h2 class="edo_msg_title">您的订单提交成功</h2>
+            <p class="edo_msg_desc">请耐心等待发货</p>
+        </div>
+    </div>
+    @Html.Partial("menu", "1")
+</body>
+</html>

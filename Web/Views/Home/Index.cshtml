@@ -1,0 +1,182 @@
+﻿@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <link type="text/css" href="@Url.Content("~/Content/xiaoxiong/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/xiaoxiong/css/main.css?v=88")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.6.1.min.js")"></script>
+    <script src="/Scripts/webcomm.js"></script>
+    <script src="/Scripts/unslider.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.chrome) {
+                $('.banner li').css('background-size', '100% 100%');
+            }
+            $('.banner').unslider({
+                fluid: true,
+                dots: true
+            });
+            $(".newsimg").hover(function (e) {
+                $(this).find(".newsbox,.marker").slideToggle();
+            }, function (e) {
+                $(this).find(".newsbox,.marker").slideToggle();
+            });
+            rollPicL("procase");
+        });
+    </script>
+</head>
+<body>
+    @Html.Partial("Top")
+    <div class="m">
+        <div class="sm">
+            <div class="mit">
+                <img src="/Content/images/1.jpg" width="233" height="185" alt="@ViewBag.Title" title="@ViewBag.Title" />
+                <div class="h20p"></div>
+                <h2>上门洗车</h2>
+                <p>
+                    免移动。洗车师傅15分钟到达<br />您的爱车旁边。
+                </p>
+            </div>
+            <div class="mit">
+                <img src="/Content/images/2.jpg" width="233" height="185" alt="@ViewBag.Title" title="@ViewBag.Title" />
+                <div class="h20p"></div>
+                <h2>平台下单</h2>
+                <p>
+                    免排队。通过网上平台（微信、<br />APP），轻松下单。
+                </p>
+            </div>
+            <div class="mit">
+                <img src="/Content/images/3.jpg" width="233" height="185" alt="@ViewBag.Title" title="@ViewBag.Title" />
+                <div class="h20p"></div>
+                <h2>解放车主</h2>
+                <p>
+                    超省心。工作、休息、娱乐，<br />任何时间，随时随地洗爱车。
+                </p>
+            </div>
+            <div class="mit">
+                <img src="/Content/images/4.jpg" width="233" height="185" alt="@ViewBag.Title" title="@ViewBag.Title" />
+                <div class="h20p"></div>
+                <h2>省时高效</h2>
+                <p>
+                    超实惠。高标准的服务流程，<br />让爱车焕然一新。
+                </p>
+            </div>
+        </div>
+        <div class="h40p"></div>
+        <div class="newstit"></div>
+        <div class="h40p"></div>
+        <div class="sm">
+            <div class="newsimg fn-left">
+                <div class="newsbox">
+                    <div class="text">
+                        <p class="zh">企业动态</p>
+                        <p class="en">Company News</p>
+                    </div>
+                </div>
+                <div class="marker"></div>
+                <img src="/Content/xiaoxiong/images/wh.jpg" width="466" height="311" alt="@ViewBag.KeyWords" title="@ViewBag.KeyWords" />
+            </div>
+            <div class="newslist fn-right">
+                <ul class="newsul">
+                    @{DataTable dtnew2 = DAL.PageModel.DateList("Art_Common", "TypeID=2", "ID", 6); if (dtnew2 != null)
+                    {
+                        foreach (DataRow item in dtnew2.Rows)
+                        {
+                            <li><a href="@Url.Action("ShowNews", "News", new { @id = @item["ID"].ToString(), @title = @item["TitleSpell"].ToString().ToLower() })" title="@ViewBag.dq@item["Title"].ToString()">@ViewBag.dq@AliceDAL.Common.CutString(item["Title"].ToString(), 25 - ViewBag.dq.ToString().Length, "..")</a></li>
+                        }
+                    }}
+                </ul>
+                <a href="@Url.Action("", "News", new { @nid = 2 })" class="more"></a>
+            </div>
+            <div class="h40p"></div>
+            <div class="newslist fn-left">
+                <ul class="newsul">
+                    @{DataTable dtnew6 = DAL.PageModel.DateList("Art_Common", "TypeID=3", "ID", 6); if (dtnew6 != null)
+                    {
+                        foreach (DataRow item in dtnew6.Rows)
+                        {
+                            <li><a href="@Url.Action("ShowNews", "News", new { @id = @item["ID"].ToString(), @title = @item["TitleSpell"].ToString().ToLower() })" title="@ViewBag.dq@item["Title"].ToString()">@ViewBag.dq@AliceDAL.Common.CutString(item["Title"].ToString(), 25 - ViewBag.dq.ToString().Length, "..")</a></li>
+                        }
+                    }}
+                </ul>
+                <a href="@Url.Action("", "News", new { @nid = 3})" class="more"></a>
+            </div>
+            <div class="newsimg fn-right">
+                <div class="newsbox">
+                    <div class="text">
+                        <p class="zh">行业资讯</p>
+                        <p class="en">Industry Information</p>
+                    </div>
+                </div>
+                <div class="marker"></div>
+                <img src="/Content/xiaoxiong/images/td.jpg" width="466" height="311" alt="@ViewBag.KeyWords" title="@ViewBag.KeyWords" />
+            </div>
+            <div class="h40p"></div>
+        </div>
+        <div class="whtit"></div>
+        <div class="h40p"></div>
+        <div class="sm">
+            <div class="whimg fn-left">
+                <div class="whbox">
+                    <p class="zh"><a href="@Url.Action("Index", "About", new { id = 12 })">洁力小熊项目优势</a></p>
+                    <p class="en">区别于传统洗车店的复杂流程，足不出户上门洗车，只需动动手指在…</p>
+                </div>
+                <div class="marker1"></div>
+                <img src="/Content/xiaoxiong/images/wh1.jpg" width="307" height="205" alt="@ViewBag.KeyWords" title="@ViewBag.KeyWords" />
+            </div>
+            <div class="whimg fn-left" style="margin-left:39px">
+                <div class="whbox">
+                    <p class="zh"><a href="@Url.Action("Index", "About", new { id = 13 })">洁力小熊发展目标</a></p>
+                    <p class="en">通过洗车服务切入汽车后市场服务创造一系列硬性服务，软性服务，管家服务。 </p>
+                </div>
+                <div class="marker1"></div>
+                <img src="/Content/xiaoxiong/images/wh2.jpg" width="307" height="205" alt="@ViewBag.KeyWords" title="@ViewBag.KeyWords" />
+            </div>
+            <div class="whimg fn-right">
+                <div class="whbox">
+                    <p class="zh"><a href="@Url.Action("Index", "About", new { id = 14 })">洁力小熊加盟合作</a></p>
+                    <p class="en">集互联网O2O模式、上门服务模式、无中间环节盈利模式于一身。</p>
+                </div>
+                <div class="marker1"></div>
+                <img src="/Content/xiaoxiong/images/wh3.jpg" width="307" height="205" alt="@ViewBag.KeyWords" title="@ViewBag.KeyWords" />
+            </div>
+            <div class="h40p"></div>
+            <div class="joinbd">
+                <div class="jointit">
+                    加<br />盟<br />合<br />作
+                </div>
+                <div class="joinpic">
+                    <div id="procase">
+                        <div class="h10p"></div>
+                        <table>
+                            <tr>
+                                @{DataTable dtrolltemp = DAL.PageModel.DateList("Art_Common", "TypeID=5", "ID", 20); if (dtrolltemp != null)
+                                {
+                                    foreach (DataRow item in dtrolltemp.Rows)
+                                    {
+                                        <td>
+                                            <a href="@Url.Action("ShowNews", "News", new { @id = @item["ID"].ToString(), @title = @item["TitleSpell"].ToString().ToLower() })" title="@ViewBag.dq@item["Title"].ToString()">
+                                                <img src="@item["Img"].ToString()" alt="@item["Title"].ToString()" width="120" height="80" />
+                                            </a><p>
+                                                <a href="@Url.Action("ShowNews", "News", new { @id = @item["ID"].ToString(), @title = @item["TitleSpell"].ToString().ToLower() })" title="@ViewBag.dq@item["Title"].ToString()">@AliceDAL.Common.CutString(item["Title"].ToString(), 8 - ViewBag.dq.ToString().Length, "..")</a>
+                                            </p>
+                                        </td>
+                                    }
+                                }}
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="fn-clear"></div>
+            </div>
+        </div>
+    </div>
+    <div class="fn-clear"></div>
+    @Html.Partial("Foot")
+</body>
+</html>

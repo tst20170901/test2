@@ -1,0 +1,31 @@
+﻿<div class="head">
+    <div class="m">
+        <div class="logo">
+            <a href="/"><img src="/Content/xiaoxiong/images/xiaoxiongxichelogos.png" width="311" height="105" alt="@ViewBag.Title" title="@ViewBag.Title" /></a>
+        </div>
+        <ul class="menu">
+            <li><a href="/">小熊首页</a></li>
+            <li class="spit"></li>
+            <li>@Html.ActionLink("了解小熊", "", "About", new { id = "4" }, new { })</li>
+            <li class="spit"></li>
+            <li>@Html.ActionLink("小熊成长", "", "About", new { id = "6" }, new { })</li>
+            <li class="spit"></li>
+            <li>@Html.ActionLink("新闻中心", "", "News")</li>
+            <li class="spit"></li>
+            <li>@Html.ActionLink("加入小熊", "", "About", new { id = "5" }, new { })</li>
+            <li class="spit"></li>
+            <li>@Html.ActionLink("开通区域", "", "About", new { id = "8" }, new { })</li>
+        </ul>
+    </div>
+</div>
+<div class="banner">
+    <ul>
+        @{System.Data.DataTable dt = DAL.PageModel.DateList("Flash", "TypeID=1", "SortID", 0); if (dt != null && dt.Rows.Count > 0)
+        {
+            foreach (System.Data.DataRow row in dt.Rows)
+            {
+                <li style="background: url(@row["Img"].ToString()); "><a href="@row["Url"].ToString()" title="@row["Title"].ToString()"></a></li>}
+        }}
+    </ul>
+</div>
+<div class="h40p"></div>

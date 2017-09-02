@@ -1,0 +1,142 @@
+﻿@model Models.BD_BusiAction
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script src="@Url.Content("~/Content/kindeditor/kindeditor-min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        KindEditor.ready(function (K) {
+            var options = {
+                uploadJson: '/Content/kindeditor/asp.net/upload_json.ashx',
+                fileManagerJson: '/Content/kindeditor/asp.net/file_manager_json.ashx',
+                afterBlur: function () { editor.sync(); },
+                allowFileManager: true,
+                filterMode: false//是否开启过滤模式
+            };
+            window.editor = K.create('#Body', options);
+        });
+    </script>
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#Title").val() == "") {
+                alert("活动名称不能为空！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改商家活动
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                活动名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.ActionName, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.ActionName)</span>
+            </td>
+        </tr>@{
+        if (WorkContext.RoleID == 1)
+        {
+            <text>
+                <tr>
+                    <th>
+                        分公司
+                    </th>
+                    <td>
+                        <select class="ddl" id="BranchID" name="BranchID">
+                            <option @if (0 == Model.BranchID) { <text> selected="selected" </text>     } value="0">请选择</option>
+                            @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == Model.BranchID) { <text> selected="selected" </text>     } value="@item.ID">@item.Title</option>
+    }
+}
+                            }
+                        </select>
+
+                    </td>
+                </tr></text>
+        }
+        else
+        {
+            <text>
+                <tr>
+                    <th>分公司</th>
+                    <td>
+                        @WorkContext.Branch.Title
+                        <input type="hidden" name="BranchID" value="@WorkContext.BranchID">
+                    </td>
+                </tr>
+            </text>
+        }
+        }
+        <tr>
+            <th>
+                排序
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                人群
+            </th>
+            <td>
+                <select class="ddl" id="IsNewUser" name="IsNewUser">
+                    <option @if (0 == Model.IsNewUser) { <text> selected="selected" </text>      } value="0">所有用户</option>}
+                    <option @if (10 == Model.IsNewUser) { <text> selected="selected" </text>      } value="10">新用户</option>}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                车辆信息
+            </th>
+            <td>
+                <select class="ddl" id="DataType" name="DataType">
+                    <option @if (0 == Model.DataType) { <text> selected="selected" </text>   } value="0">不需要</option>}
+                    <option @if (10 == Model.DataType) { <text> selected="selected" </text>  } value="10">需要</option>}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.SMSContent, new { style = "width:400px;height:100px" })<span style="color: #f00">*【小熊洗车】不能删除，不允许手动换行。若此活动不发送短信，全部删除。</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                活动详情
+            </th>
+            <td>
+                <pre>
+&lt;style type="text/css"&gt;html, body {background:#54C3F1;}&lt;/style&gt;  
+</pre>注：在“源码”模式下粘贴这段代码，即可修改页面背景颜色。
+                @Html.TextAreaFor(model => model.Body, new { style = "width: 99%;height: 300px; visibility: hidden;" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>}}

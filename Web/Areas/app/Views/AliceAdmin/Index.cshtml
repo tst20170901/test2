@@ -1,0 +1,227 @@
+﻿@{
+    Layout = null;
+}
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>B/S软件后台</title>
+    <link type="text/css" href="@Url.Content("~/Content/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/css/main.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.11.1.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/fun.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/c.js")"></script>
+    <script src="@Url.Content("~/Scripts/nc.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            divniceScroll(".navigation");
+        })
+    </script>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div id="container">
+            <div class="top">
+                <div id="logo">
+                    <img src="@Url.Content("~/Content/images/logo.gif")" width="550" height="70" alt="" />
+                </div>
+                <div class="topmenu">
+                    <ul id="topnav">
+                        <li id="metnav_1" class="list">
+                            <a href="/" target="_blank" id="nav_1">
+                                <span class="c1">
+                                </span>前台首页
+                            </a>
+                        </li>
+                        <li id="metnav_3" class="list" onclick="Controlpanel();">
+                            <a href="javascript:void(0);"
+                               id="nav_3"><span class="c3"></span>控制面板</a>
+                        </li>
+                        <li id="metnav_5" class="list" onclick="IndexOut();">
+                            <a href="javascript:void(0);"
+                               id="nav_4"><span class="c4"></span>安全退出</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="topbtn">
+                <div class="sysdate">
+                    <span id="datetime">1900年01月01日 00:00:00</span>
+                </div>
+                <div class="sysnav">
+                    <div class="sysnav-hd">
+                        <ul class="tab-nav" id="tabs_container"></ul>
+                    </div>
+                    <div class="toolbar">
+                        <img src="@Url.Content("~/Content/images/refresh.png")" title="刷新当前窗口" onclick="Loading(true);top.$('#' + Current_iframeID())[0].contentWindow.window.location.reload();return false;"
+                             width="16" height="16" style="padding-bottom: 3px; cursor: pointer; vertical-align: middle;"
+                             alt="刷新当前窗口" />
+                        &nbsp;
+                        <img id="full_screen" src="@Url.Content("~/Content/images/max.gif")" title="最大化" alt="最大化" onclick="Maximize();"
+                             width="16" height="16" style="padding-bottom: 3px; cursor: pointer; vertical-align: middle;" />
+                        &nbsp;
+                    </div>
+                </div>
+            </div>
+            <div id="MainContent">
+                <div class="navigation">
+                    <ul class="accordion">
+                        <li>
+                            <a style="border-top: 0px solid #ccc;">
+                                <img src="@Url.Content("~/Content/images/32/eye.png")">系统设置
+                            </a>
+                            <div class="sub-menu">
+                                <div onclick="AddTabMenu('a1', '@Url.Action("WebInfo", "AliceAdmin")', '网站设置', '5026_settings.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/5026_settings.png")">网站设置
+                                </div>
+                                <div onclick="AddTabMenu('a2', '@Url.Action("EditPassword", "AliceAdmin")', '修改密码', '243.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/243.png")">修改密码
+                                </div>
+                                <div onclick="AddTabMenu('a3', '@Url.Action("UserList", "User")', '用户管理', '4957_customers.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/4957_customers.png")">用户管理
+                                </div>
+                                <div onclick="AddTabMenu('a4', '@Url.Action("List", "Logs")', '操作记录', '20131012030416621.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/20131012030416621.png")">操作记录
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a>
+                                <img src="@Url.Content("~/Content/images/32/160.png")">服务项目管理
+                            </a>
+                            <div class="sub-menu">
+                                <div onclick="AddTabMenu('item1', '@Url.Action("List", "WashItem")', '服务项目管理', '161.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/161.png")">服务项目管理
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a>
+                                <img src="@Url.Content("~/Content/images/32/309.png")">会员管理
+                            </a>
+                            <div class="sub-menu">
+                                <div onclick="AddTabMenu('procaselist', '@Url.Action("List", "Member")', '会员管理', '396.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/396.png")">会员管理
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a>
+                                <img src="@Url.Content("~/Content/images/32/164.png")">洗车工管理
+                            </a>
+                            <div class="sub-menu">
+                                <div onclick="AddTabMenu('service', '@Url.Action("List", "WorkShop")', '洗车工管理', '257.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/257.png")">洗车工管理
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a>
+                                <img src="@Url.Content("~/Content/images/32/216.png")">订单管理
+                            </a>
+                            <div class="sub-menu">
+                                <div onclick="AddTabMenu('procaselist', '@Url.Action("List", "Orders")', '订单管理', '4977_photography.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/4977_photography.png")">订单管理
+                                </div>
+                                <div onclick="AddTabMenu('pj', '@Url.Action("ReviewsList", "Orders")', '评价管理', '4977_photography.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/4977_photography.png")">评价管理
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <a>
+                                <img src="@Url.Content("~/Content/images/32/92.png")">储值管理
+                            </a>
+                            <div class="sub-menu">
+                                <div onclick="AddTabMenu('chargetype', '@Url.Action("List", "ChargeType")', '充值套餐管理', '92.png', 'true','true');">
+                                    <img src="@Url.Content("~/Content/images/32/4977_photography.png")">充值套餐管理
+                                </div>
+                            </div>
+                        </li>
+                        @*<li>
+                                <a>
+                                    <img src="@Url.Content("~/Content/images/32/526.png")">网站文章
+                                </a>
+                                <div class="sub-menu">
+                                    <div onclick="AddTabMenu('newstype', '@Url.Action("List", "NewsType", new { ParentID = 1 })', '文章分类', '295.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/295.png")">文章分类
+                                    </div>
+                                    <div onclick="AddTabMenu('newsadd', '@Url.Action("Add", "News", new { ParentID = 1 })', '添加文章', '296.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/296.png")">添加文章
+                                    </div>
+                                    <div onclick="AddTabMenu('newslist', '@Url.Action("List", "News", new { ParentID = 1 })', '网站文章管理', 'news.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/news.png")">网站文章管理
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a>
+                                    <img src="@Url.Content("~/Content/images/32/297.png")">客户案例
+                                </a>
+                                <div class="sub-menu">
+                                    <div onclick="AddTabMenu('supplierlist', '@Url.Action("List", "Supplier")', '分销商管理', '574.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/574.png")">分销商管理
+                                    </div>
+                                    <div onclick="AddTabMenu('caselist', '@Url.Action("List", "Case")', '案例管理', '234.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/234.png")">案例管理
+                                    </div>
+                                    <div onclick="AddTabMenu('caseadd', '@Url.Action("Add", "Case")', '添加案例', '247.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/247.png")">添加案例
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a>
+                                    <img src="@Url.Content("~/Content/images/32/548.png")">广告管理
+                                </a>
+                                <div class="sub-menu">
+                                    <div onclick="AddTabMenu('flashadd', '@Url.Action("FlashAdd", "Flash")', '添加幻灯片', '4977_photography.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/4977_photography.png")">添加幻灯片
+                                    </div>
+                                    <div onclick="AddTabMenu('flashlist', '@Url.Action("FlashList", "Flash")', '幻灯片管理', '310.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/310.png")">幻灯片管理
+                                    </div>
+                                    <div onclick="AddTabMenu('flashtype', '@Url.Action("TypeList", "Flash")', '幻灯片分类管理', '521.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/521.png")">幻灯片分类管理
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a>
+                                    <img src="@Url.Content("~/Content/images/32/storage1.png")">链接管理
+                                </a>
+                                <div class="sub-menu">
+                                    <div onclick="AddTabMenu('linkout', '@Url.Action("List", "Links")', '友情链接', '239.png', 'true','true');">
+                                        <img src="@Url.Content("~/Content/images/32/239.png")">友情链接
+                                    </div>
+                                </div>
+                            </li>*@
+                    </ul>
+                </div>
+                <div id="ContentPannel">
+                </div>
+            </div>
+            <div id="botton_toolbar">
+                <div style="width: 42%; text-align: left; float: left;">
+                    &nbsp;<a title="智方软件科技有限公司" href="javascript:void(0)">技术支持：智方软件科技有限公司</a> <span class="south-separator">
+                    </span>&nbsp;专业版 V8.1 <span class="south-separator"></span><span class="south-separator">
+                    </span>
+                </div>
+                <div style="width: 16%; text-align: left; float: left;">
+                    <a title="智方软件科技有限公司" href="javascript:void()">CopyRight © 2010-2015 By 智方软件</a>
+                </div>
+                <div style="width: 42%; text-align: right; float: left;">
+                    <span class="south-separator"></span>操作员：@WorkContext.NickName<span class="south-separator">
+                    </span>&nbsp;
+                </div>
+            </div>
+        </div>
+        <!--载进度条start-->
+        <div id="loading" onclick="Loading(false);">
+            <img src="@Url.Content("~/Content/images/loading.gif")" width="32" height="32" style="padding-bottom: 4px;
+            vertical-align: middle;" alt="" />&nbsp;正在处理，请稍待&nbsp;
+        </div>
+        <!--载进度条end-->
+    </form>
+</body>
+</html>

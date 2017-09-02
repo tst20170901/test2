@@ -1,0 +1,97 @@
+﻿@model Supplier
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="/Scripts/area_array.js"></script>
+    <script type="text/javascript" src="/Scripts/areaselect.js"></script>
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#Title").val() == "") {
+                alert("分销商名称不能为空！");
+                return false;
+            } else if ($("#Phone").val() == "") {
+                alert("客服电话不能为空！");
+                return false;
+            } else if ($("#ProvinceName").val() == "") {
+                alert("请选择省份！");
+                return false;
+            } else if ($("#CityName").val().indexOf(",") < 0) {
+                alert("请选择城市！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改分销商</h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                分销商名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt", style = "width:200px" })<span
+                    style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                客服电话
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Phone, new { @class = "txt", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                所在地区
+            </th>
+            <td id="region">
+                @Html.Hidden("pcregion", (@ProvinceName + @CityName))
+                @Html.HiddenFor(x => x.ProvinceName)
+                @Html.HiddenFor(x => x.CityName)
+                <select class="ddl" id="proid">
+                </select><span style="color: #f00">*@Html.ValidationMessage("Region")</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                授权区域
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.ActArea, new { @class = "txt", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                排序ID
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                状态
+            </th>
+            <td>@Html.RadioButtonFor(x => x.IsShow, 0, new { @id = "radio1" })未审核
+                @Html.RadioButtonFor(x => x.IsShow, 1, new { @id = "radio2" })正常
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>}}

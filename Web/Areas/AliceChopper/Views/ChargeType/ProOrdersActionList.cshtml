@@ -1,0 +1,115 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                订单流水管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("ProOrdersActionList", "ChargeType", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                订单编号
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <th>
+                                手机号
+                            </th>
+                            <td>
+                                @Html.TextBox("txtMobile", AliceDAL.UrlParam.GetStringValue("txtMobile"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <td>
+                                <input type="submit" id="btnSearch" class="btnSearch" value="搜索" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        订单编号
+                    </th>
+                    <th scope="col">
+                        手机号
+                    </th>
+                    <th scope="col">
+                        订单金额
+                    </th>
+                    <th scope="col">
+                        类型
+                    </th>
+                    <th scope="col">
+                        描述
+                    </th>
+                    <th scope="col">
+                        时间
+                    </th>
+                </tr>
+                @{if (Model.Page != null)
+                {
+                    foreach (DataRow item in Model.Page)
+                    {
+                        <tr class="gvRow">
+                            <td align="left">
+                                &nbsp;&nbsp;@item["Osn"].ToString()
+                            </td>
+                            <td align="center" style="width: 100px">
+                                @item["LoginID"].ToString()
+                            </td>
+                            <td align="center" style="width: 60px">
+                                @item["Amount"].ToString()
+                            </td>
+                            <td align="center" style="width: 50px">
+                                @item["ActionType"].ToString()
+                            </td>
+                            <td align="center">
+                                @item["ActionDes"].ToString()
+                            </td>
+                            <td style="width: 150px;text-align:center">
+                                @item["ActionTime"].ToString()
+                            </td>
+                        </tr>
+                    }
+                }}
+
+
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

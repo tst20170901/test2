@@ -1,0 +1,76 @@
+﻿@model DataTable
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                幻灯片管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn"><span><b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                刷新</b></span></a><div class="tools_separator">
+                </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn"><span><b
+                    style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                离开</b></span></a><div class="tools_separator">
+                </div>
+        </div>
+        <div id="articles">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        ID
+                    </th>
+                    <th scope="col">
+                        图片名称
+                    </th>
+                    <th scope="col">
+                        查看图片
+                    </th>
+                    <th scope="col">
+                        排序
+                    </th>
+                    <th scope="col">
+                        所属分类
+                    </th>
+                    <th scope="col">
+                        管理操作
+                    </th>
+                </tr>
+                @if (Model != null)
+                {
+                    foreach (DataRow item in Rows)
+                    {
+                    <tr class="gvRow">
+                        <td style="width: 100px">
+                            @item["ID"].ToString()
+                        </td>
+                        <td align="left">
+                            <div class="c1">@item["Title"].ToString()</div>
+                        </td>
+                        <td align="center" style="width: 100px">
+                            <a href="@item["Img"].ToString()" target="_blank">查看</a>
+                        </td>
+                        <td align="center" style="width: 100px">
+                            @item["SortID"].ToString()
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @item["TypeID"].ToString()
+                        </td>
+                        <td align="center" style="width: 120px">
+                            @Html.ActionLink("编辑", "Edit", new { tid = item["ID"].ToString() }, new { @class = "abtn edit" })
+                            @Html.ActionLink("删除", "Delete", new { tid = item["ID"].ToString() }, new { @class = "abtn delete" })
+                        </td>
+                    </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+}

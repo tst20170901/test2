@@ -1,0 +1,161 @@
+﻿@model Web.Models.ProOrderInfoModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/weui.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".star").click(function (e) {
+                var offset = $(this).offset();
+                var relativeX = (e.pageX - offset.left);
+                var width = relativeX / $(this).width() * 100;
+                if (width <= 20) {
+                    width = 20;
+                } else if (width <= 40) {
+                    width = 40;
+                } else if (width <= 60) {
+                    width = 60;
+                } else if (width <= 80) {
+                    width = 80;
+                } else if (width >= 80) {
+                    width = 100;
+                }
+                $(this).children("div").children("input").val(width / 20);
+                $(this).children("div").width(width + "%");
+            });
+        })
+        function checkForm() {
+            if ($("#btnpj").val() != "1") {
+                showToast("该订单不能评价！");
+                return;
+            } else {
+                $.post("/BearClient/OrderDetail1?oid=@(Model.OrderInfo.ID)", { SpeedStar: $("input[name='SpeedStar']:checked").val(), ServiceStar: $("input[name='ServiceStar']:checked").val(), AttitudeStar: $("input[name='AttitudeStar']:checked").val(), pjbody: $("#pjbody").val() }, function (data) {
+                    showToast(data.msg);
+                });
+            }
+        }
+    </script>
+</head>
+<body ontouchstart>
+    <div class="head"><a href="@Url.Action("GoodsOrderList","BearClient")" class="back"></a><span>订单详情</span></div>
+    @if (Model.UserActionsList != null && Model.UserActionsList.Count > 0)
+    {
+        <div class="weui_cells_title">操作详情</div>
+        <div class="weui_cells">
+            @foreach (Models.UserOrderActions item in Model.UserActionsList)
+            {
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>@item.ActionDes</p>
+                    </div><div class="weui_cell_ft">@item.RealName &nbsp; &nbsp;@AliceDAL.DataType.ConvertToDateTimeStr(item.ActionTime)</div>
+                </div>
+            }
+        </div>
+    }
+    @if (Model.OrderInfo != null)
+    {
+        <div class="weui_cells_title">订单信息</div>
+        <div class="weui_cells">
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">收货人电话</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Model.OrderInfo.Mobile</p>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">收货地址</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Model.OrderInfo.Address</p>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">商品详情</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>
+                        @if (Model.OrdersItem != null)
+                        {
+                            foreach (Models.Pro_Orders_Item item in Model.OrdersItem)
+                            {
+                                <span>@item.ItemName (@item.Money 元) </span> <text>&nbsp;</text>
+                            }
+                        }
+                    </p>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">备注信息</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Model.OrderInfo.Remark</p>
+                </div>
+            </div>
+        </div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务速度</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <label for="rdo1"><input type="radio" name="SpeedStar" value="5" id="rdo1" checked="checked" />快</label>&nbsp;&nbsp;
+                    <label for="rdo2"><input type="radio" name="SpeedStar" value="3" id="rdo2" />中</label>&nbsp;&nbsp;
+                    <label for="rdo3"><input type="radio" name="SpeedStar" value="1" id="rdo3" />慢</label>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务质量</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <label for="rdo4"><input type="radio" name="ServiceStar" value="5" id="rdo4" checked="checked" />好</label>&nbsp;&nbsp;
+                    <label for="rdo5"><input type="radio" name="ServiceStar" value="3" id="rdo5" />中</label>&nbsp;&nbsp;
+                    <label for="rdo6"><input type="radio" name="ServiceStar" value="1" id="rdo6" />差</label>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务态度</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <label for="rdo7"><input type="radio" name="AttitudeStar" value="5" id="rdo7" checked="checked" />好</label>&nbsp;&nbsp;
+                    <label for="rdo8"><input type="radio" name="AttitudeStar" value="3" id="rdo8" />中</label>&nbsp;&nbsp;
+                    <label for="rdo9"><input type="radio" name="AttitudeStar" value="1" id="rdo9" />差</label>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务评价</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <textarea class="weui_textarea" placeholder="请输入评论" rows="3" name="pjbody" id="pjbody"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="weui_btn_area">
+            <input id="submit" class="weui_btn weui_btn_primary" type="button" value="服务评价" onclick="checkForm();" />
+        </div>
+        <div class="weui_opr_area">
+            <p class="weui_btn_area">
+                @if (Model.OrderInfo != null && Model.OrderInfo.OrderState == (int)Models.UserProOrderState.WaitPaying)
+                {<a class="weui_btn weui_btn_primary" href="/BearClient/RePay1?oid=@Model.OrderInfo.ID">继续支付</a>}
+
+                @if (Model.OrderInfo != null && (Model.OrderInfo.OrderState == (int)Models.UserProOrderState.Finished || Model.OrderInfo.OrderState == (int)Models.UserProOrderState.Started || Model.OrderInfo.OrderState == (int)Models.UserProOrderState.Assigned || Model.OrderInfo.OrderState == (int)Models.UserProOrderState.Payed))
+                {
+                    <input type="hidden" name="btnpj" value="1" id="btnpj" />
+                }
+                @if (Model.OrderInfo != null && Model.OrderInfo.OrderState == (int)Models.UserProOrderState.Payed)
+                {
+                    <a class="weui_btn weui_btn_warn" href="/BearClient/Cancel1?oid=@Model.OrderInfo.ID">全额退款</a>}
+
+            </p>
+        </div>
+        <div class="weui_msg">
+            <div class="weui_text_area">
+                <p class="weui_msg_desc">温馨提示：系统派单前撤单可全额退款。</p>
+            </div>
+        </div>
+    }
+    @Html.Partial("menu", "3")
+</body>
+</html>

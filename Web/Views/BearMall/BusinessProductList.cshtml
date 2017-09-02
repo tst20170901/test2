@@ -1,0 +1,79 @@
+﻿@model Web.Models.ListModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=29")" rel="stylesheet" />
+    <style type="text/css">
+        html, body {
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="head" style="position:fixed;left:0px;top:0px;z-index:99"><a href="@AliceDAL.Common.GetUrlReferrer()" class="back"></a><span>@ViewBag.BusinessName</span></div>
+    <div>
+        <div class="protypelist">
+            <ul id="dataClass">
+                <li><a href="/BearMall/BusinessProductList?bid=@AliceDAL.UrlParam.GetIntValue("bid")">全部商品</a></li>
+                @{
+                    List<Models.Pro_Types> typeList = ViewData["categoryList"] as List<Models.Pro_Types>;
+                    if (typeList != null)
+                    {
+                        foreach (var item in typeList)
+                        {
+                            <li><a href="/BearMall/BusinessProductList?bid=@(item.BusinessID)&typeID=@item.ID">@item.TypeName</a></li>
+                        }
+                    }
+                }
+            </ul>
+        </div>
+        <div class="goodlist">
+            <div id="dataList">
+                @if (Model != null)
+                {
+                    foreach (DataRow item in Model.Page)
+                    {
+                        <div class="gooditem">
+                            <div class="gooditem_bor">
+                                <div class="gooditem_img">
+                                    <a href="@Url.Action("Product", "BearMall",new{pid=item["ID"].ToString()})">
+                                        <img style="width: 100%; display: block;height:100px" src="@item["Img"].ToString()">
+                                    </a>
+                                </div>
+                                <a href="@Url.Action("Product", "BearMall",new{pid=item["ID"].ToString()})">@item["Title"].ToString()</a>
+                                <p>价格：@(item["Price"].ToString())元 <i>原价：@(item["Price1"].ToString())元</i></p>
+                                <div class="gooditem_buy">
+                                    @if (item["ProType"].ToString() == "1")
+                                    {
+                                        <a href="@Url.Action("Product", "BearMall",new{pid=item["ID"].ToString()})" class="edo_btn1">立即查看</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="@Url.Action("ProductOrder", "Product", new { pid = item["ID"].ToString() })" class="edo_btn1">立刻购买</a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div id="loadpro" style="display:none"></div>
+        </div>
+        <div class="fn-clear"></div>
+    </div>
+    @Html.Partial("menu", "1")
+    <script>
+        var typeid = @AliceDAL.UrlParam.GetIntValue("typeID");
+        var bid=@AliceDAL.UrlParam.GetIntValue("bid");
+    </script>
+    <script src="/Scripts/jquery-2.1.4.min.js"></script>
+    <script src="/Scripts/mall.js?v=10"></script>
+</body>
+</html>

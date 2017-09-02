@@ -1,0 +1,116 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#mobile").val() == "") {
+                showToast("手机号不能为空！");
+                return;
+            } else if ($("#code").val() == "") {
+                showToast("验证码不能为空！");
+                return;
+            } else {
+                $.post("/login/", { LoginID: $("#mobile").val(), password: $("#code").val(), returnUrl: '@AliceDAL.UrlParam.GetStringValue("returnUrl")' }, function (data) {
+                    showToast(data.msg);
+                    if (data.msg == "OK") {
+                        location.href = data.url;
+                    }
+                });
+            }
+        }
+        function Reg() {
+            location.href = "/Login/Reg";
+        }
+    </script>
+
+</head>
+<body>
+    <div class="head"><span>登录</span></div>
+    <div class="edo_cells_title">
+        *小熊洗车承诺将严格保护您的个人信息
+    </div>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken();
+        <div class="edocell2 w">
+            <div class="edo_hd1">手机号</div>
+            <div class="edo_bd1">
+                <input class="edoui_input" style="text-align:left" type="tel" id="mobile" placeholder="请输入手机号" value="" />
+            </div>
+        </div>
+        <div class="edocell2 w">
+            <div class="edo_hd1">验证码</div>
+            <div class="edo_bd1" style="position:relative">
+                <input class="edoui_input" type="number" style="text-align:left" id="code" placeholder="请输入验证码" value="" maxlength="4" />
+                <a href="javascript:void(0)" class="edo_btn1" onclick="sendmessage()" id="sendmsg" style="position:absolute;right:10px;top:8px">获取验证码</a>
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <a href="javascript:void(0)" class="edo_btn" id="send" onclick="checkForm()">登录</a>
+        <script type="text/javascript">
+            var countdown = 90;
+            var ttt;
+            function sendmessage() {
+                if ($("#mobile").val() == "") {
+                    showToast("手机号不能为空！");
+                    return;
+                }
+                settime();
+            }
+
+            function settime() {
+                if (countdown == 0) {
+                    $("#sendmsg").attr("onclick", "sendmessage()");
+                    $("#sendmsg").removeClass("weui_btn_disabled");
+                    $("#sendmsg").text("免费获取验证码");
+                    countdown = 90;
+                } else {
+                    if (countdown == 90) {
+                        sendmsg();
+                    }
+                    $("#sendmsg").removeAttr("onclick");
+                    $("#sendmsg").addClass("weui_btn_disabled");
+                    $("#sendmsg").text("重新发送(" + countdown + ")");
+                    countdown--;
+                }
+                ttt = setTimeout(function () {
+                    settime();
+                }, 1000);
+                if (countdown == 0) {
+                    $("#sendmsg").attr("onclick", "sendmessage()");
+                    $("#sendmsg").removeClass("weui_btn_disabled");
+                    $("#sendmsg").text("免费获取验证码");
+                    countdown = 90;
+                    clearTimeout(ttt);
+                }
+            }
+            function sendmsg() {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/Login/SendMsg/",
+                    data: { loginID: $("#mobile").val() },
+                    success: function (data) {
+                        showToast(data.msg);
+                    },
+                    error: function (error) {
+                        showToast("网络错误，请重试");
+                    }
+                });
+            }
+        </script>
+    }
+</body>
+</html>

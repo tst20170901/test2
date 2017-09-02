@@ -1,0 +1,107 @@
+﻿@model Models.BD_Admin
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    编辑用户
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                登录名
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.LoginID, new { @class = "txt", @readonly = "true" })
+            <span style="color: #f00">*</span>登录名具有唯一性，不可更改
+        </td>
+    </tr>
+    @{
+        if (WorkContext.RoleID == 1)
+        {
+            <text>
+                <tr>
+                    <th>
+                        分公司
+                    </th>
+                    <td>
+                        <select class="ddl" id="BranchID" name="BranchID">
+                            <option @if (0 == Model.BranchID) { <text> selected="selected" </text>  } value="0">请选择</option>
+                            @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == Model.BranchID) { <text> selected="selected" </text>  } value="@item.ID">@item.Title</option>
+    }
+}
+                            }
+                        </select>
+                    </td>
+                </tr></text>
+        }
+        else
+        {
+            <text>
+                <tr>
+                    <th>分公司</th>
+                    <td>
+                        @WorkContext.Branch.Title
+                        <input type="hidden" name="BranchID" value="@WorkContext.BranchID">
+                    </td>
+                </tr>
+            </text>
+        }
+    }
+    <tr>
+        <th>角色</th>
+        <td>
+            <select class="ddl" id="RoleID" name="RoleID">
+                <option @if (0 == Model.RoleID) { <text> selected="selected" </text>  } value="0">请选择</option>
+                @{
+System.Data.DataTable dtrole = ViewData["RoleList"] as System.Data.DataTable;
+if (dtrole != null && dtrole.Rows.Count > 0)
+{
+    foreach (System.Data.DataRow row in dtrole.Rows)
+    {
+        <option @if (int.Parse(row["ID"].ToString()) == Model.RoleID) { <text> selected="selected" </text>  } value="@row["ID"].ToString()">@row["Title"].ToString()</option>
+    }
+}
+                }
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            密码
+        </th>
+        <td>
+            @Html.PasswordFor(model => model.Password, new { @class = "txt" })
+        <span style="color: #f00">*</span>留空则不修改
+    </td>
+</tr>
+<tr>
+    <th>
+        昵称
+    </th>
+    <td>
+        @Html.TextBoxFor(model => model.NickName, new { @class = "txt" })
+    @Html.ValidationMessageFor(model => model.NickName)
+</td>
+</tr>
+<tr>
+    <th>
+        &nbsp;
+    </th>
+    <td>
+        <input id="btnSure" class="btn" value="确定" type="submit" />
+    </td>
+</tr>
+</table> }
+}

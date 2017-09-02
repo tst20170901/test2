@@ -1,0 +1,168 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                商家管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="新增" class="tools_btn" onclick="Add('@Url.Action("Add")');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        新增
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("List", "Business", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                商家名称
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            @{
+                    if (WorkContext.RoleID == 1)
+                    {
+                        <text>
+                            <th>
+                                分公司
+                            </th>
+                            <td>
+                                <select class="ddl" id="BranchID" name="BranchID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>         } value="0">请选择</option>
+                                    @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>         } value="@item.ID">@item.Title</option>
+    }
+}
+                                    }
+                                </select>
+                            </td></text>
+                    }
+                            }
+                            <td>
+                                <input type="submit" id="btnSearch" class="btnSearch" value="搜索" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        登录名
+                    </th>
+                    <th scope="col">
+                        商家名称
+                    </th>
+                    <th scope="col">
+                        手机号
+                    </th>
+                    <th scope="col">
+                        排序
+                    </th>
+                    <th scope="col">
+                        状态
+                    </th>
+                    <th scope="col">
+                        所属分类
+                    </th>
+                    <th scope="col">
+                        所属分公司
+                    </th>
+                    <th scope="col">
+                        编辑操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td style="width: 200px;text-align:center">
+                            @item["LoginID"].ToString()
+                        </td>
+                        <td align="left">
+                            &nbsp;&nbsp;@item["BusinessName"].ToString()
+                        </td>
+                        <td style="width:100px">
+                            @item["Data2"].ToString()
+                        </td>
+                        <td style="width: 200px">
+                            @item["SortID"].ToString()
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @if (item["BusinessState"].ToString() == "0")
+                            {
+                                <text><span style="color:#F00">禁用</span></text>
+                            }
+                            else
+                            {
+                                <text>正常</text>
+                            }
+                        </td>
+                        <td style="width:150px">
+                            @item["TypeName"].ToString()
+                        </td>
+                        <td style="width:150px">
+                            @item["BranchName"].ToString()
+                        </td>
+                        <td align="center" style="width: 320px">
+                            @Html.ActionLink("编辑", "Edit", new { bid = item["ID"] }, new { @class = "abtn edit" })
+                            @if (item["BusinessState"].ToString() == "0")
+                            {
+                                @Html.ActionLink("启用", "ChangeState", new { bid = item["ID"] }, new { @class = "abtn edit" })
+                            }
+                            else
+                            {
+                                @Html.ActionLink("禁用", "ChangeState", new { bid = item["ID"] }, new { @class = "abtn edit" })
+                            }
+                            @Html.ActionLink("重置密码", "EditPwd", new { bid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            @Html.ActionLink("分类", "List","Category", new { bid = item["ID"] }, new { @class = "abtn edit" })
+                            @Html.ActionLink("商品", "List", "ProCase", new { bid = item["ID"] }, new { @class = "abtn edit" })
+                            <a href="http://qr.liantu.com/api.php?text=@(AliceDAL.Common.CreateRandomValue(8,false)+item["ID"].ToString())&logo=http://www.xiaoxiongxiche.com/content/bear/images/logo.jpg&w=500&m=50" target="_blank" class="abtn edit">二维码</a>
+                            @*@Html.ActionLink("修改余额", "EditMoney", new { bid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })*@
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

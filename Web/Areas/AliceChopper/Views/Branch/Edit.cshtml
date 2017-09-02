@@ -1,0 +1,135 @@
+﻿@model Models.BD_Branch
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276&plugin=AMap.MouseTool"></script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {
+        <table class="frm">
+            <tr>
+                <td colspan="2" class="pagetit">
+                    <h1>
+                        修改分公司
+                    </h1>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    名称
+                </th>
+                <td>
+                    @Html.TextBoxFor(x => x.Title, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    电话
+                </th>
+                <td>
+                    @Html.TextBoxFor(x => x.Mobile, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Mobile)</span>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    服务范围
+                </th>
+                <td id="region">
+                    <input type="hidden" id="Points" name="Points" value="@Model.Points" />
+                    <input type="hidden" id="CenterLng" name="CenterLng" value="@Model.CenterLng" />
+                    <input type="hidden" id="CenterLat" name="CenterLat" value="@Model.CenterLat" />
+                    <span style="color:#F00">建议拖动地图选取合适地区，鼠标勾画多边形，禁止交叉多边形；双击结束；结束后继续点击清空地图；尽量不勾画尖角区域；务必在同一行政区域，如划分衡水市，则须避开衡水市与武邑县交界</span>
+                    <div id="mapContainer" style="width: 99%; height: 500px; position: relative;"></div>
+                    <script type="text/javascript">
+                        var map, geolocation;
+                        map = new AMap.Map('mapContainer', {
+                            resizeEnable: true,@if (Model != null && !String.IsNullOrEmpty(Model.CenterLng) && !String.IsNullOrEmpty(Model.CenterLat)){@:center: [@Model.CenterLng, @Model.CenterLat],
+                            }zoom: 13
+                        });
+                        map.plugin(["AMap.ToolBar"], function () {
+                            map.addControl(new AMap.ToolBar());
+                        });
+                        map.plugin('AMap.Geolocation', function () {
+                            geolocation = new AMap.Geolocation({
+                                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                                timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+                                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                                showButton: true,        //显示定位按钮，默认：true
+                                buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                                panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                                zoomToAccuracy: false      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                            });
+                            map.addControl(geolocation);
+                            AMap.event.addListener(geolocation, 'complete', function (e) {
+                                map.setCenter(e.position);
+                            });//返回定位信息
+                        });
+                        @if (Model == null ||String.IsNullOrEmpty(Model.CenterLng) || String.IsNullOrEmpty(Model.CenterLat)){
+                        <text>
+                        geolocation.getCurrentPosition();</text>}
+                        @if (Model!=null&&!String.IsNullOrEmpty(Model.Points)&&Model.Points.Split(';').Length>=3)
+                    {
+                        <text>var polygonArr = new Array();</text>
+                        foreach (string item in Model.Points.Split(';'))
+                        {
+                            <text>polygonArr.push([@item]);</text>
+                        }
+                        <text>
+                        var polygons = new AMap.Polygon({
+                            path: polygonArr,//设置多边形边界路径
+                            strokeColor: "#FF33FF", //线颜色
+                            strokeOpacity: 1, //线透明度
+                            strokeWeight: 1,    //线宽
+                            fillColor: "#1791fc", //填充色
+                            fillOpacity: 0.35//填充透明度
+                        });
+                        polygons.setMap(map);
+                        </text>
+                    }
+                        var mouseTool = new AMap.MouseTool(map);
+                        var polygon = mouseTool.polygon({
+                            strokeColor: "#FF33FF", //线颜色
+                            strokeOpacity: 1, //线透明度
+                            strokeWeight: 1,    //线宽
+                            fillColor: "#1791fc", //填充色
+                            fillOpacity: 0.35//填充透明度
+                        });
+                        map.on('click', function (e) {
+                            if (map.getAllOverlays(polygon).length > 1) {
+                                map.clearMap();
+                                mouseTool.polygon();
+                            }
+                        });
+                        function checkForm() {
+                            if ($("#Title").val() == "") {
+                                alert("名称不能为空！");
+                                return false;
+                            }
+                            $("#Points").val(map.getAllOverlays(polygon));
+                            if ($("#Points").val() == "" || $("#Points").val().length < 3) {
+                                alert("请重新勾画区域！");
+                                return false;
+                            }
+                            var p = map.getAllOverlays(polygon)[0].getBounds().getCenter();
+                            $("#CenterLng").val(p.getLng());
+                            $("#CenterLat").val(p.getLat());
+                            return true;
+                        }
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    &nbsp;
+                </th>
+                <td>
+                    <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+                </td>
+            </tr>
+        </table>}}

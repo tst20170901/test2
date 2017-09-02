@@ -1,0 +1,430 @@
+﻿@model Web.Areas.AliceChopper.Models.OrderInfoModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}@section header{
+    <script type="text/javascript">
+        var models = null;
+        function init_models() {
+            if (models) {
+                show_brand();
+            } else {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/CarModelAPI/CarModel/",
+                    success: function (data) {
+                        models = data;
+                        show_brand();
+                    },
+                    error: function () {
+                        alert("网络错误，请重试");
+                    }
+                });
+            }
+        }
+        function show_brand() {
+            $("#selebrand option").remove();
+            $("#selebrand").append("<option value='0'>品牌</option>");
+            for (var k in models) {
+                $("#selebrand").append("<option value='" + models[k].id + "'>" + models[k].py.substr(0, 1) + models[k].name + "</option>");
+            }
+            $("select[name='selebrand']").change(function () {
+                var selectedProvince = $(this).val();
+                $("#Brand").val($(this).find("option:selected").text());
+                $("#selemodel option").remove();
+                $("#selemodel").append("<option value='0'>车型</option>");
+                for (var s in models[selectedProvince - 1].models) {
+                    $("#selemodel").append("<option value='" + models[selectedProvince - 1].models[s].id + "'>" + models[selectedProvince - 1].models[s].py.substr(0, 1) + models[selectedProvince - 1].models[s].name + "</option>");
+                }
+            });
+            $("select[name='selemodel']").change(function () {
+                $("#ModelStr").val($(this).find("option:selected").text());
+                $("#oBrandShow").val($("#Brand").val() + " " + $("#ModelStr").val());
+            });
+        }
+        $(document).ready(function () {
+            $('input:text:first').focus();
+            $("#mobile").bind('keydown', function (e) {
+                var key = e.which;
+                if (key == 13) {
+                    GetUserInfo();
+                }
+            });
+            init_models();
+        })
+
+        function GetUserInfo() {
+            if ($("#mobile").val() == "") {
+                $("#msg").html("*手机号不能为空！");
+                return;
+            } else {
+                $.post("@Url.Action("AjaxUserInfo", "Member")", { mobile: $("#mobile").val() }, function (data) {
+                    var v = JSON.parse(data);
+                    if (v.code == "0") {
+                        $("#msg").html(v.msg);
+                        return;
+                    }
+                });
+            }
+        }
+        function checklogin() {
+            var brand = $("#selebrand").find("option:selected").text();
+            var model = $("#selemodel").find("option:selected").text();
+            var brandid = $("#selebrand").val();
+            var modelid = $("#selemodel").val();
+            if ($("#mobile").val() == "") {
+                window.alert("请输入手机号码！");
+                return false;
+            } else if ($("#carplate").val() == "") {
+                window.alert("请输入车牌号！");
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                dataType: "json",
+                url: "@Url.Action("PreAdd", "Member")",
+                data: { mobile: $("#mobile").val(), name: $("#name").val(), carplate: $("#carplate").val(), 'alicebrand': brand, 'alicemodel': model, 'alicecolor': $("#selecolor").val(), 'alicebrandid': brandid, 'alicemodelid': modelid },
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    订单信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单号
+            </th>
+            <td>
+                @Model.OrderInfo.Osn
+            </td>
+            <th>
+                订单状态
+            </th>
+            <td>
+                @{Models.UserOrderState uos = (Models.UserOrderState)Model.OrderInfo.OrderState;
+                switch (uos)
+                {
+                    case Models.UserOrderState.WaitPaying:
+                        @:未支付
+                        break;
+                    case Models.UserOrderState.Payed:
+                    @:支付成功
+                                    break;
+                    case Models.UserOrderState.Assigned:
+                    @:派单完成
+                                    break;
+                    case Models.UserOrderState.Started:
+                    @:开始洗车
+                                    break;
+                    case Models.UserOrderState.Finished:
+                    @:洗车完成
+                                    break;
+                    case Models.UserOrderState.Canceled:
+                    @:已取消
+                                    break;
+                    case Models.UserOrderState.Void:
+                    @:已作废
+                                    break;
+                    default:
+                                    break;
+                }
+                }
+            </td>
+            <th>
+                提交日期
+            </th>
+            <td>
+                @AliceDAL.DataType.ConvertToDateTimeStrAll(Model.OrderInfo.CDate)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    用户信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                用户姓名
+            </th>
+            <td>
+                @Model.OrderInfo.UserName
+            </td>
+            <th>
+                手机号
+            </th>
+            <td>
+                @Model.OrderInfo.Mobile
+            </td>
+            <th>
+                提交IP
+            </th>
+            <td>
+                @Model.OrderInfo.IP
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    车辆信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                颜色
+            </th>
+            <td>
+                <input class="txt" id="oColor" name="oColor" style="width:200px" type="text" value="@Model.OrderInfo.Color" />
+            </td>
+            <th>
+                车牌号
+            </th>
+            <td>
+                <input class="txt" id="oPlate" name="oPlate" style="width:200px" type="text" value="@Model.OrderInfo.Plate" />
+            </td>
+            <th>
+                品牌
+            </th>
+            <td>
+                <select class="select" name="selebrand" id="selebrand">
+                    <option value="0">品牌</option>
+                </select>
+                <select class="select" name="selemodel" id="selemodel">
+                    <option value="0">车型</option>
+                </select>
+                <input id="Brand" name="Brand" type="hidden" value="" />
+                <input id="ModelStr" name="ModelStr" type="hidden" value="" /><input class="txt" id="oBrandShow" name="oBrandShow" style="width:200px" readonly="readonly" type="text" value="@Model.OrderInfo.BrandShow" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                保险公司
+            </th>
+            <td>
+                @if (Model.UserCar != null)
+                {
+                    <input class="txt" id="oCompany" name="oCompany" style="width:200px" type="text" value="@Model.UserCar.Data2" />
+                }
+                else
+                {
+                    <input class="txt" id="oCompany" name="oCompany" style="width:200px" type="text" value="" />
+                }
+
+            </td>
+            <th>
+                到期时间
+            </th>
+            <td>
+                @if (Model.UserCar != null)
+                {
+                    <input class="txt" id="oDueTime" name="oDueTime" style="width:200px" type="text" value="@Model.UserCar.Data3" />
+                }
+                else
+                {
+                    <input class="txt" id="oDueTime" name="oDueTime" style="width:200px" type="text" value="" />
+                }
+            </td>
+            <th>
+                备注
+            </th>
+            <td>
+                <input class="txt" id="oRemark" name="oRemark" style="width:200px" type="text" value="@Model.OrderInfo.Data4" />
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    服务项目
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                服务项目
+            </th>
+            <td>
+                @if (Model.OrderItems != null)
+                {
+                    foreach (Models.Orders_Item item in Model.OrderItems)
+                    {
+                        <span>@item.ItemName</span>
+                    }
+                }
+            </td>
+            <th>
+                预约
+            </th>
+            <td>
+                <input class="txt" id="oYY" name="oYY" style="width:200px" type="text" value="@Model.OrderInfo.Remark" />
+            </td>
+            <th colspan="2">
+                <input id="btnSure1" name="btnSure" class="btn" value="修改" type="submit" />
+            </th>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    清洁信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单处理
+            </th>
+            <td colspan="5">
+                @switch (uos)
+                {
+                    case Models.UserOrderState.Payed:
+                        <a href="@Url.Action("CancelOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[取消]</a>
+                        <a href="@Url.Action("AssignOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[派单]</a>
+                        break;
+                    case Models.UserOrderState.Assigned:
+                    <a href="@Url.Action("CancelOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[取消]</a>
+                    <a href="@Url.Action("StartOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[开始洗车]</a>
+                        break;
+                    case Models.UserOrderState.Started:
+                    <a href="@Url.Action("CancelOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[取消]</a>
+                    <a href="@Url.Action("FinishOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })">[洗车完成]</a>
+                        break;
+                    case Models.UserOrderState.Finished:
+                        break;
+                    case Models.UserOrderState.Canceled:
+                        break;
+                    default:
+                        break;
+                }
+                <a href="@Url.Action("VoidOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })" onclick="return confirm('作废后不可恢复且不退款，确定？');">[作废]</a>
+                <span style="color:#F00">若是手动线下单，如取消请直接作废，否则会额外增加用户余额</span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    位置信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                地址
+            </th>
+            <td colspan="5">
+                @Model.OrderInfo.Address
+            </td>
+        </tr>
+        <tr>
+            <th>
+                分配洗车工
+            </th>
+            <td colspan="5">
+                <select class="ddl" id="WorkerID" name="WorkerID">
+                    <option @if (0 == Model.OrderInfo.WorkID) { <text> selected="selected" </text>                                } value="0">选择洗车工</option>
+                    @{
+System.Data.DataTable dt = ViewData["WorkerListchild"] as System.Data.DataTable;
+if (dt != null && dt.Rows.Count > 0)
+{
+    foreach (System.Data.DataRow item in dt.Rows)
+    {
+        <option @if (item["ID"].ToString() == Model.OrderInfo.WorkID.ToString()) { <text> selected="selected" </text>                                               } value="@item["ID"].ToString()">@AliceDAL.HzToPz.ShouPin(item["Title"].ToString().Substring(0, 1))@item["Title"].ToString() (@item["OrderCount"].ToString())</option>
+    }
+}
+                    }
+                </select>
+                <input id="btnSure" name="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                地图位置
+            </th>
+            <td colspan="5">
+                <div style="position: relative; height: 400px">
+                    <div id="map">
+                        <div id="mapContainer" style="width: 100%; height: 400px; position: absolute;z-index: 9;left: 0; right: 0; "></div>
+                        <div id="mapmarker"><img src="/Content/images/mapmarker.png" /></div>
+                        <input type="hidden" id="lng" name="lng" value="@Model.OrderInfo.Lng" />
+                        <input type="hidden" id="lat" name="lat" value="@Model.OrderInfo.Lat" />
+                        <script type="text/javascript">
+                            var map;
+                            map = new AMap.Map('mapContainer', {
+                                resizeEnable: true,
+                                center: [@Model.OrderInfo.Lng, @Model.OrderInfo.Lat],
+                                zoom: 18,
+                                dragEnable: true,
+                                zoomEnable: true
+                            });
+                            var marker = new AMap.Marker({
+                                position: map.getCenter(),
+                                draggable: false,
+                                raiseOnDrag: false
+                            });
+                            marker.setMap(map);
+                        </script>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                操作详情
+            </th>
+            <td colspan="5">
+                @if (Model.UserActionsList != null)
+                {
+                    foreach (Models.UserOrderActions item in Model.UserActionsList)
+                    {<p>
+                        <span>@item.ActionDes</span>&nbsp;&nbsp;@item.RealName &nbsp; &nbsp;@AliceDAL.DataType.ConvertToDateTimeStrAll(item.ActionTime)
+                    </p>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>
+                洗车前图片
+            </th>
+            <td colspan="5">
+                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data1))
+                {
+                    foreach (string item in Model.OrderInfo.Data1.Split(','))
+                    {
+                        <a href="@item" target="_blank"><img src="@item" width="100" height="100" /></a>
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <th>
+                洗车后图片
+            </th>
+            <td colspan="5">
+                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data2))
+                {
+                    foreach (string item in Model.OrderInfo.Data2.Split(','))
+                    {
+                        <a href="@item" target="_blank"><img src="@item" width="100" height="100" /></a>
+                    }
+                }
+            </td>
+        </tr>
+    </table> }
+}

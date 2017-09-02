@@ -1,0 +1,116 @@
+﻿@model Web.Areas.AliceChopper.Models.ActionsAllotModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .actionDiv {
+            width: 110px;
+            float: left;
+        }
+    </style>
+    <script type="text/javascript">
+        function checklogin() {
+            if ($("#Title").val() == "") {
+                window.alert("请输入名称！");
+                return false;
+            }
+            return true;
+        }
+        @{
+            StringBuilder sb = new StringBuilder();
+            if(Model.ActionList!=null)
+            {
+                foreach (string action in Model.ActionList)
+            {
+                sb.AppendFormat("\"{0}\",",action.Replace("?","").Replace("=",""));
+            }
+        }
+        if (sb.Length > 0)
+        {
+            sb.Remove(sb.Length - 1, 1);
+        }
+        }
+        var actionArray = new Array(@Html.Raw(sb.ToString()));
+        $(function () {
+            for (var i = 0; i < actionArray.length; i++) {
+                $("#" + actionArray[i]).attr("checked", true);
+            }
+        })
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改管理员组
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt" })
+                <span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        @{
+        List<Models.BD_BearAdminActions> ActionTree = ViewData["ActionTree"] as List<Models.BD_BearAdminActions>;
+        int temp = 0;
+        if (ActionTree != null)
+        {
+            foreach (Models.BD_BearAdminActions item in ActionTree)
+            {
+                if (item.ParentID == 0)
+                {
+                    if (temp == 0)
+                    {
+                        <text>
+                            <tr>
+                                <th>
+                                    @item.Title
+                                </th>
+                                <td>
+                        </text>
+                    }
+                    else
+                    {@:</td>
+                     @:</tr>
+            <text>
+                <tr>
+                    <th>
+                        @item.Title
+                    </th>
+                    <td>
+            </text>
+                    }
+                }
+                else
+                {
+                    <div class="actionDiv">
+                        <label><input type="checkbox" name="ActionList" value="@(item.Controller+item.Action)" id="@(item.Controller.ToLower() + item.Action.Replace("?", "").Replace("=", "").ToLower())" class="checkbox" />@item.Title</label>
+                    </div>
+                }
+                temp++;
+                if (temp == ActionTree.Count)
+                {
+                    @:</td>
+                @:</tr>
+                }
+            }
+        }
+        }
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checklogin();" />
+            </td>
+        </tr>
+    </table> }
+}

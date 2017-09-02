@@ -1,0 +1,170 @@
+﻿@model Models.Art_Common
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link href="@Url.Content("~/Content/css/uploadify.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Content/kindeditor/kindeditor-min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        KindEditor.ready(function (K) {
+            var options = {
+                uploadJson: '/Content/kindeditor/asp.net/upload_json.ashx',
+                fileManagerJson: '/Content/kindeditor/asp.net/file_manager_json.ashx',
+                afterBlur: function () { editor.sync(); },
+                allowFileManager: true
+            };
+            window.editor = K.create('#Body', options);
+        });
+    </script>
+    <script type="text/javascript">
+        //防止chrome缓存jquery.uploadify.js文件，而引起chrome崩溃
+        document.write("<script type='text/javascript' src='/Scripts/jquery.uploadify.js?" + new Date() + "'></s" + "cript>");  
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#uploadify").uploadify({
+                'formData': { 'loginid': '@WorkContext.LoginID', 'password': '@WorkContext.Password' },
+                'swf': '/Content/flash/uploadify.swf',
+                'uploader': '/Tools/Upload?operation=img',
+                'buttonText': '上传图片',
+                'height': 24,
+                'width': 80,
+                'fileTypeDesc': 'Image Files',
+                'fileTypeExts': '*.jpg;*.jpeg;*.png;*.gif;*.jpg;',
+                'fileSizeLimit': '900000',
+                'auto': true,
+                'multi': false,
+                'removeTimeout': 2,
+                'onUploadSuccess': function (file, data, response) {
+                    if (data == "-1")
+                        alert('上传图片不能为空');
+                    else if (data == "-2")
+                        alert('上传图片的类型不允许');
+                    else {
+                        $(".uploadPreview").empty().append("<img width=\"88\" height=\"88\" src=\"" + data + "\"  />");
+                        $("#Img").val(data);
+                        $(".upload span[htmlFor='Img']").empty();
+                    }
+                }
+            });
+        });
+
+        function checkform() {
+            if ($("#Title").val() == "") {
+                alert("请输入信息标题！");
+                return false;
+            } else if ($("#BranchID").val() == "" || $("#BranchID").val() == "0") {
+                alert("请选择分公司");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加信息</h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                信息名称
+            </th>
+            <td>@Html.TextBoxFor(x => x.Title, new { @class = "txt", style = "width:580px" })
+                <span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                转向网址
+            </th>
+            <td>@Html.TextBoxFor(model => model.Description, new { @class = "txt", style = "width:280px" }) 注：填写网址后，详细内容将不起作用
+            </td>
+        </tr>
+         @{
+        if (WorkContext.RoleID == 1)
+        {
+         <text>
+             <tr>
+                 <th>
+                     分公司
+                 </th>
+                 <td>
+                     <select class="ddl" id="BranchID" name="BranchID">
+                         <option @if (0 == Model.BranchID) { <text> selected="selected" </text>      } value="0">请选择</option>
+                         @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+     <option @if (item.ID == Model.BranchID) { <text> selected="selected" </text>      } value="@item.ID">@item.Title</option>
+    }
+}
+                         }
+                     </select>
+                 </td>
+             </tr></text>
+        }
+        else
+        {
+         <text>
+             <tr>
+                 <th>分公司</th>
+                 <td>
+                     @WorkContext.Branch.Title
+                     <input type="hidden" name="BranchID" value="@WorkContext.BranchID">
+                 </td>
+             </tr>
+         </text>
+        }
+         }          
+        <tr>
+            <th>
+                信息缩略图
+            </th>
+            <td>
+                <div class="upload">
+                    <div class="uploadPreview">
+                        <img width="88" height="88" src="@Model.Img" alt="暂无图片" title="暂无图片" /></div>
+                    <div class="uploadProgressBar" id="uploadify-queue">
+                    </div>
+                    <div class="uploadBut">
+                        <input type="file" name="uploadify" id="uploadify" /></div>
+                    @Html.HiddenFor(model => model.Img)
+                    <div style="position: absolute; top: 30px; left: 180px;">
+                    </div>
+                </div>
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 是否置顶
+             </th>
+             <td>
+                 @Html.RadioButtonFor(m => m.Hot, 1, new { @name = "rdolstState" })是
+                 @Html.RadioButtonFor(m => m.Hot, 0, new { @name = "rdolstState" })否
+             </td>
+         </tr>
+        <tr>
+            <th>
+                信息详情
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.Body, new { style = "width: 99%;height: 300px; visibility: hidden;" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checkform();" />
+            </td>
+        </tr>
+    </table> }
+}

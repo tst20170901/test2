@@ -1,0 +1,66 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>小熊洗车</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=2")" rel="stylesheet" />
+    <style type="text/css">
+        .tipmsg {
+            text-align: center;
+            color: #FB5954;
+            line-height: 60px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .tip {
+            text-align: center;
+        }
+
+            .tip p {
+                font-size: 14px;
+            }
+
+            .tip a {
+                padding-top: 10px;
+            }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            var time = 3; //设置时间为几秒
+            var timer = document.getElementById('timer'); //获取ID为timer的对象
+            timer.innerHTML = time; //初始化显示秒数
+            time = time - 1;
+            var g = window.setInterval(function () {
+                if (time < 0) {
+                    window.clearTimeout(g); //清除动画
+                    window.location.href = '@ViewBag.BackUrl'; //跳转到指定地址
+                    //window.history.back(-1); //后退
+                } else {
+                    showTime();
+                }
+            }, 1000);
+            function showTime() {
+                timer.innerHTML = time;
+                time--;
+            }
+        };
+    </script>
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","BearMall")" class="back"></a><span>提示信息</span></div>
+    <div class="tipmsg">@ViewBag.Message</div>
+    <div class="tip">
+        <p>
+            如果您不做出选择，将在<span id="timer">3</span>秒后自动返回
+        </p>
+        <div class="h10p"></div>
+        <a href="@ViewBag.BackUrl">←点击返回</a>
+    </div>
+</body>
+</html>

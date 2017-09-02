@@ -1,0 +1,198 @@
+﻿@model Models.BD_Business
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link href="@Url.Content("~/Content/css/uploadify.css")" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        //防止chrome缓存jquery.uploadify.js文件，而引起chrome崩溃
+        document.write("<script type='text/javascript' src='/Scripts/jquery.uploadify.js?" + new Date() + "'></s" + "cript>");
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#uploadify").uploadify({
+                'formData': { 'loginid': '@WorkContext.LoginID', 'password': '@WorkContext.Password' },
+                'swf': '/Content/flash/uploadify.swf',
+                'uploader': '/Tools/Upload?operation=img',
+                'buttonText': '上传图片',
+                'height': 24,
+                'width': 80,
+                'fileTypeDesc': 'Image Files',
+                'fileTypeExts': '*.jpg;*.jpeg;*.png;*.gif;*.jpg;',
+                'fileSizeLimit': '900000',
+                'auto': true,
+                'multi': false,
+                'removeTimeout': 2,
+                'onUploadSuccess': function (file, data, response) {
+                    if (data == "-1")
+                        alert('上传图片不能为空');
+                    else if (data == "-2")
+                        alert('上传图片的类型不允许');
+                    else {
+                        $(".uploadPreview").empty().append("<img width=\"88\" height=\"88\" src=\"" + data + "\"  />");
+                        $("#Data1").val(data);
+                        $(".upload span[htmlFor='Data1']").empty();
+                    }
+                }
+            });
+        });
+        function checkForm() {
+            if ($("#Title").val() == "") {
+                alert("商家名称不能为空！");
+                return false;
+            } else if ($("#BranchID").val() == "" || $("#BranchID").val() == "0") {
+                alert("请选择分公司");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改商家
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                登录名
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.LoginID, new { @class = "txt", @readonly = "true" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.LoginID)</span>登录名具有唯一性，不可更改
+            </td>
+        </tr>
+        <tr>
+            <th>
+                密码
+            </th>
+            <td>
+                @Html.PasswordFor(model => model.Password, new { @class = "txt" })<span style="color: #f00">*</span>留空则不修改
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.BusinessName, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.BusinessName)</span>
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 手机号
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.Data2, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.BusinessName)</span>
+             </td>
+         </tr>
+        @{
+        if (WorkContext.RoleID == 1)
+        {
+            <text>
+                <tr>
+                    <th>
+                        分公司
+                    </th>
+                    <td>
+                        <select class="ddl" id="BranchID" name="BranchID">
+                            <option @if (0 == Model.BranchID) { <text> selected="selected" </text>       } value="0">请选择</option>
+                            @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == Model.BranchID) { <text> selected="selected" </text>       } value="@item.ID">@item.Title</option>
+    }
+}
+                            }
+                        </select>
+                    </td>
+                </tr></text>
+        }
+        else
+        {
+            <text>
+                <tr>
+                    <th>分公司</th>
+                    <td>
+                        @WorkContext.Branch.Title
+                        <input type="hidden" name="BranchID" value="@WorkContext.BranchID">
+                    </td>
+                </tr>
+            </text>
+        }
+        }
+         <tr>
+             <th>
+                 分类
+             </th>
+             <td>
+                 <select class="ddl" id="TypeID" name="TypeID">
+                     <option @if (0 == Model.TypeID) { <text> selected="selected" </text>              } value="0">请选择</option>
+                     @{
+List<Models.Business_Types> listtype = ViewData["businessTypeList"] as List<Models.Business_Types>;
+if (listtype != null)
+{
+    foreach (Models.Business_Types item in listtype.FindAll(x => x.ParentID == 0))
+    {
+     <optgroup label="@item.TypeName">
+         @{  List<Models.Business_Types> l = listtype.FindAll(x => x.ParentID == item.ID);
+           if (l != null)
+           {
+               foreach (var i in l)
+               {
+                 <option @if (i.ID == Model.TypeID) { <text> selected="selected" </text>           } value="@i.ID">@i.TypeName</option>
+               }
+           }
+         }
+     </optgroup>
+
+    }
+}
+                     }
+                 </select>
+             </td>
+         </tr>
+
+        <tr>
+            <th>
+                排序
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 店铺招牌
+             </th>
+             <td>
+                 <div class="upload">
+                     <div class="uploadPreview">
+                         <img width="88" height="88" src="@Model.Data1" alt="暂无图片" title="暂无图片" />
+                     </div>
+                     <div class="uploadProgressBar" id="uploadify-queue">
+                     </div>
+                     <div class="uploadBut">
+                         <input type="file" name="uploadify" id="uploadify" />
+                     </div>
+                     @Html.HiddenFor(model => model.Data1)
+                     <div style="position: absolute; top: 30px; left: 180px;">
+                     </div>
+                 </div>
+             </td>
+         </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>}}

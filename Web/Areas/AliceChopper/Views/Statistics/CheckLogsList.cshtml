@@ -1,0 +1,113 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/my97datepicker/WdatePicker.js")"></script>
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                移车电话查询统计表
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("CheckLogsList", "Statistics", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {<table border="0" class="frm-find" style="height: 45px;">
+                    <tr>
+                        <th>日期</th>
+                        <td>
+                            @Html.TextBox("txtSDate", AliceDAL.UrlParam.GetStringValue("txtSDate"), new { css = "txt1", style = "width:130px", onfocus = "WdatePicker({el:'txtSDate'})" })至 @Html.TextBox("txtEDate", AliceDAL.UrlParam.GetStringValue("txtEDate"), new { css = "txt1", style = "width:130px", onfocus = "WdatePicker({el:'txtEDate'})" })
+                        </td>
+                        <th>车牌号</th>
+                        <td>
+                            @Html.TextBox("plate", AliceDAL.UrlParam.GetStringValue("plate"), new { @class = "txt", style = "width:100px" })
+                        </td>
+                        <th>
+                            被查手机号
+                        </th>
+                        <td>
+                            @Html.TextBox("mobile", AliceDAL.UrlParam.GetStringValue("mobile"), new { @class = "txt", style = "width:100px" })
+                        </td>
+                        <th>
+                            用户手机号
+                        </th>
+                        <td>
+                            @Html.TextBox("usermobile", AliceDAL.UrlParam.GetStringValue("usermobile"), new { @class = "txt", style = "width:100px" })
+                        </td>
+                        <td>
+                            <input type="submit" id="btnSearch" name="btnSearch" class="btnSearch" value="搜索" />
+                        </td>
+                    </tr>
+                </table>
+                }
+            </div>
+        </div>
+        <div id="articles">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        ID
+                    </th>
+                    <th scope="col">
+                        手机号
+                    </th>
+                    <th scope="col">
+                        车牌号
+                    </th>
+                    <th scope="col">
+                        用户手机号
+                    </th>
+                    <th scope="col">
+                        操作时间
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td style="width: 100px">
+                            @item["ID"].ToString()
+                        </td>
+                        <td>
+                            &nbsp;@item["Mobile"].ToString()
+                        </td>
+                        <td align="center" style="width: 120px">
+                            @item["Plate"].ToString()
+                        </td>
+                        <td style="width:120px">
+                            @item["UserMobile"].ToString()
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @item["CDate"].ToString()
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

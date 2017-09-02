@@ -1,0 +1,104 @@
+﻿@model Web.Models.ProductIndexModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=2")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="/Scripts/mall.js"></script>
+    <script></script>
+</head>
+<body>
+    <div id="msg" class="head">小熊洗车</div>
+    <div id="orderinfo">
+        <div class="edocell">
+            <div class="edo_hd u">姓<i style="width:2em"></i>名</div>
+            <div class="edo_bd">
+                @if (Model.OrderInfo != null)
+                {
+                    <input class="edoui_input" id="name" name="name" type="text" placeholder="请输入称呼" value="@Model.OrderInfo.UserName" />
+                }
+                else
+                {
+                    <input class="edoui_input" id="name" name="name" type="text" placeholder="请输入称呼" />
+                }
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd m">手<i></i>机<i></i>号</div>
+            <div class="edo_bd">
+                <input class="edoui_input" type="tel" id="mobile_show" name="mobile_show" readonly="readonly" value="@WorkContext.Mobile" />
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd mp">地<i style="width:2em"></i>址</div>
+            <div class="edo_bd">
+                @if (Model.OrderInfo != null)
+                {
+                    <input class="edoui_input" id="address" name="address" type="text" placeholder="请输入地址" value="@Model.OrderInfo.Address" />
+                }
+                else
+                {
+                    <input class="edoui_input" id="address" name="address" type="text" placeholder="请输入地址" />
+                }
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd x">商<i style="width:2em"></i>品</div>
+            <div class="edo_bd">
+                <input class="edoui_input sel" id="product" type="text" name="product" readonly="readonly" value="@Model.Product.Title" />
+                <input type="hidden" name="pid" id="pid" value="@Model.Product.ID" />
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edocell">
+            <div class="edo_hd s">备<i style="width:2em"></i>注</div>
+            <div class="edo_bd">
+                <input class="edoui_input" id="comment" type="text" placeholder="请输入备注信息" />
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd r">总<i></i>金<i></i>额</div>
+            <div class="edo_bd money">
+                <span id="showallmoney">@Model.Product.Price</span><input type="hidden" id="allmoney" value="@Model.Product.Price" />元
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edocell">
+            <div class="edo_hd qb">钱包支付</div>
+            <div class="edo_bd">
+                <div class="qianbao">
+                    @(Model.Money) 元&nbsp;&nbsp;
+                    <label for="xqianbao">
+                        <input type="radio" class="edo_radio" name="zhifu" id="xqianbao" value="10" checked="checked">
+                        <i class="edo_icon_radio"></i>
+                    </label>
+                </div>
+                <input type="hidden" id="walletmoney" value="@Model.Money">
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd wx">微信支付</div>
+            <div class="edo_bd" style="text-align:right">
+                <label for="xweixin">
+                    <input type="radio" name="zhifu" class="edo_radio" id="xweixin" value="20">
+                    <i class="edo_icon_radio"></i>
+                </label>
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edorow g">
+            <a href="javascript:void(0)" class="edo_btn" onclick="order()" id="ordersubmit">提交</a>
+        </div>
+        <div class="h20p g"></div>
+    </div>
+    @Html.Partial("menu", "1")
+</body>
+</html>

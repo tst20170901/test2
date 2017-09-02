@@ -1,0 +1,150 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                车辆列表
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="新增" class="tools_btn" onclick="Add('/UsersManger/UsersAdmin/UserCarAdd');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        新增
+                    </b>
+                </span>
+            </a><a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">离开</b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                <table border="0" class="frm-find" style="height: 45px;">
+                    <tr>
+                        @using (Html.BeginForm("CarList", "UsersAdmin", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                        {
+                            <th>
+                                车牌号：
+                            </th>
+                            <td>
+                                @Html.TextBox("plate", AliceDAL.UrlParam.GetStringValue("plate"), new { css = "txt1", style = "width:200px" })
+                            </td>
+                            <th>车辆分组</th>
+                            <td>
+                                <select class="ddl" id="gp" name="gp">
+                                    <option @if ("" == AliceDAL.UrlParam.GetStringValue("gp")) { <text> selected="selected" </text>   } value="">选择分组</option>
+                                    @{
+System.Data.DataTable dt = ViewData["cartypeList"] as System.Data.DataTable;
+if (dt != null && dt.Rows.Count > 0)
+{
+    foreach (System.Data.DataRow item in dt.Rows)
+    {
+        <option @if (item["TypeName"].ToString() == AliceDAL.UrlParam.GetStringValue("gp")) { <text> selected="selected" </text>   } value="@item["TypeName"].ToString()">@item["TypeName"].ToString()</option>
+    }
+}}
+                                </select>
+                            </td>
+                            <td>
+                                <input id="btnSearch" type="submit" class="btnSearch" value="搜 索" />
+                            </td>}
+                        @using (Html.BeginForm("CarList", "UsersAdmin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <th>
+                                批量导入:
+                            </th>
+                            <th>导入分组</th>
+                            <td>
+                                <select class="ddl" id="cargroup" name="cargroup">
+                                    <option @if ("" == AliceDAL.UrlParam.GetStringValue("gp")) { <text> selected="selected" </text>    } value="">选择分组</option>
+                                    @{System.Data.DataTable dt1 = ViewData["cartypeList"] as System.Data.DataTable;
+                            if (dt1 != null && dt1.Rows.Count > 0)
+                            {
+                                foreach (System.Data.DataRow item in dt1.Rows)
+                                {
+                                    <option @if (item["TypeName"].ToString() == AliceDAL.UrlParam.GetStringValue("gp")) { <text> selected="selected" </text>     } value="@item["TypeName"].ToString()">@item["TypeName"].ToString()</option>
+                                }
+                            }}
+                                </select>
+                            </td>
+                            <td>
+                                <input type="file" name="uploadFile" id="uploadFile" /> <input id="btnUpload" type="submit" class="btnSearch" value="上 传" />
+                            </td>
+                            <td>使用记事本导入，每行一个车牌号</td>
+                        }
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <div id="articles">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        车牌号
+                    </th>
+                    <th scope="col">
+                        品牌车型
+                    </th>
+                    <th scope="col">
+                        颜色
+                    </th>
+                    <th scope="col">
+                        分组
+                    </th>
+                    <th scope="col">
+                        车主姓名
+                    </th>
+                    <th scope="col">
+                        操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td>
+                            &nbsp;@item["Plate"].ToString()
+                        </td>
+                        <td style="width:200px;text-align:center">
+                            @item["BrandShow"].ToString()
+                        </td>
+                        <td style="width:100px;text-align:center">
+                            @item["Color"].ToString()
+                        </td>
+                        <td style="width:200px">
+                            @item["Data1"].ToString()
+                        </td>
+                        <td style="width:200px">
+                            @item["UserName"].ToString()
+                        </td>
+                        <td align="center" style="width: 100px;">
+                            @*@Html.ActionLink("重置密码", "EditPwd", new { uid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })*@
+                            @Html.ActionLink("修改", "UserCarEdit", new { cid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            @Html.ActionLink("删除", "DeleteUserCar", new { cid = item["ID"] }, new { @class = "abtn delete", @onclick = "return confirm('删除后不可恢复，确定？');" })
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

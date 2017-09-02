@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+}
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/main.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/weui.min.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=22")"></script>
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#mobile").val() == "") {
+                showToast("手机号不能为空！");
+                return;
+            } else if ($("#pwd").val() == "") {
+                showToast("密码不能为空！");
+                return;
+            } else {
+                $.post("/webworker/account/login/", { LoginID: $("#mobile").val(), password: $("#pwd").val() }, function (data) {
+                    showToast(data.msg);
+                    if (data.msg == "OK") {
+                        location.href = data.url;
+                    }
+                });
+            }
+        }
+    </script>
+
+</head>
+<body ontouchstart>
+    <div class="bluehead"><span>小熊洗车员工登录</span></div>
+
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">工号</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="text" id="mobile" placeholder="请输入员工工号" value="@ViewBag.LoginID" />
+            </div>
+        </div>
+    </div>
+    <div class="weui_cells weui_cells_form">
+        <div class="weui_cell">
+            <div class="weui_cell_hd"><label class="weui_label">密码</label></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <input class="weui_input" type="password" id="pwd" placeholder="请输入密码" value="" />
+            </div>
+        </div>
+    </div>
+    <div style="height:20px;clear:both"></div>
+    <a href="javascript:void(0)" class="weui_btn weui_btn_primary" id="send" onclick="checkForm()">登录</a>
+</body>
+</html>

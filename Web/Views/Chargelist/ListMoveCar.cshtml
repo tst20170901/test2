@@ -1,0 +1,45 @@
+﻿@model System.Data.DataTable
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>移车记录-小熊洗车</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","BearClient")" class="back"></a><span>移车记录</span></div>
+    @if (Model != null)
+    {
+        <div id="orderinfo">
+            <div class="edocell3">
+                <div class="edocell_item">
+                    车牌号
+                </div>
+                <div class="edocell_item">
+                    对方电话
+                </div>
+                <div class="edocell_item" style="width:36%">
+                    <span style="float:right">日期</span>
+                </div>
+            </div>
+            @foreach (DataRow item in (Model as DataTable).Rows)
+            {<div class="edocell3">
+                <div class="edocell_item">
+                    @item["Plate"].ToString()
+                </div>
+                <div class="edocell_item">
+                    @item["UserMobile"].ToString()
+                </div>
+                <div class="edocell_item" style="width:36%">
+                    <span style="float:right">@AliceDAL.DataType.ConvertToDateTime(item["CDate"].ToString()).ToString("yyyy/MM/dd HH:mm:ss")</span>
+                </div>
+            </div>
+            }
+        </div>
+    }@Html.Partial("menu", "1")
+</body>
+</html>

@@ -1,0 +1,105 @@
+﻿@model Web.Models.BusinessIndexModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script>
+        function showToast(msg, url) { layer.open({ content: msg, style: "background:#333;color:#FFF;border:none;", time: 2, end: function () { if (typeof (url) != "undefined" && href != "") { window.location.href = url; } } }); }
+        function submitfk() {
+            var p = $("#price").val();
+           
+            var val_pay = $('input[name="zhifu"]:checked').val();
+            if (val_pay == "10") {
+                var walletmoney = $("#walletmoney").val();
+                if (parseFloat(p) > walletmoney) {
+                    showToast("钱包余额不足，请选择其他支付方式");
+                    return;
+                }
+            } else if (val_pay == "20") {
+                if (parseFloat(p) == 0) {
+                    showToast("0元不能选择微信支付，请选择钱包支付方式");
+                    return;
+                }
+            }
+            $("#submitbtn").removeAttr("onclick");
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                dataType: "json",
+                async: false,
+                url: "/Business/BusinessOrderPost",
+                data: { 'paymode': val_pay, bid: $("#bid").val(), p: p },
+                success: function (data) {
+                    if (data.code == 0) {
+                        showToast(data.msg);
+                        $("#submitbtn").attr("onclick", "submitfk()");
+                        return;
+                    } else if (data.code == 1) {
+                        if (data.msg == "zfb") {
+                            window.location.href = "/OrderAlipay/Pay?oid=" + data.data;
+                        } else if (data.msg == "wx") {
+                            window.location.href = "/OrderWeiXinPay/ProPay?oid=" + data.data;
+                        } else if (data.msg == "qb") {
+                            window.location.href = "/Business/PayResult?oid=" + data.data;
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+    </script>
+    <style type="text/css">
+        html, body {
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <a href="@Url.Action("Index","BearMall")" class="back"></a><span>@Model.Business.BusinessName</span>
+    </div>
+    @if (Model != null)
+    {<input type="hidden" name="bid" id="bid" value="@Model.Business.ID" />
+        <div class="probd"><img src="@Model.Business.Data1" width="80%" style="display:block;margin:auto" /></div>
+        <div class="buybtn">
+            <div class="buybtncon">
+                <div style="text-align:center"> <input class="inpprice" id="price" name="price" type="text" placeholder="金额" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" maxlength="4" /> 元</div>
+                <div class="h10p g"></div>
+                <div class="edocell">
+                    <div class="edo_hd qb">钱包支付</div>
+                    <div class="edo_bd">
+                        <div class="qianbao">
+                            @Model.Money 元&nbsp;&nbsp;
+                            <label for="xqianbao">
+                                <input type="radio" class="edo_radio" name="zhifu" id="xqianbao" value="10" checked="checked">
+                                <i class="edo_icon_radio"></i>
+                            </label>
+                        </div>
+                        <input type="hidden" id="walletmoney" value="@Model.Money">
+                    </div>
+                </div>
+                <div class="edocell">
+                    <div class="edo_hd wx">微信支付</div>
+                    <div class="edo_bd" style="text-align:right">
+                        <label for="xweixin">
+                            <input type="radio" name="zhifu" class="edo_radio" id="xweixin" value="20">
+                            <i class="edo_icon_radio"></i>
+                        </label>
+                    </div>
+                </div>
+                <div class="h10p"></div>
+                <a href="javascript:void(0)" onclick="submitfk()" id="submitbtn">立即付款</a>
+            </div>
+        </div>
+    }
+    @Html.Partial("menu", "1")
+</body>
+</html>

@@ -1,0 +1,23 @@
+﻿@model Web.Models.ListModel
+@{Models.Art_Common_Types act = Model.DataType as Models.Art_Common_Types;}
+@{Layout = "~/Views/Shared/Templates.cshtml";}
+@section body{
+    <div class="toptit">
+        @act.TypeName
+    </div>
+    <div class="h40p"></div>
+    <div class="sm">
+        <ul class="newsul">
+            @foreach (DataRow item in Model.Page)
+            {
+                <li><a href="@Url.Action("ShowNews", "News", new { @id = @item["ID"].ToString(), @title = @item["TitleSpell"].ToString().ToLower() })" title="@ViewBag.dq@item["Title"].ToString()">@ViewBag.dq@item["Title"].ToString()</a><span>@AliceDAL.DataType.ConvertToDateTime(@item["CDate"].ToString()).ToString("yyyy-MM-dd HH:mm:ss")</span></li>
+            }
+        </ul>
+        <div class="h20p">
+        </div>
+        <div class="pages">
+            @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+            @{Html.RegisterMvcPagerScriptResource();}
+        </div>
+    </div>
+}

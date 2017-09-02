@@ -1,0 +1,144 @@
+﻿@model Web.Areas.AliceChopper.Models.VipTypeModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加会员卡类型
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                描述
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.VipDes, new { style = "width:400px;height:100px", maxlength = "50" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Price, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                使用次数
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Count, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", maxlength = "3" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家
+            </th>
+            <td>
+                <select class="ddl" id="BusinessID" name="BusinessID">
+                    <option @if (0 == Model.BusinessID) { <text> selected="selected" </text>            } value="0">选择商家</option>
+                    @{
+List<Models.BD_Business> list = ViewData["businessList"] as List<Models.BD_Business>;
+if (list != null)
+{
+    foreach (Models.BD_Business item in list)
+    {
+        <option @if (item.ID == Model.BusinessID) { <text> selected="selected" </text>            } value="@item.ID">@item.BusinessName</option>
+    }
+
+}
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                使用项目
+            </th>
+            <td>
+                <select class="ddl" id="FreeID" name="FreeID">
+                    <option @if (0 == Model.FreeID) { <text> selected="selected" </text>             } value="0">选择项目</option>
+                    @{
+List<Models.Wash_Item> list1 = ViewData["washitemList"] as List<Models.Wash_Item>;
+if (list1 != null)
+{
+    foreach (Models.Wash_Item item in list1)
+    {
+        <option @if (item.ID == Model.FreeID) { <text> selected="selected" </text>             } value="@item.ID">@item.Title</option>
+    }
+
+}
+                    }
+
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>线上线下</th>
+            <td>
+                <select class="ddl" id="Online" name="Online">
+                    <option @if (1 == Model.Online) { <text> selected="selected" </text>} value="1">线下卡</option>
+                    <option @if (2 == Model.Online) { <text> selected="selected" </text>} value="2">线上卡</option>
+                    <option @if (3 == Model.Online) { <text> selected="selected" </text>} value="3">限时卡</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>绑定车牌</th>
+            <td>
+                <select class="ddl" id="LockPlate" name="LockPlate">
+                    <option @if (1 == Model.LockPlate) { <text> selected="selected" </text>  } value="1">不绑定</option>
+                    <option @if (2 == Model.LockPlate) { <text> selected="selected" </text>  } value="2">绑定</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                排序
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Period, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                限购数量
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardCount, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" }) 线下无效
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.SMSContent, new { style = "width:400px;height:100px" })<span style="color: #f00">*【小熊洗车】不能删除，不允许手动换行。</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+    </table> }
+}

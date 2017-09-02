@@ -1,0 +1,50 @@
+﻿@model Web.Areas.AliceChopper.Models.BranchConfig
+@{
+    ViewBag.Title = "WebSet";
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    平台基本信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                平台开关
+            </th>
+            <td>
+                @Html.RadioButtonFor(x => x.BranchState, 10, new { }) 开启 @Html.RadioButtonFor(x => x.BranchState, 30, new { }) 关闭
+            </td>
+        </tr>
+        <tr>
+            <th>
+                弹框内容
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.StateMsg, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单峰值
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.OrderCount, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" text="确定" type="submit" />
+            </td>
+        </tr>
+    </table>
+    }
+}

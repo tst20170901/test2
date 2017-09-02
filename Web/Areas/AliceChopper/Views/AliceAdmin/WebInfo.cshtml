@@ -1,0 +1,211 @@
+﻿@model Models.WebConfigInfo
+@{
+    ViewBag.Title = "WebInfo";
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    网站基本信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                网站名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.WebName, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                公司名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CompanyName, new { @class = "txt", size = "100", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                关键字
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.KeyWords, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                网站描述
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Description, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                网站域名
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Url, new { @class = "txt", size = "200", style = "width:400px" })
+                不加http://
+            </td>
+        </tr>
+        <tr>
+            <th>
+                上报位置
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.TimeSpanForLoc, new { @class = "txt", size = "50", style = "width:400px" }) 秒
+            </td>
+        </tr>
+        <tr>
+            <th>
+                电话
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Phone, new { @class = "txt", size = "50", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Mobile, new { @class = "txt", size = "50", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                传真
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Fax, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                地址
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Address, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                邮编
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Code, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                邮箱
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Email, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                联系人
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.LinkMan, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Javascript API
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data1, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Web服务API
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data2, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                MchId
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data3, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                AppId
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data4, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                AppSecret
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data5, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                AppKey
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data6, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                弹框开关
+            </th>
+            <td>
+                @Html.RadioButtonFor(x => x.Data7, 1, new { }) 开启 @Html.RadioButtonFor(x => x.Data7, 0, new {}) 关闭
+            </td>
+        </tr>
+        <tr>
+            <th>
+                弹框内容
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data8, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                附加属性
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data9, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                附加属性
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Data10, new { @class = "txt", size = "200", style = "width:400px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" text="确定" type="submit" />
+            </td>
+        </tr>
+    </table>
+    }
+}

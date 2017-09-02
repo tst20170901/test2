@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Areas/UsersManger/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    <table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    常用功能
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                下单
+            </th>
+            <td>
+                <a href="@Url.Action("OrdersAdd", "Orders")">我要下单</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                车辆管理
+            </th>
+            <td>
+                <a href="@Url.Action("CarList", "UsersAdmin")">车辆管理</a>
+            </td>
+        </tr>
+    </table>
+}

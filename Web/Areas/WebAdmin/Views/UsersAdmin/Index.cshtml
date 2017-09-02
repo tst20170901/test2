@@ -1,0 +1,70 @@
+﻿@model DataSet
+@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>工作中订单列表</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/mobiscroll.custom-2.6.2.min.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/webadmin.css?v=1")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/mobiscroll.custom-2.6.2.min.js"></script>
+    <style type="text/css">
+        html, body {
+            background: #f1f1f5;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $("#txtSDate").scroller('destroy').scroller($.extend({ preset: 'date', minDate: new Date(2015, 10, 26), maxDate: new Date(2016, 11, 31) }, { theme: "sense-ui", mode: "scroller", display: "modal", lang: "zh" }));
+            $("#txtEDate").scroller('destroy').scroller($.extend({ preset: 'date', minDate: new Date(2015, 10, 26), maxDate: new Date(2016, 11, 31) }, { theme: "sense-ui", mode: "scroller", display: "modal", lang: "zh" }));
+        });
+    </script>
+</head>
+<body ontouchstart>
+    <div class="bluehead"><span>@WebAdminContext.NickName (帐号:@WebAdminContext.LoginID)</span><a href="@Url.Action("Index", "UsersAdmin")" class="finish">刷新</a></div>
+    @using (Html.BeginForm("Index", "UsersAdmin", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+    {
+        <div class="boxcon">
+            @Html.TextBox("txtSDate", AliceDAL.UrlParam.GetStringValue("txtSDate"), new { @class = "box1 fn-left", placeholder = "起始时间" })@Html.TextBox("txtEDate", AliceDAL.UrlParam.GetStringValue("txtEDate"), new { @class = "box1 fn-left", placeholder = "结束时间" })<input type="submit" id="btnSearch" name="btnSearch" class="boxbtn" value="&nbsp;&nbsp;" />
+            <div class="fn-clear"></div>
+        </div>
+    }
+    <div class="ordermsg">
+        @if (Model != null && Model.Tables.Count == 2)
+        {
+            if (Model.Tables[0].Rows.Count > 0)
+            {
+
+                <p>当前总单数:<span>@Model.Tables[0].Rows[0]["TotalOrders"].ToString()</span>单</p>
+                <p>未付款单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersNo"].ToString()</span>单</p>
+                <p>已付款单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersYes"].ToString()</span>单</p>
+                <p>其中</p>
+                <p style="text-indent:2em">未完成单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersNoFinish"].ToString()</span>单</p>
+                <p style="text-indent:2em">已完成单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersFinish"].ToString()</span>单</p>
+                <p>其中</p>
+                <p style="text-indent:2em">微信支付单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersWX"].ToString()</span>单,总计:<span>@Model.Tables[0].Rows[0]["WXAmount"].ToString()</span>元</p>
+                <p style="text-indent:2em">钱包支付单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersQB"].ToString()</span>单,总计:<span>@Model.Tables[0].Rows[0]["QBAmount"].ToString()</span>元</p>
+                <p>其中</p>
+                <p style="text-indent:2em">实收金额:<span>@Model.Tables[0].Rows[0]["SSAmount"].ToString()</span>元</p>
+                <p style="text-indent:2em">会员卡单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersHY"].ToString()</span>单（抵<span>@Model.Tables[0].Rows[0]["HYAmount"].ToString()</span>）元</p>
+                <p style="text-indent:2em">优惠券单数:<span>@Model.Tables[0].Rows[0]["TotalOrdersYHQ"].ToString()</span>单（抵<span>@Model.Tables[0].Rows[0]["YHQAmount"].ToString()</span>）元</p>
+            }
+            if (Model.Tables[1].Rows.Count > 0)
+            {
+                <p>其中</p>
+                foreach (DataRow row in Model.Tables[1].Rows)
+                {
+                    <p style="text-indent:2em">@(row["ItemName"].ToString()):<span>@row["ItemCount"].ToString()</span>单,总计:<span>@row["Amount"].ToString()</span>元,洗车工配额:<span>@row["WorkAmount"].ToString()</span>元</p>
+                }
+            }
+        }
+        else
+        {
+            <p>暂无数据</p>
+        }
+    </div>
+</body>
+</html>

@@ -1,0 +1,139 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                用户列表
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="新增" class="tools_btn" onclick="Add('@Url.Action("Add")');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        新增
+                    </b>
+                </span>
+            </a><a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">离开</b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("UserList", "User", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {<table border="0" class="frm-find" style="height: 45px;">
+                    <tr>
+                        <th>
+                            登录名：
+                        </th>
+                        <td>
+                            @Html.TextBox("LoginID", AliceDAL.UrlParam.GetStringValue("LoginID"), new { css = "txt1", style = "width:200px" })
+                        </td>
+                        <th>
+                            昵称：
+                        </th>
+                        <td>
+                            @Html.TextBox("NickName", AliceDAL.UrlParam.GetStringValue("NickName"), new { css = "txt1", style = "width:200px" })
+                        </td>
+                        @{
+                    if (WorkContext.RoleID == 1)
+                    {
+                        <text>
+                            <th>
+                                分公司
+                            </th>
+                            <td>
+                                <select class="ddl" id="BranchID" name="BranchID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>     } value="0">请选择</option>
+                                    @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>     } value="@item.ID">@item.Title</option>
+    }
+}
+                                    }
+                                </select>
+                            </td></text>
+                    }
+                        }
+                        <td>
+                            <input id="btnSearch" type="submit" class="btnSearch" value="搜 索" />
+                        </td>
+                    </tr>
+                </table>
+                }
+            </div>
+        </div>
+        <div id="articles">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        ID
+                    </th>
+                    <th scope="col">
+                        登录名
+                    </th>
+                    <th scope="col">
+                        昵称
+                    </th>
+                    <th scope="col">
+                        所属分公司
+                    </th>
+                    <th scope="col">
+                        角色
+                    </th>
+                    <th scope="col">
+                        操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td style="width: 100px">
+                            @item["ID"].ToString()
+                        </td>
+                        <td align="left">
+                            &nbsp;@item["LoginID"].ToString()
+                        </td>
+                        <td align="center">
+                            @item["NickName"].ToString()
+                        </td>
+                        <td style="width:200px">
+                            @item["BranchName"].ToString()
+                        </td>
+                        <td style="width:150px">
+                            @item["AllotName"].ToString()
+                        </td>
+                        <td align="center" style="width: 220px;">
+                            @Html.ActionLink("编辑", "Edit", new { uid = item["ID"], page = Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            @Html.ActionLink("删除", "Delete", new { uid = item["ID"] }, new { @class = "abtn delete" })
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

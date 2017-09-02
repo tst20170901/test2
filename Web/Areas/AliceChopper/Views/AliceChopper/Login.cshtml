@@ -1,0 +1,102 @@
+﻿@{
+    Layout = null;
+}
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link href="@Url.Content("~/Content/css/base.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/css/login.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/jquery-1.11.1.min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).keyup(function (event) {
+            if (event.keyCode == 13) {
+                $("#submit").trigger("click");
+            }
+        });
+        function checkForm() {
+            if ($("#loginID").val() == "") {
+                $("#msg").html("用户名不能为空！");
+            } else if ($("#password").val() == "") {
+                $("#msg").html("密码不能为空！");
+            } else if ($("#txtValidate").val() == "") {
+                $("#msg").html("验证码不能为空！");
+            } else {
+                $.post("/alicechopper/alicechopper/login", { LoginID: $("#loginID").val(), password: $("#password").val(), verifyCode: $("#txtValidate").val() }, function (data) {
+                    $("#msg").html(data.msg);
+                    if (data.msg == "OK") {
+                        location.href = data.url;
+                    }
+                });
+            }
+        }
+    
+    </script>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken();
+        <div class="logo">
+        </div>
+        <div class="login">
+            <div class="hp">
+            </div>
+            <table class="login-con">
+                <tr>
+                    <td class="lt">
+                        用户名
+                    </td>
+                    <td>
+                        <div class="username">
+                            <input type="text" class="uintput" name="loginID" id="loginID" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lt">
+                        密码
+                    </td>
+                    <td>
+                        <div class="userpwd">
+                            <input type="password" class="uintput" name="password" id="password" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lt">
+                        验证码
+                    </td>
+                    <td>
+                        <div class="validate">
+                            <input type="text" class="valipt" name="txtValidate" id="txtValidate" />
+                        </div>
+                        <div class="valimg">
+                            <img src="/alicechopper/alicechopper/verifyimage?chk=1" valign="middle" id="imgVerify" align="middle"
+                                alt="看不清？点击更换" onclick="this.src=this.src+'1'" width="80" height="32" style="cursor: pointer;" /></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lt">
+                        &nbsp;
+                    </td>
+                    <td>
+                        <div class="loginbtn">
+                            <a class="btn" href="javascript:void(0)" id="submit" onclick="checkForm()">&nbsp</a></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lt">
+                        &nbsp;
+                    </td>
+                    <td>
+                        <div id="msg">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    }
+</body>
+</html>

@@ -1,0 +1,95 @@
+﻿@charset "utf-8";
+html,body{height:100%;width:100%;background:#FBF9FE}
+.weui_label {color:#A9A9A9}
+.msg{height:40px;width:100%;line-height:40px;text-align:center;vertical-align:middle;background:#419AE3;color:#FFF}
+#mycoupons{overflow:hidden;display:none;position:absolute;left:0;top:0;width:100%;min-height:100%;text-align:center;vertical-align:middle;z-index:1000;background-color:#FBF9FE}
+#carlist{overflow:hidden;display:none;position:absolute;left:0;top:0;width:100%;height:100%;text-align:center;vertical-align:middle;z-index:1000;background-color:#FBF9FE}
+#caradd{overflow:hidden;display:none;position:absolute;left:0;top:0;width:100%;height:100%;vertical-align:middle;z-index:1000;background-color:#FBF9FE}
+
+.ilist{overflow-y:scroll;height:100%}
+.couponhead{height:40px;width:100%;line-height:40px;text-align:center;vertical-align:middle;background:#FFF;border-bottom:1px solid #b2b2b2}
+.headitem{width:49%;float:left;font-size:15px;text-align:center;cursor:pointer}
+.couponhead .on{color:#419AE3}
+.couponitem{position:relative;border-bottom:1px solid #ECECEC}
+
+
+.couponitemcbx1{width:3em;position:absolute;right:0;top:1.5em;}
+.couponitemcbxsmall{width:3em;position:absolute;right:0;top:-0.3em;}
+.couponitemcbx{width:3em;position:absolute;right:0;top:2em;}
+.couponitemcbxitem{width:3em;position:absolute;left:0;top:2em;}
+.couponbd1{margin-right:3em;height:6em;border-right:1px solid #ECECEC;padding-left:15px}
+.couponbdsmall{margin-right:3em;height:2em;border-right:1px solid #ECECEC;padding-left:15px}
+.couponbd{margin-right:3em;height:7em;border-right:1px solid #ECECEC;padding-left:15px}
+.couponbditem{margin-left:3em;height:7em;border-left:1px solid #ECECEC;padding-left:15px}
+.vipbd{margin-right:3em;height:4em;border-right:1px solid #ECECEC;padding-left:15px}
+.couponitem h1{font-size:15px;font-weight:700;color:#419AE3;line-height:2em;margin-top:5px}
+.couponitem h1 span{font-size:14px;font-weight:700;color:#FE9223;line-height:2em;margin-top:5px}
+.couponbdsmall .titles{font-size:12px;color:#419AE3;line-height:2.5em;text-indent:2em;height:2em}
+.couponitem .cishu{font-size:14px;font-weight:700;color:#FE9223;line-height:2em}
+.couponitem .price{font-size:14px;font-weight:700;color:#FE9223;line-height:2em}
+.couponitem .busi{font-size:10px;color:#419AE3;line-height:1.8em}
+.couponitem .tdate{font-size:10px;color:#999;line-height:1.2em}
+.couponitem .w{font-size:14px;color:#000;line-height:1.8em}
+.couponitem .wr{font-size:14px;color:#EF4540;line-height:1.8em}
+.couponitem .date{font-size:10px;color:#999;line-height:1.4em}
+.couponitem .carddes{font-size:10px;color:#999;line-height:1.4em}
+
+.caritem{position:relative;border-bottom:1px solid #ECECEC}
+.caritem .carno{font-size:15px;font-weight:700;color:#419AE3;line-height:2em}
+.caritem .carxilie{font-size:14px;font-weight:700;color:#FE9223;line-height:1.5em}
+.caritem .color{font-size:12px;color:#999;line-height:2em}
+.caritem .del{float:right;margin-right:20px;background:url(../images/dele.png) left no-repeat;padding-left:20px}
+
+.caritembd{margin-right:3em;height:5em;border-right:1px solid #ECECEC;padding-left:15px}
+.caritemcbx{width:3.5em;position:absolute;right:0;top:1em;background:url(../images/circle.png) center no-repeat}
+.loadmore{text-align:center;height:30px;line-height:30px}
+#loadcar,#loaditem{height:60px;background:url(../images/loading.gif) no-repeat center;display:none}
+
+
+
+.bluehead{height:40px;width:100%;line-height:40px;text-align:center;vertical-align:middle;background:#419AE3;font-size:17px;font-weight:700;color:#FFF}
+.ilast{height:40px;border-left:1px solid #b2b2b2}
+.location::-webkit-input-placeholder{color: #EF4540;}
+.location:-moz-placeholder{color:#EF4540 !important;}
+.location::-moz-placeholder{color:#EF4540 !important;}
+.location:-ms-input-placeholder {color:#EF4540 !important;}
+#map{overflow:hidden;display:none;position:absolute;left:0;top:0;width:100%;height:100%;text-align:center;vertical-align:middle;z-index:1001;background-color:#FFF}
+#mapmsg{position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:40px;line-height:40px;text-align:center;vertical-align:middle;background:#419AE3;color:#FFF}
+#mapaddress{position:absolute;z-index:10;top:50px;left:15%;right:15%;bottom:0;height:30px;line-height:30px;border-radius:5px;overflow:hidden;border:1px solid #39cd89;padding-left:5px;padding-right:5px;background-color:#fff}
+#mapmarker{position: absolute;top:40px;bottom:120px;left: 0;right: 0;text-align:center;vertical-align:middle}
+#mapmarker img{position: absolute;z-index:10;top:50%;left:50%;height:100px;width:28px;margin-top:-50px;margin-left:-14px;text-align:center;vertical-align:middle}
+#mapdesc{position: absolute;left: 5px;right: 5px;bottom:0;height: 120px;text-align:left;vertical-align:top;}
+#mymap {position: absolute;z-index:9;top:40px;bottom:120px;left: 0;right: 0;}
+.map_btn{height:30px;padding-top: 5px;padding-bottom: 5px;text-align:center;vertical-align:middle;border-radius: 5px;color:#fff;border: 1px solid #b3474b;background-color: #e6454a;-webkit-appearance: none}
+#itemlist{overflow-y:scroll;display:none;position:absolute;left:0;top:0;width:100%;height:100%;vertical-align:middle;z-index:1000;background-color:#FFF}
+.back{display:block;float:left;height:40px;width:40px;background:url(../images/back.png) no-repeat center}
+.finish{display:block;float:right;font-size:15px;font-weight:500;color:#FFF;margin:0 10px}
+.red{color:#EF4540}
+.gr{color:#419AE3}
+a{color:#55c3f1}
+.abc{text-align:left}
+#list { width: 100%; height: 100%; top:0;left:0; display: none; position: absolute; background: #fff; overflow: hidden; z-index:999;}
+#list ul {list-style: none; }
+#brand_content {float:left; width: 100%; display: block; overflow: auto;  height: 100%; }
+#brand_content ul {float: left; width: 100%; display: block; position: relative; }
+#brand_content ul li {float: left; width: 100%; }
+#brand_content ul ul li a { text-decoration: none; padding: 20px 10px; color: #000;display: block; border-bottom: 1px solid #f3f3f3; text-transform: capitalize; }
+#brand_content ul ul li a:hover { text-decoration:none;background: #f3faff;border-color:#d5ebf9; }
+#brand_content .title {padding: 5px 0; text-indent:10px;background:#FB5954;color: #fff;width: 100%; float: left; font-weight: bold; text-transform: uppercase; }
+#box{margin:20px auto;width:80%;border: 1px solid #CCC;-webkit-border-radius:10px;border-radius:10px;font-size:14px}
+.star{position:relative;width:160px;height:32px;background:url(../images/wjx.png) repeat-x;overflow:hidden}
+.starcount{position:absolute;width:160px;height:32px;top:0;left:0;background:url(../images/wjx1.png) repeat-x;overflow:hidden;}
+/*模态框*/
+.hide{display:none;}
+.tip-bg{background:rgba(0,0,0,0.5);width:100%;height:100%; position:fixed;left:0;top:0;z-index:14;}
+.tip-box{position:fixed;left:50%;top:50%; z-index:15; background:#FFF; color:#000; box-shadow:1px 1px 10px rgba(0,0,0,1);-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px}
+.tip-content{padding:10px 20px}
+.tip-icon{text-align:center;font-size:16px;line-height:2em;font-weight:700;border-bottom:1px solid #EEE;}
+.tip-text{width:200px;font-size:14px;line-height:1.5em}
+.inpprice{height:30px;margin:2px;-webkit-border-radius:2px;border-radius:2px;border:1px solid #CCCCCC;-webkit-appearance:none;width:60px}
+.inpprice:focus{border:1px solid #32c8a2}
+.clear{display:block;clear:both;height:1px;font-size:0}
+#shoplist{overflow:hidden;display:none;position:absolute;left:0;top:0;width:100%;height:100%;text-align:center;vertical-align:middle;z-index:1000;background:#FBF9FE}
+#load{height:60px;background:url(../images/loading.gif) no-repeat center}
+.h20p{height:20px;clear:both;}
+.jscount{color:#EF4540;font-size:12px}

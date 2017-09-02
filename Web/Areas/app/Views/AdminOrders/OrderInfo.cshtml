@@ -1,0 +1,90 @@
+﻿@model Web.Areas.AliceChopper.Models.AdminOrderInfoModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    订单信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单号
+            </th>
+            <td>
+                @Model.OrderInfo.Osn
+            </td>
+            <th>
+                订单状态
+            </th>
+            <td>
+                @{Models.OrderState uos = (Models.OrderState)Model.OrderInfo.OrderState;
+                switch (uos)
+                {
+                    case Models.OrderState.Submitted:
+                        @:已提交
+                                    break;
+                    case Models.OrderState.WaitPaying:
+                    @:等待付款
+                                    break;
+                    case Models.OrderState.Confirming:
+                    @:确认中
+                                    break;
+                    case Models.OrderState.Confirmed:
+                    @:已发券
+                                    break;
+                    default:
+                                    break;
+                }
+                }
+            </td>
+            <th>
+                提交日期
+            </th>
+            <td>
+                @AliceDAL.DataType.ConvertToDateTimeStrAll(Model.OrderInfo.CDate)
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" class="pagetit">
+                <h1>
+                    用户信息
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                用户ID
+            </th>
+            <td>
+                @Model.UserInfo.LoginID
+            </td>
+            <th>
+                手机号
+            </th>
+            <td>
+                @Model.UserInfo.Mobile
+            </td>
+            <th>
+                &nbsp;
+            </th>
+            <td>  &nbsp;</td>
+        </tr>
+
+
+
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td colspan="5">
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checkform();" />
+            </td>
+        </tr>
+    </table> }
+}

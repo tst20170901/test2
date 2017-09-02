@@ -1,0 +1,170 @@
+﻿@model Web.Models.OrderInfoModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/main.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <script>
+        $(document).ready(function () {
+            $("input[name='washitem']").click(function () {
+                var money = 0;
+                $("input[name='washitem']").each(function () {
+                    if (this.checked && $(this).attr("disabled") != "disabled") {
+                        money += parseFloat($(this).attr('value'));
+                    }
+                });
+                $("#showallmoney").html(money);
+                $("#allmoney").val(money);
+            });
+        })
+
+        function order() {
+            var val_pay = $('#paycon input[name="zhifu"]:checked').val();
+            if (val_pay == "10") {
+                var all = $("#allmoney").val();
+                var walletmoney = $("#walletmoney").val();
+                if (parseFloat(all) > walletmoney) {
+                    showToast("钱包余额不足，请选择其他支付方式");
+                    return;
+                }
+            }
+            var itemIds = new Array();
+            $("input[name='washitem']").each(function () {
+                if (this.checked && $(this).attr("disabled") != "disabled") {
+                    itemIds.push($(this).attr('id'));
+                }
+            });
+            if (itemIds.length <= 0) { showToast('请选择服务项目！'); return; }
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                url: "/BearClient/AdditionalPost",
+                data: { 'itemIds': itemIds, 'paymode': val_pay,'oid':@Model.OrderInfo.ID },
+                success: function (data) {
+                    if (data.code == 0) {
+                        showToast(data.msg);
+                        if (data.msg == "ok") {
+                            window.location.href = "/BearClient/PayResult?oid=" + data.oid;
+                        }
+                        return;
+                    } else if (data.code == 1) {
+                        if (data.msg == "zfb") {
+                            window.location.href = "/OrderAlipay/Pay?oid=" + data.oid;
+                        } else if (data.msg == "wx") {
+                            window.location.href = "/OrderWeiXinPay/Pay?oid=" + data.oid;
+                        }
+                        return;
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    @if (Model.UserActionsList != null && Model.UserActionsList.Count > 0)
+    {
+        <div style="margin:10px">
+            <div class="gzCon">
+                <span class="gzSJ"></span>
+                <ul>
+                    @foreach (Models.UserOrderActions item in Model.UserActionsList)
+                    {
+                        <li><span class="icon on"></span><span>@item.ActionDes&nbsp;&nbsp;&nbsp;&nbsp; @item.RealName &nbsp; &nbsp;&nbsp;&nbsp;@AliceDAL.DataType.ConvertToDateTimeStr(item.ActionTime)</span></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+    <div class="border_out">
+        <table class="infotable1">
+            <tr>
+                <td class="lable">联系电话</td>
+                <td style="text-align:left">
+                    @if (Model.OrderInfo != null)
+                    {
+                        @Model.OrderInfo.Mobile
+                    }
+                    else
+                    {
+                        @:订单不存在
+                    }
+                </td>
+            </tr>
+            @if (Model.OrderInfo != null)
+            {
+                <tr>
+                    <td class="lable">停放位置</td>
+                    <td style="text-align:left">
+                        @Model.OrderInfo.Address
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lable">车辆信息</td>
+                    <td style="text-align:left">
+                        @Model.OrderInfo.Plate @Model.OrderInfo.Color @Model.OrderInfo.BrandShow
+                    </td>
+                </tr>
+                <tr>
+                    <td class="lable">备注信息</td>
+                    <td style="text-align:left">
+                        @Model.OrderInfo.Remark
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td class="lable">追加服务</td>
+                <td style="text-align:left" id="washitemlist" class="abc">
+                    @if (Model.WashItems != null)
+                    {
+                        foreach (Models.Wash_Item item in Model.WashItems)
+                        {
+                            if (Model.OrdersItem.Find(x => x.ItemID == item.ID) != null)
+                            {
+                                <input name="washitem" type="checkbox" value="@item.Price" id="@item.ID" checked="checked" disabled="disabled" />{@item.Title}
+                                {<text>(@item.Price)</text>}<br />
+                            }
+                            else
+                            {
+                                <input name="washitem" type="checkbox" value="@item.Price" id="@item.ID" />{@item.Title}
+                                {<text>(@item.Price)</text>}<br />
+                            }
+                        }
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td class="lable">
+                    总金额
+                </td>
+                <td colspan="2" style="text-align:left;text-indent:5px"><span id="showallmoney">0.00</span><input type="hidden" id="allmoney" value="0.00" />元</td>
+            </tr>
+            <tr>
+                <td class="lable">
+                    支付方式
+                </td>
+                <td colspan="2" style="text-align:left;text-indent:5px;" id="paycon">
+                    <label><input type="radio" name="zhifu" value="10" checked="checked" />钱包支付（@(WorkContext.wallet.Money1 + WorkContext.wallet.Money2)）<input type="hidden" id="walletmoney" value="@(WorkContext.wallet.Money1 + WorkContext.wallet.Money2)"></label>
+                    <label><input type="radio" name="zhifu" value="20" />微信支付</label>
+                    <label><input type="radio" name="zhifu" value="30" />支付宝支付</label>
+                    <span><a href="/Chargelist/" style="text-decoration:underline">充值特惠</a></span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin:10px">
+        @if (Model.OrderInfo != null && Model.OrderInfo.OrderState != (int)Models.UserOrderState.Finished && Model.OrderInfo.OrderState != (int)Models.UserOrderState.Canceled && Model.OrderInfo.OrderState != (int)Models.UserOrderState.WaitPaying)
+        {
+            <a class="btn" style="width:100%" href="javascript:void(0)" onclick="order()">追加服务</a>}
+    </div>
+    <div style="margin:10px">温馨提示：系统派单前撤单可全额退款。</div>
+</body>
+</html>

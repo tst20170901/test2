@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <link type="text/css" href="@Url.Content("~/Content/xiaoxiong/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/xiaoxiong/css/main.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.6.1.min.js")"></script>
+    <script src="/Scripts/webcomm.js"></script>
+    <script src="/Scripts/unslider.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            if (window.chrome) {
+                $('.banner li').css('background-size', '100% 100%');
+            }
+            $('.banner').unslider({
+                fluid: true,
+                dots: true
+            });
+        });
+    </script>
+    @RenderSection("header", false)
+</head>
+<body>
+    @Html.Partial("Top")
+    @RenderSection("body")
+    @Html.Partial("Foot")
+</body>
+</html>

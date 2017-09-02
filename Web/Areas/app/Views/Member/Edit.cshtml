@@ -1,0 +1,80 @@
+﻿@model Web.Areas.AliceChopper.Models.BD_UserModel
+@{
+    Layout = "~/Areas/IDoDo/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="@Url.Content("~/Scripts/my97datepicker/WdatePicker.js")"></script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    编辑会员</h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机号码
+            </th>
+            <td>@Html.TextBoxFor(x => x.LoginID, new { @class = "txt", @readonly = "true" })
+                <span style="color: #f00">*</span>登录名具有唯一性，不可更改
+            </td>
+        </tr>
+        <tr>
+            <th>
+                密码
+            </th>
+            <td>@Html.PasswordFor(model => model.Password, new { @class = "txt" })
+                <span style="color: #f00">*</span>留空则不修改
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 姓名
+             </th>
+             <td>
+                 @Html.TextBoxFor(model => model.UserName, new { @class = "txt" })
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 公司名称
+             </th>
+             <td>
+                 @Html.TextBoxFor(model => model.CompanyName, new { @class = "txt" })
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 到期时间
+             </th>
+             <td>
+                 @Html.TextBox("UserDate", Model.UserDate, new { css = "txt1", style = "width:130px", onfocus = "WdatePicker({el:'UserDate'})" })
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 状态
+             </th>
+             <td>
+                 <select class="ddl" id="UserState" name="UserState">
+                     <option @if (0 == Model.UserState) { <text> selected="selected" </text>  } value="0">选择状态</option>
+                     <option @if (10 == Model.UserState) { <text> selected="selected" </text>  } value="10">未开通</option>
+                     <option @if (30 == Model.UserState) { <text> selected="selected" </text>  } value="30">正常</option>
+                     <option @if (70 == Model.UserState) { <text> selected="selected" </text>  } value="70">已过期</option>
+                     <option @if (50 == Model.UserState) { <text> selected="selected" </text>  } value="50">已锁定</option>
+                 </select>
+             </td>
+         </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+    </table> }
+}

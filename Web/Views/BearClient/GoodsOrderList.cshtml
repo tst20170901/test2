@@ -1,0 +1,71 @@
+﻿@model Web.Models.GoodsOrderListModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","BearClient")" class="back"></a><span>我的订单</span></div>
+    <div class="btnbd">
+        <div class="suild">
+            <div class="btnbdcon">
+                <a href="@Url.Action("OrderList", "BearClient")" class="shangmen w">洗车订单</a><a href="@Url.Action("GoodsOrderList", "BearClient")" class="shitidian blue">商品订单</a>
+            </div>
+        </div>
+    </div>
+    @if (Model.OrderInfoList != null)
+    {
+        foreach (Models.Pro_Orders item in Model.OrderInfoList)
+        {
+            Models.UserProOrderState uos = (Models.UserProOrderState)item.OrderState;
+            <div class="edocells w fg">
+                <div class="ordertit">
+                    订单编号：<span>@item.Osn</span>@if (uos == Models.UserProOrderState.Canceled)
+                    {<text><a href="/BearClient/OrderDel1?oid=@item.ID" class="edo_btn1 fn-right margin10" onclick="return confirm('删除后不可恢复，确定？');">删除</a></text>} <a href="/BearClient/OrderDetail1?oid=@item.ID" class="edo_btn1 fn-right margin10">详情</a>
+                </div>
+                <div class="order_bd">
+                    <p>商品详情：<span>@Web.Units.Comm.GetProItemNoPrice(item.ID.ToString(), 2)</span></p>
+                    <p>
+                        支付状态：@switch (uos)
+                        {
+                            case Models.UserProOrderState.WaitPaying:@:<span>等待支付</span>
+                            break;
+                            case Models.UserProOrderState.Payed:@:<span style="color:#047548">支付成功</span>
+                            break;
+                            case Models.UserProOrderState.Assigned:@:<span style="color:#ff6a00">备货完成</span>
+                            break;
+                            case Models.UserProOrderState.Started:@:<span style="color:#b6ff00">发货中</span>
+                            break;
+                            case Models.UserProOrderState.Finished:@:<span style="color:#00F">已签收</span>
+                            break;
+                            case Models.UserProOrderState.Canceled:@:<span style="color:#CCC">已取消</span>
+                            break;
+                            default:
+                            break;
+                        }
+                    </p>
+                    <p>收货地址：<span>@item.Address</span></p>
+                </div>
+            </div>
+            <div class="h10p g"></div>
+        }
+    }
+    else
+    {<div class="weui_cells">
+        <div class="weui_cell">
+            <div class="weui_cell_ft" style="padding-right:0.5em"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>暂无订单</p>
+            </div>
+        </div>
+    </div>}
+    @Html.Partial("menu", "3")
+</body>
+</html>

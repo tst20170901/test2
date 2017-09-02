@@ -1,0 +1,53 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <style type="text/css">
+        html, body {
+            background: #253D69;
+            font-size: 18px;
+        }
+        .result {
+            color: #FFF100;
+            text-align:center;
+            font-size:2em;
+            font-weight:700;line-height:1.5em
+        }
+        .get-now {
+            display:block;
+            width: 8rem;
+            height: 2.1rem;
+            margin:auto;
+            background-color: #ffcf0e;
+            border-radius: .3rem;
+            text-align: center;
+            line-height: 2.1rem;
+            font-size: 1em;
+            margin-top:10px
+        }
+    </style>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken();
+        <div style="position:relative">
+            <img src="@Url.Content("~/Content/bear/images/xctop.jpg")" style="width:100%;height:auto" />
+        </div>
+        <div class="result">
+            @ViewBag.Msg
+        </div>
+        <div><a class="get-now" id="send" href="@Url.Action("Index","BearClient")">立即使用</a></div>
+    }
+</body>
+</html>

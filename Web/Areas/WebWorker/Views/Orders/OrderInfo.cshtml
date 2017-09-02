@@ -1,0 +1,304 @@
+﻿@model Web.Areas.WebWorker.Models.OrderInfoModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>订单详情</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/worker.css?v=1")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/worker.js?v=3")"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <style type="text/css">
+        html, body {
+            background: #f1f1f5;
+        }
+    </style>
+    <script type="text/javascript">
+        function OrderTrun(){
+            if (confirm("确定要流转吗？")) {
+                $.ajax({
+                    type: 'post',
+                    traditional: true,
+                    dataType: "json",
+                    async: false,
+                    url: "/WebWorker/Orders/TrunOrder",
+                    data: { oid:@(Model.OrderInfo.ID)},
+                    success: function (data) {
+                        if (data.code == 0) {
+                            showToast(data.msg);
+                            return;
+                        } else if (data.code == 1) {
+                            window.location.href='@Url.Action("Index", "UsersAdmin")';
+                            return;
+                        }
+                    }
+                });
+            }
+        }
+        function Start() {
+            var pt=$("#paytype").val();
+            if (pt=="手动线下") {
+                if(!confirm("是否已收取现金？"))return;
+            }
+            var imglength = $("#imgcon img").length;
+            var imgbase64 = $("#hfimgs").val().split(",");
+            //if (imglength < 4 || $("#hfimgs").val() == "" || ((imgbase64.length - 1) < 4) || (imglength != imgbase64.length - 1)) {
+            //    showToast("至少上传四张图片！");
+            //    return;
+            //}
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                dataType: "json",
+                async: false,
+                url: "/WebWorker/Orders/StartOrder",
+                data: { oid:@Model.OrderInfo.ID,images:$("#hfimgs").val() },
+                success: function (data) {
+                    if (data.code == 0) {
+                        showToast(data.msg);
+                        return;
+                    } else if (data.code == 1) {
+                        window.location.href='@Url.Action("OrderInfo", "Orders", new { id = Model.OrderInfo.ID })';
+                        return;
+                    }
+                }
+            });
+        }
+        function Finish() {
+            var imglength = $("#imgcon img").length;
+            var imgbase64 = $("#hfimgs").val().split(",");
+            //if (imglength < 4 || $("#hfimgs").val() == "" || ((imgbase64.length - 1) < 4) || (imglength != imgbase64.length - 1)) {
+            //    showToast("至少上传四张图片！");
+            //    return;
+            //}
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                dataType: "json",
+                async: false,
+                url: "/WebWorker/Orders/FinishOrder",
+                data: { oid:@Model.OrderInfo.ID,images:$("#hfimgs").val() },
+                success: function (data) {
+                    if (data.code == 0) {
+                        showToast(data.msg);
+                        return;
+                    } else if (data.code == 1) {
+                        window.location.href='@Url.Action("OrderInfo", "Orders", new { id = Model.OrderInfo.ID })';
+                        return;
+                    }
+                }
+            });
+        }
+        function closemap(){
+            $("#maporder").hide();
+            $("#ordercon").show();
+        }
+        function openmap(){
+            $("#maporder").show();
+            $("#ordercon").hide();
+            var map= new AMap.Map('mymap', {
+                resizeEnable: true,
+                center:[@Model.OrderInfo.Lng, @Model.OrderInfo.Lat],
+                zoom: 13
+            });
+            AMap.service(["AMap.Driving"], function() {
+                var driving = new AMap.Driving({
+                    map: map
+                });
+                driving.search([@WebWorkContext.Lng,@WebWorkContext.Lat],[@Model.OrderInfo.Lng, @Model.OrderInfo.Lat]);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="maporder">
+        <div id="mymap"></div>
+        <div id="mapmsg"><span>订单位置</span><a href="javascript:void(0)" class="finish" onclick="closemap()">关闭</a></div>
+    </div>
+    <div id="ordercon">
+        <div class="bluehead"><a href="@Url.Action("Index","UsersAdmin")" class="back"></a><span>订单详情</span><a href="@Url.Action("OrderInfo", "Orders", new { id = Model.OrderInfo.ID })" class="finish">刷新</a></div>
+        <div class="proItem">订单号：@Model.OrderInfo.Osn</div>
+        <div class="proItem">
+            <div class="uname"><i></i>@Model.OrderInfo.UserName</div><div class="umobile"><i></i><a href="tel:@Model.OrderInfo.Mobile">@Model.OrderInfo.Mobile</a></div>
+            <div class="address"><a href="javascript:void(0)" onclick="openmap()">@(Model.OrderInfo.Address)[点击查看]</a></div>
+            <div class="fn-clear"></div>
+        </div>
+        <div class="proItem">
+            <div class="bt">服务项目</div>
+            @if (Model.OrderItems != null)
+            {
+                foreach (Models.Orders_Item item in Model.OrderItems)
+                {
+                    <span>@item.ItemName</span>
+                }
+            }
+            <div class="fn-clear"></div>
+        </div>
+        <div class="proItem">
+            <div class="bt">车辆信息</div>
+            <div class="proline">车牌号：@Model.OrderInfo.Plate</div>
+            <div class="proline">车系：@Model.OrderInfo.BrandShow</div>
+            <div class="proline">颜色：@Model.OrderInfo.Color</div>
+            <div class="fn-clear"></div>
+        </div>
+        <div class="proItem">
+            <div class="bt">订单信息</div>
+            <div class="proline">付款方式：@(Model.OrderInfo.Data3 == "" ? "<span style='color:#047548'>线上</span>" : "<span style='color:#F00'>" + Model.OrderInfo.Data3 + "</span>")<input type="hidden" name="paytype" id="paytype" value="@Model.OrderInfo.Data3" /></div>
+            <div class="proline">支付明细：@Model.OrderInfo.PayName @(Model.OrderInfo.DiscountDes != "" ? "(" + @Model.OrderInfo.DiscountDes + "共抵额" + @Model.OrderInfo.DiscountAmount + ")" : "")</div>
+            <div class="proline">
+                订单状态：@{Models.UserOrderState uos = (Models.UserOrderState)Model.OrderInfo.OrderState;
+                switch (uos)
+                {
+                    case Models.UserOrderState.WaitPaying:
+                        @:未支付
+                        break;
+                    case Models.UserOrderState.Payed:
+                    @:支付成功
+                                    break;
+                    case Models.UserOrderState.Assigned:
+                    @:接单完成
+                                    break;
+                    case Models.UserOrderState.Started:
+                    @:开始洗车
+                                    break;
+                    case Models.UserOrderState.Finished:
+                    @:洗车完成
+                                    break;
+                    case Models.UserOrderState.Canceled:
+                    @:已取消
+                                    break;
+                    case Models.UserOrderState.Void:
+                    @:已作废
+                                    break;
+                    default:
+                                    break;
+                }
+                }
+            </div>
+            <div class="proline">提交时间：@AliceDAL.DataType.ConvertToDateTimeStrAll(Model.OrderInfo.CDate)</div>
+            <div class="proline">备注：@Model.OrderInfo.Remark</div>
+            <div class="fn-clear"></div>
+        </div>
+        @switch (uos)
+        {
+            case Models.UserOrderState.Assigned:
+                <div class="proItem">
+                    <div class="bt">洗车前</div>
+                    <div class="h10p"></div>
+                    <div id="imgcon">
+                    </div>
+                    @*<div class="weui_uploader_input_wrp">
+                            <input class="weui_uploader_input" type="file" id="upimg" accept="image/jpg,image/jpeg,image/png,image/gif" capture="camera" multiple />
+                        </div>*@
+                    <div style=" float:left;position: relative;margin-right: 9px; margin-bottom: 9px; width: 77px; height: 77px; border: 1px solid #D9D9D9;overflow:hidden">
+                        <input type="file" id="upimg" capture="camera" />
+                    </div>
+                    <input type="hidden" id="hfimgs" name="hfimgs" value="" />
+                    <div class="fn-clear"></div>
+                </div>
+                break;
+            case Models.UserOrderState.Started:
+            <div class="proItem">
+                <div class="bt">洗车前</div>
+                <div class="h10p"></div>
+                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data1))
+                {
+                    foreach (string item in Model.OrderInfo.Data1.Split(','))
+                    {<img src="@item" class="fpic" />
+                    }
+                }
+                <div class="fn-clear"></div>
+            </div>
+            <div class="proItem">
+                <div class="bt">洗车后</div>
+                <div class="h10p"></div>
+                <div id="imgcon">
+                </div>
+                @*<div class="weui_uploader_input_wrp">
+                        <input class="weui_uploader_input" type="file" id="upimg" accept="image/jpg,image/jpeg,image/png,image/gif" capture="camera" multiple />
+                    </div>*@
+                <div style=" float:left;position: relative;margin-right: 9px; margin-bottom: 9px; width: 77px; height: 77px; border: 1px solid #D9D9D9;overflow:hidden">
+                    <input type="file" id="upimg" capture="camera" />
+                </div>
+                <input type="hidden" id="hfimgs" name="hfimgs" value="" />
+                <div class="fn-clear"></div>
+            </div>
+                break;
+            case Models.UserOrderState.Finished:
+            <div class="proItem">
+                <div class="bt">洗车前</div>
+                <div class="h10p"></div>
+                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data1))
+                {
+                    foreach (string item in Model.OrderInfo.Data1.Split(','))
+                    {<img src="@item" class="fpic" />
+                    }
+                }
+                <div class="fn-clear"></div>
+            </div>
+            <div class="proItem">
+                <div class="bt">洗车后</div>
+                <div class="h10p"></div>
+                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data2))
+                {
+                    foreach (string item in Model.OrderInfo.Data2.Split(','))
+                    {<img src="@item" class="fpic" />
+                    }
+                }
+                <div class="fn-clear"></div>
+            </div>
+                break;
+            default:
+                break;
+        }
+        <div class="proItem">
+            @switch (uos)
+            {
+                case Models.UserOrderState.Payed:
+                    <a href="@Url.Action("AssignOrder", "Orders", new { oid = @Model.OrderInfo.ID.ToString() })" class="subbtn">接单</a>
+                    break;
+                case Models.UserOrderState.Assigned:
+                <a href="javascript:void(0)" onclick="Start()" class="subbtn">开始洗车</a>
+                <a href="javascript:void(0)" onclick="OrderTrun()" class="subbtn">订单流转</a>
+                    break;
+                case Models.UserOrderState.Started:
+                <a href="javascript:void(0)" onclick="Finish()" class="subbtn">洗车完成</a>
+                    break;
+                case Models.UserOrderState.Finished:
+                    break;
+                case Models.UserOrderState.Canceled:
+                    break;
+                case Models.UserOrderState.Deleted:
+                    break;
+                case Models.UserOrderState.Void:
+                    break;
+                default:
+                    break;
+            }
+            <div class="fn-clear"></div>
+        </div>
+        <span style="line-height:30px">订单流转后重新进入抢单池，无特殊情况需联系客服，慎重操作！</span>
+        <script src="/Scripts/localimg.js" type="text/javascript"></script>
+        <script src="/Scripts/fix.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            $("#upimg").localResizeIMG({
+                width: 400,
+                quality: 0.9,
+                success: function (result) {
+                    if ($("#imgcon img").length <= 7) {
+                        var img = new Image();
+                        img.src = result.base64;
+                        img.className = "fpic";
+                        $("#hfimgs").val($("#hfimgs").val() + result.clearBase64 + ",");
+                        $("#imgcon").append(img);
+                    }
+                }
+            });
+        </script>
+        @Html.Partial("menu")
+    </div>
+</body>
+</html>

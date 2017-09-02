@@ -1,0 +1,102 @@
+﻿@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=2")" rel="stylesheet" />
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <script src="/Scripts/jquery-2.1.4.min.js"></script>
+    <script src="/Scripts/slider.js"></script>
+    <script src="/Scripts/mf.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=29")"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="/Scripts/edo_jsapi.js"></script>
+    <script>
+        $(document).ready(function () {
+            initWX();
+        });
+    </script>
+</head>
+<body>
+    @Html.Partial("head", "小熊洗车")
+    <div id="wrapper">
+        <ul>
+            @{System.Data.DataTable dt = DAL.PageModel.DateList("Flash", "TypeID=2", "SortID", 0); if (dt != null && dt.Rows.Count > 0)
+            {
+                foreach (System.Data.DataRow row in dt.Rows)
+                {
+                    <li><a href="@row["Url"].ToString()"><img src="@row["Img"]" alt="@row["Title"].ToString()" title="@row["Title"].ToString()" /></a></li>}
+            }}
+        </ul>
+    </div>
+    <div class="toolsbd">
+        <div class="tools-item"><a href="/BearClient/"><img src="/Content/bearmall/images/washcar.jpg" /><i>上门洗车</i></a></div>
+        <div class="tools-item"><a href="/BearClient/CheckPlate"><img src="/Content/bearmall/images/nuo.jpg" /><i>挪车查询</i></a></div>
+        <div class="tools-item"><a href="/BearMall/Category"><img src="/Content/bearmall/images/shop.jpg" /><i>小熊商城</i></a></div>
+        <div class="tools-item"><a href="javscript:void(0)" onclick="QRCode()"><img src="/Content/bearmall/images/charge.jpg" /><i>扫码付款</i></a></div>
+        <div class="tools-item"><a href="/BearClient/ShopOrder/"><img src="/Content/bearmall/images/dian.jpg" /><i>到店洗车</i></a></div>
+    </div>
+    <input id="lat" type="hidden" value="0" />
+    <input id="lng" type="hidden" value="0" />
+    <input id="branchid" type="hidden" value="0" />
+    <div class="malllist">
+        <div id="scrollDiv">
+            <ul id="hotnewsul">
+            </ul>
+        </div>
+    </div>
+    <div id="mymap" style="display:none"></div>
+    @Html.Partial("menu", "1")
+    <script>
+        $("#wrapper").edoslider({ width: 640, height: 320, during: 5000 });
+    </script>
+    <script>
+        var map1, geolocation1;
+        //加载地图，调用浏览器定位服务
+        map1 = new AMap.Map('mymap', {
+            resizeEnable: true
+        });
+        map1.plugin('AMap.Geolocation', function () {
+            geolocation1 = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                zoomToAccuracy: true,    //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+            map1.addControl(geolocation1);
+            geolocation1.getCurrentPosition();
+            AMap.event.addListener(geolocation1, 'complete', onComplete);//返回定位信息
+        });
+        //解析定位结果
+        function onComplete(data) {
+            $("#lat").val(data.position.getLat());
+            $("#lng").val(data.position.getLng());
+            initnews();            
+        }
+        function initnews() {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "/BearMall/GetHotNews/",
+                data: { a: $("#lng").val(), b: $("#lat").val() },
+                success: function (data) {
+                    if (data.code == "0") {
+                        $("#hotnewsul").html(data.msg);
+                    } else if (data.code == "1") {
+                        $("#hotnewsul").html(data.msg);
+                        $("#scrollDiv").Scroll({ line: 5, speed: 1000, timer: 5000 });
+                    } else if (data.code == "2") {
+                    }
+                },
+                error: function (error) {
+                    showToast("网络错误，请重试");
+                }
+            });
+        }
+    </script>
+</body>
+</html>

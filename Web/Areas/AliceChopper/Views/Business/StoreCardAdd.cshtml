@@ -1,0 +1,99 @@
+﻿@model Web.Areas.AliceChopper.Models.StoreCardSingleModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        function randomString() {
+            var $chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";/****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+            var maxPos = $chars.length;
+            var pwd = "";
+            for (i = 0; i < 6; i++) {
+                pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            $("#CardPwd").val(pwd);
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加储值卡
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡号
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardNo, new { @class = "txt" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.CardNo)</span>卡号具有唯一性，不可更改，例如：1602010001
+            </td>
+        </tr>
+        <tr>
+            <th>
+                密码
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardPwd, new { @class = "txt" }) <input type="button" value="随机生成" class="abtn" id="btnsc" name="btnsc" onclick="randomString()" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                储值金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Price, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家
+            </th>
+            <td>
+                <select class="ddl" id="BusinessID" name="BusinessID">
+                    <option @if (0 == Model.BusinessID) { <text> selected="selected" </text>   } value="0">选择商家</option>
+                    @{
+List<Models.BD_Business> list = ViewData["businessList"] as List<Models.BD_Business>;
+if (list != null)
+{
+    foreach (Models.BD_Business item in list)
+    {
+        <option @if (item.ID == Model.BusinessID) { <text> selected="selected" </text>   } value="@item.ID">@item.BusinessName</option>
+    }
+
+}
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.SMSContent, new { style = "width:400px;height:100px" })<span style="color: #f00">*【小熊洗车】不能删除，不允许手动换行。</span>
+        </td>
+    </tr>
+
+    <tr>
+        <th>
+            &nbsp;
+        </th>
+        <td>
+            <input id="btnSure" class="btn" value="确定" type="submit" />
+        </td>
+    </tr>
+</table> }
+}

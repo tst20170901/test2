@@ -1,0 +1,211 @@
+﻿@model Web.Models.CouponIndexModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=2")" rel="stylesheet" />
+    <script src="/Scripts/jquery-2.1.4.min.js"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=28")"></script>
+    <script>
+        $(document).ready(function () {
+            $("#plate").change(function () {
+                $("#brand_model_show").val("暂无");
+                $("#color").val("暂无");
+            });
+        })
+    </script>
+    <script>
+        var map1, geolocation1;
+        //加载地图，调用浏览器定位服务
+        map1 = new AMap.Map('mymap', {
+            resizeEnable: true
+        });
+        map1.plugin('AMap.Geolocation', function () {
+            geolocation1 = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+            map1.addControl(geolocation1);
+            geolocation1.getCurrentPosition();
+            AMap.event.addListener(geolocation1, 'complete', onComplete);//返回定位信息
+        });
+        //解析定位结果
+        function onComplete(data) {
+            $("#lat").val(data.position.getLat());
+            $("#lng").val(data.position.getLng());
+            $("#userstate").val("ok");
+        }
+        function hideshoplist() {
+            $("#orderinfo").show();
+            $("#msg").show();
+            $("#shoplist").hide();
+        }
+    </script>
+</head>
+<body>
+    @Html.Partial("head", "小熊洗车")
+    <div id="orderinfo">
+        <div class="btnbd">
+            <div class="suild">
+                <div class="btnbdcon">
+                    <a href="@Url.Action("Index", "BearClient")" class="shangmen w">上门洗车</a><a href="@Url.Action("ShopOrder", "BearClient")" class="shitidian blue">实体店洗车</a>
+                </div>
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd u">姓<i style="width:2em"></i>名</div>
+            <div class="edo_bd">
+                @if (Model.OrderInfo != null)
+                {
+                    <input class="edoui_input" id="name" name="name" type="text" placeholder="请输入称呼" value="@Model.OrderInfo.UserName" />
+                }
+                else
+                {
+                    <input class="edoui_input" id="name" name="name" type="text" placeholder="请输入称呼" />
+                }
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd m">手<i></i>机<i></i>号</div>
+            <div class="edo_bd">
+                <input class="edoui_input" type="tel" id="mobile_show" name="mobile_show" readonly="readonly" value="@WorkContext.Mobile" />
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd p">车<i></i>牌<i></i>号</div>
+            <div class="edo_bd">
+                @if (Model.OrderInfo != null)
+                {
+                    <input class="edoui_input" id="plate" name="plate" type="text" placeholder="请输入车牌号 方便洗车工查找车辆" value="@Model.OrderInfo.Plate" />
+                }
+                else
+                {
+                    <input class="edoui_input" id="plate" name="plate" type="text" placeholder="请输入车牌号 方便洗车工查找车辆" />
+                }
+                <input id="brand_model_show" name="brand_model_show" type="hidden" value="暂无" />
+                <input id="color" name="color" type="hidden" value="暂无" />
+            </div>
+        </div>
+        <div class="edocell" id="showshop" onclick="showshop()">
+            <div class="edo_hd mp">实<i></i>体<i></i>店</div>
+            <div class="edo_bd">
+                <input class="edoui_input sel" id="shopname" type="text" readonly="readonly" placeholder="点击选择附近的洗车店" />
+                <input id="lat" type="hidden" value="0" />
+                <input id="lng" type="hidden" value="0" />
+                <input id="shopid" type="hidden" value="0" />
+                <input id="branchid" type="hidden" value="0" />
+                <input id="userstate" type="hidden" value="noinit" />
+            </div>
+        </div>
+        <div class="edocell" id="showitem" onclick="showitemshop()">
+            <div class="edo_hd x">服务项目</div>
+            <div class="edo_bd">
+                <input class="edoui_input sel" id="service" type="text" name="service" readonly="readonly" placeholder="点击选择服务项目" />
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edocell">
+            <div class="edo_hd s">备<i style="width:2em"></i>注</div>
+            <div class="edo_bd">
+                <input class="edoui_input" id="comment" type="text" placeholder="请输入备注信息" />
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edocell" onclick="showcard()" id="showcard">
+            <div class="edo_hd q">优<i></i>惠<i></i>券</div>
+            <div class="edo_bd">
+                <input class="edoui_input sel" id="coupons" type="text" readonly="readonly" placeholder="点击选择" />
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd r">总<i></i>金<i></i>额</div>
+            <div class="edo_bd money">
+                <span id="showallmoney">0.00</span><input type="hidden" id="allmoney" value="0.00" />元
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edocell">
+            <div class="edo_hd qb">钱包支付</div>
+            <div class="edo_bd">
+                <div class="qianbao">
+                    @(Model.Money) 元&nbsp;&nbsp;
+                    <label for="xqianbao">
+                        <input type="radio" class="edo_radio" name="zhifu" id="xqianbao" value="10" checked="checked">
+                        <i class="edo_icon_radio"></i>
+                    </label>
+                </div>
+                <input type="hidden" id="walletmoney" value="@Model.Money">
+            </div>
+        </div>
+        <div class="edocell">
+            <div class="edo_hd wx">微信支付</div>
+            <div class="edo_bd" style="text-align:right">
+                <label for="xweixin">
+                    <input type="radio" name="zhifu" class="edo_radio" id="xweixin" value="20">
+                    <i class="edo_icon_radio"></i>
+                </label>
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edorow g">
+            <a href="javascript:void(0)" class="edo_btn" onclick="shoporder()" id="ordersubmit">提交</a>
+        </div>
+    </div>
+    <div id="map">
+        <div id="mymap"></div>
+        <div id="mapmsg"></div>
+        <div id="mapaddress"></div>
+        <div id="mapmarker"><img src="/Content/bear/images/mapmarker.png" /></div>
+        <div id="mapdesc">
+            <div style="color:#F00;font-size:16px">重要提示</div>
+            <div>请在地图中调整并确认您的车辆位置，准确的位置有助于我们快速为您的爱车服务。</div>
+            <a href="javascript:void(0)" class="edo_btn" onclick="select_ok1()">确认位置</a>
+        </div>
+    </div>
+    <div id="shoplist">
+        <div class="head"><a href="javascript:void(0)" onclick="hideshoplist()" class="back"></a><span>附近的洗车店</span></div>
+        <div class="ilist" style="text-align:left">
+            <div class="edo_cells_title">以实体店具体服务为准</div>
+            <div id="shoplistbd">
+            </div>
+            <div id="load"></div>
+            <div class="edo_cells_title" style="text-align:center" id="shopmsg">附近没有洗车店</div>
+        </div>
+    </div>
+    <div id="mycoupons">
+        <div class="head" id="couphead"><a href="javascript:void(0)" onclick="hidecoupons()" class="back"></a><span>优惠券</span><a href="javascript:void(0)" onclick="hidecoupons()" class="finish">完成</a></div>
+        <div class="edo_cells_title">同一商家只能选择一张</div>
+        <div class="ilist">
+            <div id="couponlist">
+                <div style="clear:both;height:30px"></div>
+                <div id="loadcoup"></div>
+                <div class="edo_cells_title" style="text-align:center" id="coupmsg">没有优惠券</div>
+            </div>
+            <div style="clear:both;height:50px"></div>
+        </div>
+    </div>
+    <div id="itemlist">
+        <div class="head"><a href="javascript:void(0)" onclick="hideitem()" class="back"></a><span>服务项目</span><a href="javascript:void(0)" onclick="hideitem()" class="finish">完成</a></div>
+        <div class="edo_cells_title">会员卡用户直接选择</div>
+        <div id="vipcardlist">
+        </div>
+        <div class="edo_cells_title">大型SUV及MPV车辆须另加5元</div>
+        <div id="washitemlist">
+            <div class="washitemlist">
+            </div>
+        </div>
+        <div id="loaditem"></div>
+        <div class="edo_cells_title" style="text-align:center" id="itemmsg">附近没有服务项目</div>
+    </div>
+    @Html.Partial("menu", "1")
+</body>
+</html>

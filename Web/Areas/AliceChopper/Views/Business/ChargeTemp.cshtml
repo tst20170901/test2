@@ -1,0 +1,58 @@
+﻿@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        function checkForm() {
+
+            $.post("/AliceChopper/Business/ChargeTemp/", { mobile: $("#mobile").val(), cardno: $("#cardno").val(), cardpwd: $("#cardpwd").val() }, function (data) {
+                var v = JSON.parse(data);
+                alert(v.msg);
+            });
+
+        }
+    </script>
+}
+@section body{
+    <table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    测试充值
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机号
+            </th>
+            <td>
+                <input type="text" id="mobile" name="mobile" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡号
+            </th>
+            <td>
+                <input type="text" id="cardno" name="cardno" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                密码
+            </th>
+            <td>
+                <input type="text" id="cardpwd" name="cardpwd" class="txt" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="button" onclick="checkForm()" value="确定" />
+            </td>
+        </tr>
+    </table>
+}

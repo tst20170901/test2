@@ -1,0 +1,325 @@
+﻿@model Web.Models.OrderInfoModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/weui.min.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/fs_forse.js")"></script><script src="/Scripts/layer/layer.js"></script>
+<script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".star").click(function (e) {
+                var offset = $(this).offset();
+                var relativeX = (e.pageX - offset.left);
+                var width = relativeX / $(this).width() * 100;
+                if (width <= 20) {
+                    width = 20;
+                } else if (width <= 40) {
+                    width = 40;
+                } else if (width <= 60) {
+                    width = 60;
+                } else if (width <= 80) {
+                    width = 80;
+                } else if (width >= 80) {
+                    width = 100;
+                }
+                $(this).children("div").children("input").val(width / 20);
+                $(this).children("div").width(width + "%");
+            });
+        })
+        function checkForm() {
+            if ($("#btnpj").val() != "1") {
+                showToast("该订单不能评价！");
+                return;
+            } else {
+                $.post("/BearClient/OrderDetail?oid=@(Model.OrderInfo.ID)", { SpeedStar: $("input[name='SpeedStar']:checked").val(), ServiceStar: $("input[name='ServiceStar']:checked").val(), AttitudeStar: $("input[name='AttitudeStar']:checked").val(), pjbody: $("#pjbody").val() }, function (data) {
+                    showToast(data.msg);
+                });
+            }
+        }
+    </script>
+    <style type="text/css">
+        .fs_gallery {
+            background: rgba(0,0,0, 0.9);
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        .fs_gallery_close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 25px;
+            height: 25px;
+            color: #ccc;
+            font-size: 34px;
+            line-height: 23px;
+            text-align: center;
+            cursor: pointer;
+            z-index: 102;
+        }
+
+            .fs_gallery_close:before {
+                content: "×";
+            }
+
+            .fs_gallery_close:hover {
+                color: #fff;
+            }
+
+        .fs_gallery_prev, .fs_gallery_next {
+            position: absolute;
+            width: 80px;
+            color: #ccc;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 101;
+        }
+
+            .fs_gallery_prev:hover, .fs_gallery_next:hover {
+                background: rgba(0,0,0, 0.1);
+                color: #fff;
+            }
+
+        .fs_gallery_prev {
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .fs_gallery_next {
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .fs_gallery_prev:before {
+            content: "‹";
+            position: absolute;
+            height: 30px;
+            margin-top: -30px;
+            top: 50%;
+            left: 35px;
+        }
+
+        .fs_gallery_next:before {
+            content: "›";
+            position: absolute;
+            height: 30px;
+            margin-top: -30px;
+            top: 50%;
+            left: 35px;
+        }
+
+        .fs_gallery_shuft {
+            position: relative;
+            width: 9999999px;
+        }
+
+            .fs_gallery_shuft:after {
+                clear: both;
+                content: "";
+                display: block;
+            }
+
+        .fs_gallery_shuft_item {
+            float: left;
+            position: relative;
+            background-image: url(data:image/gif;base64,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);
+            background-position: center center;
+            background-repeat: no-repeat;
+        }
+
+            .fs_gallery_shuft_item img {
+                box-shadow: 0 0 8px rgba(0,0,0, 0.8);
+                position: absolute;
+                top: 50%;
+                left: 50%;
+            }
+    </style>
+</head>
+<body ontouchstart>
+    <div class="head"><a href="@Url.Action("OrderList","BearClient")" class="back"></a><span>订单详情</span></div>
+    @if (Model.UserActionsList != null && Model.UserActionsList.Count > 0)
+    {
+        <div class="weui_cells_title">操作详情</div>
+        <div class="weui_cells">
+            @foreach (Models.UserOrderActions item in Model.UserActionsList)
+            {
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>@item.ActionDes</p>
+                    </div><div class="weui_cell_ft">@item.RealName &nbsp; &nbsp;@AliceDAL.DataType.ConvertToDateTimeStr(item.ActionTime)</div>
+                </div>
+            }
+        </div>
+    }
+    @if (Model.OrderInfo != null)
+    {
+        <div class="weui_cells_title">订单信息</div>
+        <div class="weui_cells">
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">车主电话</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Model.OrderInfo.Mobile</p>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">停放位置</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Model.OrderInfo.Address</p>
+                </div>
+            </div>
+            @if (Model.WorkShop != null)
+            {
+                <div class="weui_cell">
+                    <div class="weui_cell_ft" style="padding-right:0.5em">
+                        洗 车 工
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>
+                            @(Model.WorkShop.Title) (<a href="tel:@Model.WorkShop.Phone">@Model.WorkShop.Phone</a>)
+                        </p>
+                    </div>
+                </div>
+            }
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">
+                    车辆信息
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>
+                        @Model.OrderInfo.Plate @Model.OrderInfo.Color @Model.OrderInfo.BrandShow
+                    </p>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">服务项目</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>
+                        @if (Model.OrdersItem != null)
+                        {
+                            foreach (Models.Orders_Item item in Model.OrdersItem)
+                            {
+                                <span>@item.ItemName (@item.Money 元) </span> <text>&nbsp;</text>
+                            }
+                        }
+                    </p>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_ft" style="padding-right:0.5em">备注信息</div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <p>@Model.OrderInfo.Remark</p>
+                </div>
+            </div>
+        </div>
+        <div class="weui_cells_title">服务照片</div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_bd weui_cell_primary">
+                    <div class="weui_uploader">
+                        <div class="weui_uploader_bd">
+                            <ul class="weui_uploader_files" id="gallery1">
+                                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data1))
+                                {
+                                    foreach (string item in Model.OrderInfo.Data1.Split(','))
+                                    {
+                                        <li class="weui_uploader_file">
+                                            <a href="@item">
+                                                <img src="@item" alt="" width="80" height="80" />
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                            <div class="clear"></div>
+                            <ul class="weui_uploader_files" id="gallery2">
+                                @if (!String.IsNullOrWhiteSpace(Model.OrderInfo.Data2))
+                                {
+                                    foreach (string item in Model.OrderInfo.Data2.Split(','))
+                                    {
+                                        <li class="weui_uploader_file">
+                                            <a href="@item">
+                                                <img src="@item" alt="" width="80" height="80" />
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="weui_cells weui_cells_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务速度</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <label for="rdo1"><input type="radio" name="SpeedStar" value="5" id="rdo1" checked="checked" />快</label>&nbsp;&nbsp;
+                    <label for="rdo2"><input type="radio" name="SpeedStar" value="3" id="rdo2" />中</label>&nbsp;&nbsp;
+                    <label for="rdo3"><input type="radio" name="SpeedStar" value="1" id="rdo3" />慢</label>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务质量</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <label for="rdo4"><input type="radio" name="ServiceStar" value="5" id="rdo4" checked="checked" />好</label>&nbsp;&nbsp;
+                    <label for="rdo5"><input type="radio" name="ServiceStar" value="3" id="rdo5" />中</label>&nbsp;&nbsp;
+                    <label for="rdo6"><input type="radio" name="ServiceStar" value="1" id="rdo6" />差</label>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务态度</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <label for="rdo7"><input type="radio" name="AttitudeStar" value="5" id="rdo7" checked="checked" />好</label>&nbsp;&nbsp;
+                    <label for="rdo8"><input type="radio" name="AttitudeStar" value="3" id="rdo8" />中</label>&nbsp;&nbsp;
+                    <label for="rdo9"><input type="radio" name="AttitudeStar" value="1" id="rdo9" />差</label>
+                </div>
+            </div>
+            <div class="weui_cell">
+                <div class="weui_cell_hd"><label class="weui_label">服务评价</label></div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <textarea class="weui_textarea" placeholder="请输入评论" rows="3" name="pjbody" id="pjbody"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="weui_btn_area">
+            <input id="submit" class="weui_btn weui_btn_primary" type="button" value="服务评价" onclick="checkForm();" />
+        </div>
+        <div class="weui_opr_area">
+            <p class="weui_btn_area">
+                @if (Model.OrderInfo != null && Model.OrderInfo.OrderState == (int)Models.UserOrderState.WaitPaying)
+                {<a class="weui_btn weui_btn_primary" href="/BearClient/RePay?oid=@Model.OrderInfo.ID">继续支付</a>}
+
+                @if (Model.OrderInfo != null && (Model.OrderInfo.OrderState == (int)Models.UserOrderState.Finished || Model.OrderInfo.OrderState == (int)Models.UserOrderState.Started || Model.OrderInfo.OrderState == (int)Models.UserOrderState.Assigned || Model.OrderInfo.OrderState == (int)Models.UserOrderState.Payed))
+                {
+                    <input type="hidden" name="btnpj" value="1" id="btnpj" />
+                }
+                @if (Model.OrderInfo != null && Model.OrderInfo.OrderState == (int)Models.UserOrderState.Payed)
+                {
+                    <a class="weui_btn weui_btn_warn" href="/BearClient/Cancel?oid=@Model.OrderInfo.ID">全额退款</a>}
+
+            </p>
+        </div>
+        <div class="weui_msg">
+            <div class="weui_text_area">
+                <p class="weui_msg_desc">温馨提示：系统派单前撤单可全额退款。</p>
+            </div>
+        </div>
+    }
+    @Html.Partial("menu", "3")
+</body>
+</html>

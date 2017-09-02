@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改常用地址
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                常用地址
+            </th>
+            <td>
+                <input id="address" name="address" type="text" class="txt1" value="@ViewBag.Address" style="width:400px" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" />
+            </td>
+        </tr>
+    </table>}}

@@ -1,0 +1,170 @@
+﻿@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        var models = null;
+        function init_models() {
+            if (models) {
+                show_brand();
+            } else {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/CarModelAPI/CarModel/",
+                    success: function (data) {
+                        models = data;
+                        show_brand();
+                    },
+                    error: function () {
+                        alert("网络错误，请重试");
+                    }
+                });
+            }
+        }
+        function show_brand() {
+            $("#selebrand option").remove();
+            $("#selebrand").append("<option value='0'>品牌</option>");
+            for (var k in models) {
+                $("#selebrand").append("<option value='" + models[k].id + "'>" + models[k].py.substr(0, 1) + models[k].name + "</option>");
+            }
+            $("select[name='selebrand']").change(function () {
+                var selectedProvince = $(this).val();
+                $("#Brand").val($(this).find("option:selected").text());
+                $("#selemodel option").remove();
+                $("#selemodel").append("<option value='0'>车型</option>");
+                for (var s in models[selectedProvince - 1].models) {
+                    $("#selemodel").append("<option value='" + models[selectedProvince - 1].models[s].id + "'>" + models[selectedProvince - 1].models[s].py.substr(0, 1) + models[selectedProvince - 1].models[s].name + "</option>");
+                }
+            });
+            $("select[name='selemodel']").change(function () {
+                $("#ModelStr").val($(this).find("option:selected").text());
+            });
+        }
+        $(document).ready(function () {
+            $('input:text:first').focus();
+            $("#mobile").bind('keydown', function (e) {
+                var key = e.which;
+                if (key == 13) {
+                    GetUserInfo();
+                }
+            });
+            init_models();
+        })
+
+        function GetUserInfo() {
+            if ($("#mobile").val() == "") {
+                $("#msg").html("*手机号不能为空！");
+                return;
+            } else {
+                $.post("@Url.Action("AjaxUserInfo", "Member")", { mobile: $("#mobile").val() }, function (data) {
+                    var v = JSON.parse(data);
+                    if (v.code == "0") {
+                        $("#msg").html(v.msg);
+                        return;
+                    }
+                });
+            }
+        }
+        function checklogin() {
+            var brand = $("#selebrand").find("option:selected").text();
+            var model = $("#selemodel").find("option:selected").text();
+            var brandid = $("#selebrand").val();
+            var modelid = $("#selemodel").val();
+            if ($("#mobile").val() == "") {
+                window.alert("请输入手机号码！");
+                return false;
+            } else if ($("#carplate").val() == "") {
+                window.alert("请输入车牌号！");
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                dataType: "json",
+                url: "@Url.Action("PreAdd", "Member")",
+                data: { mobile: $("#mobile").val(), name: $("#name").val(), carplate: $("#carplate").val(), 'alicebrand': brand, 'alicemodel': model, 'alicecolor': $("#selecolor").val(), 'alicebrandid': brandid, 'alicemodelid': modelid },
+                success: function (data) {
+                    if (data.code == 0) {
+                        alert(data.msg);
+                    }
+                }
+            });
+        }
+    </script>
+}
+@section body{
+    <table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加预备会员<span style="color: #F00; margin-left: 50px">注:输入手机号码后请回车以确认用户属性！</span>
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机号码
+            </th>
+            <td>
+                <input class="txt" type="text" id="mobile" name="mobile" value="" maxlength="11" /><span style="color:#F00" id="msg"></span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                姓名
+            </th>
+            <td>
+                <input class="txt" id="name" name="name" type="text" placeholder="请输入称呼" value="" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                车牌号
+            </th>
+            <td>
+                <input class="txt" type="text" placeholder="请输入牌号" maxlength="7" name="carplate" id="carplate" />
+            </td>
+        </tr>
+        <tr>
+            <th>车型</th>
+            <td>
+                <select class="select" name="selebrand" id="selebrand">
+                    <option value="0">品牌</option>
+                </select>
+                <select class="select" name="selemodel" id="selemodel">
+                    <option value="0">车型</option>
+                </select>
+                <input id="Brand" name="Brand" type="hidden" value="" />
+                <input id="ModelStr" name="ModelStr" type="hidden" value="" />
+            </td>
+        </tr>
+        <tr>
+            <th>颜色</th>
+            <td>
+                <select class="select" name="selecolor" id="selecolor">
+                    <option value="黑色">黑色</option>
+                    <option value="灰色">灰色</option>
+                    <option value="银色">银色</option>
+                    <option value="白色">白色</option>
+                    <option value="红色">红色</option>
+                    <option value="橙色">橙色</option>
+                    <option value="蓝色">蓝色</option>
+                    <option value="绿色">绿色</option>
+                    <option value="黄色">黄色</option>
+                    <option value="紫色">紫色</option>
+                    <option value="金色">金色</option>
+                    <option value="棕色">棕色</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="button" onclick="return checklogin();" />
+            </td>
+        </tr>
+    </table>
+}

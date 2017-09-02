@@ -1,0 +1,178 @@
+﻿@model Web.Areas.UsersManger.Models.BigOrderModel
+@{
+    Layout = "~/Areas/UsersManger/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <style type="text/css">.gp{font-size:16px;color:#F00}</style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("input[name='washitem']").click(function () {
+                GetSum();
+            });
+            $("input[name='carmodel']").click(function () {
+                GetSum();
+            });
+        })
+        function GetSum() {
+            var money = 0;
+            var total = 0;
+            var b = "";
+            var l = $("input[name='carmodel']:checked").length;
+            $("input[name='washitem']").each(function () {
+                if (this.checked) {
+                    money += parseFloat($(this).attr('value'));
+                }
+            });
+            $("input[name='carmodel']").each(function () {
+                if (this.checked) {
+                    b += $(this).attr('value') + "；";
+                }
+            });
+            total = money * l;
+            $("#showallmoney").html(total);
+            $("#allmoney").val(total);
+            $("#bigplate").val(b);
+
+        }
+        function checkorder() {
+            var plate = $("#bigplate").val();
+            var add = $("#address").val();
+            var all = $("#allmoney").val();
+            var walletmoney = $("#walletmoney").val();
+            if (parseFloat(all) > walletmoney) {
+                alert("钱包余额不足，请联系客服充值");
+                return false;
+            }
+
+            var itemIds = new Array();
+            $("input[name='washitem']").each(function () {
+                if (this.checked) {
+                    itemIds.push($(this).attr('id'));
+                }
+            });
+            if (itemIds.length <= 0) { alert('请选择服务项目！'); return false; }
+            $("#witems").val(itemIds);
+            if (plate == "") {
+                alert('请选择车辆！'); return false;
+            }
+            if (add == "") {
+                alert("请输入地址");
+                return false;
+            }
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    我要下单
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                车辆选择
+            </th>
+            <td>
+                <div id="carslist">
+                    @if (Model.group != null && Model.Cars != null)
+                    {
+                        foreach (System.Data.DataRow row in Model.group.Rows)
+                        {
+                            <div class="gp">@row["TypeName"].ToString()</div>
+                            <div>
+                                @foreach (Models.UserCar item in Model.Cars.FindAll(x => x.Data1 == row["TypeName"].ToString()))
+                                {
+                                    <input name="carmodel" type="checkbox" value="@item.Plate" id="@item.ID" />{@item.Plate}
+                                    {<text>&nbsp;&nbsp;&nbsp;</text>}
+                                    Model.Cars.Remove(item);
+                                }
+                            </div>
+                        }
+                        if (Model.Cars != null && Model.Cars.Count > 0)
+                        {
+                            <div class="gp">未分组</div>
+                            <div>
+                                @foreach (Models.UserCar item in Model.Cars)
+                                {
+                                    <input name="carmodel" type="checkbox" value="@item.Plate" id="@item.ID" />{@item.Plate}
+                                    {<text>&nbsp;&nbsp;&nbsp;</text>}
+                                }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        if (Model.Cars != null)
+                        {
+                            foreach (Models.UserCar item in Model.Cars)
+                            {
+                                <input name="carmodel" type="checkbox" value="@item.Plate" id="@item.ID" />{@item.Plate}
+                                {<text>&nbsp;&nbsp;&nbsp;</text>}
+                            }
+                        }
+                    }
+                    <input type="hidden" value="" name="bigplate" id="bigplate" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                项目
+            </th>
+            <td>
+                <div id="washitemlist">
+                    @if (Model.Items != null)
+                    {
+                        foreach (Models.Wash_Item item in Model.Items)
+                        {
+                            <input name="washitem" type="checkbox" value="@item.Price" id="@item.ID" />{@item.Title}
+                            {<text>(@item.Price)&nbsp;&nbsp;&nbsp;</text>}
+                        }
+                    }
+                    <input type="hidden" value="" name="witems" id="witems" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                位置
+            </th>
+            <td>
+                <input class="txt" id="address" type="text" name="address" style="width:400px" value="@WorkContext.Data3" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                预约
+            </th>
+            <td>
+                <input class="txt" id="remark" type="text" name="remark" style="width:400px" value="" placeholder="预约时间" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                总金额
+            </th>
+            <td><span id="showallmoney" style="color:#F00;font-size:20px">0.00</span><input type="hidden" id="allmoney" name="allmoney" value="0.00" />元</td>
+        <tr>
+            <th>
+                钱包余额
+            </th>
+            <td>
+                @Model.Money 元<input type="hidden" id="walletmoney" value="@Model.Money">
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checkorder();" />
+            </td>
+        </tr>
+    </table> }
+}

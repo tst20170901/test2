@@ -1,0 +1,256 @@
+﻿@model Web.Areas.AliceChopper.Models.OrderAddModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <style type="text/css">
+        .gp {
+            font-size: 16px;
+            color: #F00;
+        }
+    </style>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('input:text:first').focus();
+            $("#mobile").bind('keydown', function (e) {
+                var key = e.which;
+                if (key == 13) {
+                    GetOrderInfo();
+                }
+            });
+            $("input[name='washitem']").click(function () {
+                GetSum();
+            });
+        })
+        function GetOrderInfo() {
+            if ($("#mobile").val() == "") {
+                $("#msg").html("*手机号不能为空！");
+                return;
+            } else {
+                $.post("@Url.Action("AjaxUserInfo", "Orders")", { mobile: $("#mobile").val() }, function (data) {
+                    var v = JSON.parse(data);
+                    if (v.code == "0") {
+                        $("#msg").html(v.msg);
+                        if (v.msg == "新用户") {
+                            $("#isnew").val("newuser");
+                        }
+                        return;
+                    } else if (v.code == "1") {
+                        $("#isnew").val("ok");
+                        $("#msg").html(v.msg);
+                        $("#username").val(v.data.UserName);
+                        $("#plate").val(v.data.Plate);
+                        $("#address").val(v.data.Address);
+                        $("#showwallet").html(v.data.Money);
+                        $("#walletmoney").val(v.data.Money);
+                    }
+                });
+            }
+        }
+        function GetSum() {
+            var money = 0;
+            var total = 0;
+            $("input[name='washitem']").each(function () {
+                if (this.checked) {
+                    money += parseFloat($(this).attr('value'));
+                }
+            });
+            total = money;
+            $("#showallmoney").html(total);
+            $("#allmoney").val(total);
+        }
+        function checkorder() {
+            var s = $("#isnew").val();
+            if (s != "ok" && s != "newuser") {
+                alert('请按回车以初始化手机号！'); return false;
+            }
+            var plate = $("#plate").val();
+            var add = $("#address").val();
+            var all = $("#allmoney").val();
+            var username = $("#username").val();
+
+            var mob = $("#mobile").val();
+
+            if (mob == "") {
+                alert('请填入手机号！'); return false;
+            }
+            if (username == "") {
+                alert('请填入称呼！'); return false;
+            }
+            var itemIds = new Array();
+            $("input[name='washitem']").each(function () {
+                if (this.checked) {
+                    itemIds.push($(this).attr('id'));
+                }
+            });
+            if (itemIds.length <= 0) { alert('请选择服务项目！'); return false; }
+            if (add == "") {
+                alert("请输入地址");
+                return false;
+            }
+            var val_pay = $('#paycon input[name="zhifu"]:checked').val();
+            var walletmoney = $("#walletmoney").val();
+            if (val_pay == "10" && parseFloat(all) > walletmoney) {
+                alert("钱包余额不足，请选择线下支付");
+                return false;
+            }
+            $("#lat").val(marker.getPosition().getLat());
+            $("#lng").val(marker.getPosition().getLng());
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                url: "/AliceChopper/Orders/OrdersAdd",
+                data: { lat: $("#lat").val(), lng: $("#lng").val(), 'itemIds': itemIds, 'username': username, plate: plate, remark: $("#remark").val(), mobile: mob, address: add, allmoney: all, paymode: val_pay },
+                success: function (data) {
+                    var v = JSON.parse(data);
+                    if (v.code == "0") {
+                        $("#msg").html("*" + v.msg);
+                        return;
+                    } else if (v.code == "1") {
+                        alert(v.msg);
+                        location.href = "/AliceChopper/Orders/OrdersAdd";
+                        return;
+                    }
+                }
+            });
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm("OrdersAdd", "Orders", FormMethod.Post, new { name = "nbform", id = "nbform", onkeydown = "if(event.keyCode==13){return false;}" }))
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    手动下单<span style="color:#F00;margin-left:50px">注:输入手机号码后请回车以确认用户属性！</span>
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>手机号码</th>
+            <td><input class="txt" id="mobile" type="text" name="mobile" value="" /><input id="isnew" name="isnew" type="hidden" value="" /><span style="color:#F00" id="msg"></span></td>
+        </tr>
+        <tr>
+            <th>称呼</th>
+            <td>
+                <input class="txt" id="username" name="username" type="text" />
+            </td>
+        </tr>
+        <tr>
+            <th>车牌号</th>
+            <td>
+                <input class="txt" id="plate" name="plate" type="text" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                项目
+            </th>
+            <td>
+                <div id="washitemlist">
+                    @if (Model.Items != null)
+                    {
+                        foreach (Models.Wash_Item item in Model.Items)
+                        {
+                            <input name="washitem" type="checkbox" value="@item.Price" id="@item.ID" />{@item.Title}
+                            {<text>(@item.Price)&nbsp;&nbsp;&nbsp;</text>}
+                        }
+                    }
+                    <input type="hidden" value="" name="witems" id="witems" />
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th rowspan="2">
+                位置
+            </th>
+            <td>
+                <input class="txt" id="address" type="text" name="address" style="width:400px" value="@WorkContext.Data3" />
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <div style="position: relative; height: 300px">
+                    <div id="map">
+                        <div id="mapContainer" style="width: 100%; height: 400px; position: absolute;z-index: 9;left: 0; right: 0; "></div>
+                        <input type="hidden" id="lng" name="lng" value="" />
+                        <input type="hidden" id="lat" name="lat" value="" />
+                        <script type="text/javascript">
+                            var map;
+                            map = new AMap.Map('mapContainer', {
+                                resizeEnable: true,
+                                zoom: 14,
+                                dragEnable: true,
+                                zoomEnable: true
+                            });
+                            map.plugin('AMap.Geolocation', function () {
+                                geolocation = new AMap.Geolocation({
+                                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                                    timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+                                    maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                                    convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                                    showButton: true,        //显示定位按钮，默认：true
+                                    buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                                    showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                                    showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                                    panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                                    zoomToAccuracy: false      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                                });
+                                map.addControl(geolocation);
+                                AMap.event.addListener(geolocation, 'complete', function (e) {
+                                    map.setCenter(e.position);
+                                    check_location(e);
+                                });//返回定位信息
+                            });
+                            geolocation.getCurrentPosition();
+                            function check_location(e) {
+                                $("#lat").val(e.position.getLat());
+                                $("#lng").val(e.position.getLng());
+                            }
+                            var marker = new AMap.Marker({
+                                position: map.getCenter(),
+                                draggable: true,
+                                cursor: 'move',
+                                raiseOnDrag: true
+                            });
+                            marker.setMap(map);
+                        </script>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                备注
+            </th>
+            <td>
+                <input class="txt" id="remark" type="text" name="remark" style="width:400px" value="" placeholder="备注" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                总金额
+            </th>
+            <td><span id="showallmoney" style="color:#F00;font-size:20px">0.00</span><input type="hidden" id="allmoney" name="allmoney" value="0.00" />元</td>
+        <tr>
+            <th>
+                支付方式
+            </th>
+            <td id="paycon">
+                <input type="radio" name="zhifu" id="qianbao" value="10" checked="checked" />钱包支付<span id="showwallet">0.00</span>元<input type="hidden" id="walletmoney" value="">&nbsp;&nbsp;
+                <input type="radio" name="zhifu" id="xianxia" value="20" />线下支付
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="button" onclick="return checkorder();" />
+            </td>
+        </tr>
+    </table> }
+}

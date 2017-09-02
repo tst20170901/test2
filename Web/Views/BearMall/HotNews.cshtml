@@ -1,0 +1,33 @@
+﻿@model Models.Art_Common
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+    <style type="text/css">
+        html, body {
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","BearMall")" class="back"></a><span>信息详情</span></div>
+    @if (Model != null)
+    {
+        <div class="probd">@Model.Body</div>
+    }
+    @Html.Partial("menu", "1")
+    <script src="/Scripts/jquery-2.1.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".probd img").css("width","100%");
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+﻿@model Models.Links
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#Title").val() == "") {
+                alert("链接名称不能为空！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                链接管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn"><span><b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                刷新</b></span></a><div class="tools_separator">
+                </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn"><span><b
+                    style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                离开</b></span></a><div class="tools_separator">
+                </div>
+        </div>
+        @using (Html.BeginForm())
+        {
+            <div id="articles">
+                <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                    <tr class="gvHeader" style="white-space: nowrap;">
+                        <th scope="col">
+                            ID
+                        </th>
+                        <th scope="col">
+                            链接名称
+                        </th>
+                        <th scope="col">
+                            链接类型
+                        </th>
+                        <th scope="col">
+                            排序
+                        </th>
+                        <th scope="col">
+                            管理操作
+                        </th>
+                    </tr>
+                    @if ((ViewData["list"] as DataTable) != null)
+                    {
+                        foreach (DataRow item in (ViewData["list"] as DataTable).Rows)
+                        {
+                        <tr class="gvRow">
+                            <td style="text-align: left; text-indent: 2em; width: 100px">
+                                @item["ID"].ToString()
+                            </td>
+                            <td align="left">
+                                <a href="@item["Url"].ToString()" target="_blank">@item["Title"].ToString()</a>
+                            </td>
+                            <td align="center" style="width: 120px">
+                                @(item["LinkType"].ToString() == "1" ? "友情链接" : "内部链接")
+                            </td>
+                            <td align="center" style="width: 120px">
+                                @item["SortID"].ToString()
+                            </td>
+                            <td align="center" style="width: 120px">
+                                @Html.ActionLink("编辑", "List", new { tid = item["ID"], act = "edit" }, new { @class = "abtn edit" })
+                                @Html.ActionLink("删除", "List", new { tid = item["ID"], act = "del" }, new { @class = "abtn delete", @click = "return confirm('删除后不可恢复，确定？');" })
+                            </td>
+                        </tr>
+                        }
+                    }
+                </table>
+            </div>
+            <table class="frm">
+                <tr>
+                    <th>
+                        链接名称
+                    </th>
+                    <td>@Html.TextBoxFor(x => x.Title, new { @class = "txt"})<span
+                        style="color: #f00">*@Html.ValidationMessageFor(x => x.Title)</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        链接地址
+                    </th>
+                    <td>@Html.TextBoxFor(x => x.Url, new { @class = "txt", style = "width:580px" })
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        链接类型
+                    </th>
+                    <td>
+                        @Html.DropDownListFor(x => x.LinkType, new List<SelectListItem> { new SelectListItem() { Selected = true, Text = "友情链接", Value = "1" }, new SelectListItem() { Text = "内部链接", Value = "2" } }, new { @class = "ddl" })
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        排序ID
+                    </th>
+                    <td>
+                        @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')" })
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        &nbsp;
+                    </th>
+                    <td>
+                        <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" /><span
+                            style="color: #F00">@Html.ValidationMessage("Error")</span>
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+}

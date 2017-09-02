@@ -1,0 +1,158 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                商品管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="新增" class="tools_btn" onclick="Add('/AliceChopper/ProCase/Add?bid=@AliceDAL.UrlParam.GetIntValue("bid")');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        新增
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("List", "ProCase", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                商品名称
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <th>
+                                所属分类
+                            </th>
+                            <td>
+                                <select class="ddl" id="ParentID" name="ParentID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("ParentID")) { <text> selected="selected" </text>     } value="0">选择分类</option>
+                                    @foreach (Models.Pro_Types item in ViewData["categoryList"] as List<Models.Pro_Types>)
+                                    {
+                                        <option @if (item.ID == AliceDAL.UrlParam.GetIntValue("ParentID")) { <text> selected="selected" </text>     } value="@item.ID">@Html.Raw(AliceDAL.Common.GetHtmlBS(item.Layer - 1))@item.TypeName</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="hidden" id="bid" name="bid" value="@AliceDAL.UrlParam.GetIntValue("bid")" />
+                                <input type="submit" id="btnSearch" class="btnSearch" value="搜索" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        商品名称
+                    </th>
+                    <th scope="col">
+                        价格
+                    </th>
+                    <th scope="col">
+                        排序
+                    </th>
+                    <th scope="col">
+                        类型
+                    </th>
+                    <th scope="col">
+                        类别
+                    </th>
+                    <th scope="col">
+                        状态
+                    </th>
+                    <th scope="col">
+                        所属商户
+                    </th>
+                    <th scope="col">
+                        发布时间
+                    </th>
+                    <th scope="col">
+                        编辑操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td>
+                            @item["Title"].ToString()
+                        </td>
+                        <td style="width: 100px">
+                            @item["Price"].ToString()
+                        </td>
+                        <td align="center" style="width: 100px">
+                            @item["SortID"].ToString()
+                        </td>
+                        <td align="center" style="width: 60px">
+                            @(item["ProType"].ToString() == "0" || item["ProType"].ToString() == "" ? "产品" : "广告")
+                        </td>
+                        <td align="center" style="width: 200px">
+                            @item["TypeName"].ToString()
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @if (item["ProState"].ToString() == "10")
+                            {
+                                <text><span style="color:#047548">上架</span></text>
+                            }
+                            else if (item["ProState"].ToString() == "30")
+                            {
+                                <text><span style="color:#ff0000">下架</span></text>
+                            }
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @item["BusinessName"].ToString()
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @item["CDate"].ToString()
+                        </td>
+                        <td align="center" style="width: 180px">
+                            @if (item["ProState"].ToString() == "10")
+                            {
+                                @Html.ActionLink("下架", "ProChangeState", new { cid = item["ID"], bid = AliceDAL.UrlParam.GetIntValue("bid"), page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            }
+                            else
+                            {
+                                @Html.ActionLink("上架", "ProChangeState", new { cid = item["ID"], bid = AliceDAL.UrlParam.GetIntValue("bid"), page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            }
+                            @Html.ActionLink("编辑", "Edit", new { pid = item["ID"], bid = AliceDAL.UrlParam.GetIntValue("bid") }, new { @class = "abtn edit" })
+                            @Html.ActionLink("删除", "Delete", new { pid = item["ID"] }, new { @class = "abtn delete" })
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,170 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                商家会员卡管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="单加" class="tools_btn" onclick="Add('@Url.Action("VipCardAdd")');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        单加
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="批加" class="tools_btn" onclick="Add('@Url.Action("VipCardBatchAdd")');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        批加
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("VipCardUsedList", "VipCard", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                卡号
+                            </th>
+                            <td>
+                                @Html.TextBox("txtCardNo", AliceDAL.UrlParam.GetStringValue("txtCardNo"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <th>
+                                名称
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <th>
+                                手机号
+                            </th>
+                            <td>
+                                @Html.TextBox("txtMobile", AliceDAL.UrlParam.GetStringValue("txtMobile"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <th>
+                                商家
+                            </th>
+                            <td>
+                                <select class="ddl" id="BusID" name="BusID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("BusID")) { <text> selected="selected" </text>             } value="0">选择商家</option>
+                                    @{
+List<Models.BD_Business> list = ViewData["businessList"] as List<Models.BD_Business>;
+if (list != null)
+{
+    foreach (Models.BD_Business item in list)
+    {
+        <option @if (item.ID == AliceDAL.UrlParam.GetIntValue("BusID")) { <text> selected="selected" </text>             } value="@item.ID">@item.BusinessName</option>
+    }
+
+}
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="submit" id="btnSearch" class="btnSearch" name="btnSearch" value="搜索" />
+                                <input type="submit" id="btnSearch1" name="btnSearch" class="btnSearch" value="导出表格" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        卡号
+                    </th>
+                    <th scope="col">
+                        名称
+                    </th>
+                    <th scope="col">
+                        手机号
+                    </th>
+                    <th scope="col">
+                        车牌号
+                    </th>
+                    <th scope="col">
+                        商家
+                    </th>
+                    <th scope="col">
+                        项目
+                    </th>
+                    <th scope="col">
+                        次数
+                    </th>
+                    <th scope="col">
+                        已使用
+                    </th>
+                    <th scope="col">
+                        兑换日期
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td style="width: 120px;text-align:center">
+                            @item["CardNo"].ToString()
+                        </td>
+                        <td>
+                            @item["Title"].ToString()
+                        </td>
+                        <td style="text-align:center;width:120px;">
+                            @item["Mobile"].ToString()
+                        </td>
+                        <td style="text-align:center;width:80px;">
+                            @item["Plate"].ToString()
+                        </td>
+                        <td style="width: 200px">
+                            @item["BusinessName"].ToString()
+                        </td>
+                        <td style="width: 200px">
+                            @item["ItemTitle"].ToString() (@item["ItemPrice"].ToString())
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @item["CardCount"].ToString()
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @item["UserCount"].ToString()
+                        </td>
+                        <td style="width: 130px;text-align:center">
+                            @item["UseDate"].ToString()
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

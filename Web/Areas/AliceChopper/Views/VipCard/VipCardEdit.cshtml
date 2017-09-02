@@ -1,0 +1,109 @@
+﻿@model Web.Areas.AliceChopper.Models.VipCardSingleModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="@Url.Content("~/Scripts/my97datepicker/WdatePicker.js")"></script>
+    <script type="text/javascript">
+        function randomString() {
+            var $chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";/****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+            var maxPos = $chars.length;
+            var pwd = "";
+            for (i = 0; i < 6; i++) {
+                pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            $("#CardPwd").val(pwd);
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改会员卡
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡号
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardNo, new { @class = "txt" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.CardNo)</span>卡号具有唯一性，不可更改，例如：1602010001
+            </td>
+        </tr>
+        <tr>
+            <th>
+                密码
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardPwd, new { @class = "txt" }) <input type="button" value="随机生成" class="abtn" id="btnsc" name="btnsc" onclick="randomString()" />
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt" }) 不填默认卡系列名称
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                卡系列
+            </th>
+            <td>
+                <select class="ddl" id="TypeID" name="TypeID">
+                    <option @if (0 == Model.TypeID) { <text> selected="selected" </text>      } value="0">选择卡系列</option>
+                    @{
+List<Web.Areas.AliceChopper.Models.VipTypeToBusi> list = ViewData["businessVipTypeList"] as List<Web.Areas.AliceChopper.Models.VipTypeToBusi>;
+if (list != null)
+{
+    foreach (Web.Areas.AliceChopper.Models.VipTypeToBusi item in list)
+    {
+        <optgroup label="@item.BusinessName">
+            @if (item.TypeList != null)
+            {
+                foreach (var ite in item.TypeList)
+                {
+                    <option @if (ite.TypeID == AliceDAL.UrlParam.GetIntValue("TypeID")) { <text> selected="selected" </text>             } value="@ite.TypeID">@ite.Title</option>
+                }
+            }
+
+        </optgroup>
+    }
+
+}
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.SMSContent, new { style = "width:400px;height:100px" })<span style="color: #f00">*【小熊洗车】不能删除，不允许手动换行。不填默认卡系列名称</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                到期日期
+            </th>
+            <td>
+                @Html.TextBox("TDate", AliceDAL.DataType.ConvertToDateTimeStr(Model.TDate), new { css = "txt", style = "width:130px", onfocus = "WdatePicker({el:'TDate'})" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+    </table> }
+}

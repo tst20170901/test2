@@ -1,0 +1,15 @@
+﻿<div class="fz">
+    <div class="fzhead">
+        <h2>
+            企业分站</h2>
+        <a href="/SiteMap" class="more">更多企业分站</a>
+    </div>
+    <div class="fzbd">
+        @{string[] hot = AliceDAL.IniHelper.GetValue("WebInfo", "HotCity").Split(',');
+          foreach (string item in hot)
+          {
+            <a href="@Url.Action("Index", "Home", new { @map = AliceDAL.CityData.GetCityPY(item) })" >@item</a>
+          }
+        }
+    </div>
+</div>

@@ -1,0 +1,174 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                商家优惠券管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="添加" class="tools_btn" onclick="Add('/AliceChopper/Business/CouponsTypeAdd');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        添加
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("CouponsTypeList", "Business", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                名称
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            @{
+                    if (WorkContext.RoleID == 1)
+                    {
+                        <text>
+                            <th>
+                                分公司
+                            </th>
+                            <td>
+                                <select class="ddl" id="BranchID" name="BranchID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>        } value="0">请选择</option>
+                                    @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+                        <option @if (item.ID == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>        } value="@item.ID">@item.Title</option>
+    }
+}
+                                    }
+                                </select>
+                            </td></text>
+                    }
+                            }
+                            <th>
+                                商家
+                            </th>
+                            <td>
+                                @Html.TextBox("txtBusinessName", AliceDAL.UrlParam.GetStringValue("txtBusinessName"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <td>
+                                <input type="submit" id="btnSearch" class="btnSearch" value="搜索" />
+                            </td>
+                            <td><span style="color:#F00">每个活动建立一个优惠券，活动过后及时禁用，防止选项过多</span></td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        名称
+                    </th>
+                    <th scope="col">
+                        商家
+                    </th>
+                    <th scope="col">
+                        所属分公司
+                    </th>
+                    <th scope="col">
+                        金额
+                    </th>
+                    <th scope="col">
+                        状态
+                    </th>
+                    <th scope="col">
+                        有效期
+                    </th>
+                    <th scope="col">
+                        日期
+                    </th>
+                    <th scope="col">
+                        编辑操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    Models.CouponsTypeState cts = (Models.CouponsTypeState)AliceDAL.DataType.ConvertToInt(item["IsSpecial"].ToString());
+                    <tr class="gvRow">
+                        <td>
+                            @item["Title"].ToString()
+                        </td>
+                        <td style="width: 200px">
+                            @item["BusinessName"].ToString()
+                        </td>
+                        <td style="width:150px">
+                            @item["BranchName"].ToString()
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @item["Price"].ToString()
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @switch (cts)
+                            {
+                                case Models.CouponsTypeState.Normal:
+                                    @:<span style="color:#047548">正常</span>
+                                    break;
+                                case Models.CouponsTypeState.Discard:
+                                @:<span style="color:#ff0000">禁用</span>
+                                break;
+                                default:
+                                break;
+                            }
+                        </td>
+                        <td style="width: 80px;text-align:center">
+                            @item["Period"].ToString()/天
+                        </td>
+                        <td style="width: 140px;text-align:center">
+                            @item["CDate"].ToString()
+                        </td>
+                        <td align="center" style="width: 100px">
+                            @Html.ActionLink("编辑", "CouponsTypeEdit", new { cid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            @if (item["IsSpecial"].ToString() == "10")
+                            {
+                                @Html.ActionLink("禁用", "CouponsTypeChangeState", new { cid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            }
+                            else
+                            {
+                                @Html.ActionLink("启用", "CouponsTypeChangeState", new { cid = item["ID"], page = Model.Page.CurrentPageIndex }, new { @class = "abtn edit" })
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

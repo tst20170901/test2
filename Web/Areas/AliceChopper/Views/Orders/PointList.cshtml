@@ -1,0 +1,146 @@
+﻿@{
+    Layout = null;
+}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title></title>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            font-size: 12px;
+        }
+
+        #mapContainer {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .amap-info-content {
+            font-size: 12px;
+        }
+
+        .amap-info-close {
+            top: 10px;
+        }
+        .pd{font-weight:700;color:#F00}
+    </style>
+
+    <script type="text/javascript" src="/Scripts/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="/Scripts/jquery.cookie.js"></script>
+</head>
+<body>
+    <div id="mapContainer"></div>
+    <div style="height:30px;width:100%;line-height:30px;position:absolute;left:0;top:0;background:#FFF;z-index:999;">
+        <span style="color: #0067FF">5min以内</span> <span style="color: #03A01F">5min～10min</span>
+        <span style="color: #CBB711">10min～15min</span> <span style="color: #FF9703">15min～20min</span>
+        <span style="color: #FF03E4">20min～25min</span> <span style="color: #6803FF">25min～30min</span>
+        <span style="color: #FF030F">30min以上</span>
+        自动刷新&nbsp;&nbsp;<input type="checkbox" value="1" id="autoLoadOrderList" />
+        <a href="@Url.Action("PointList")" id="lookOrderList" style="color:Red; font-size:14px; display:none;">新订单,点击查看</a>
+        <script type="text/javascript">
+            var oid = 0;
+            var timeoutId = null;
+            function loadOrderList() {
+                $.get("/AliceChopper/Orders/AjaxList?oid=" + oid + "&time=" + new Date(), function (data) {
+                    if (parseInt(data) > 0) {
+                        oid = parseInt(data);
+                        $("#lookOrderList").attr("style", "color:Red;font-size:14px;");
+                        if (timeoutId != null)
+                            window.clearInterval(timeoutId);
+                    }
+
+                })
+            }
+            function loadMaxOid() {
+                $.get("/AliceChopper/Orders/AjaxList?oid=" + oid + "&time=" + new Date(), function (data) {
+                    if (parseInt(data) > 0) {
+                        oid = parseInt(data);
+                    }
+                })
+            }
+
+            $(function () {
+                loadMaxOid();
+                $("#autoLoadOrderList").click(function () {
+                    if (this.checked) {
+                        $.cookie("autoLoadOrderList", "1", { expires: 1000 });
+                        timeoutId = window.setInterval(loadOrderList, 5000);
+                    }
+                    else {
+                        $.cookie("autoLoadOrderList", null);
+                        if (timeoutId != null)
+                            window.clearInterval(timeoutId);
+                    }
+                })
+                if ($.cookie("autoLoadOrderList") == "1") {
+                    $("#autoLoadOrderList").attr("checked", "true");
+                    timeoutId = window.setInterval(loadOrderList, 5000);
+                }
+            })
+        </script>
+    </div>
+    <script type="text/javascript">
+        var cluster, markers = [];
+        var map = new AMap.Map("mapContainer", {
+            resizeEnable: true,
+            zoom: 13
+        });
+        var ols = @ViewBag.OrderPoints;
+        var wls = @ViewBag.WorkList;
+        var infoWindow = new AMap.InfoWindow({ offset: new AMap.Pixel(0, -30) });
+        for (var i = 0, marker; i < ols.length; i++) {
+            var marker = new AMap.Marker({
+                icon: ols[i].Icon,
+                position: ols[i].Pos
+                //map: map
+            });
+            marker.content = '姓名：<b>' + ols[i].UserName + '</b><br/><a href="/AliceChopper/Orders/OrderInfo?oid='+ols[i].ID+'" target="_blank" class="pd">派单</a><br/>手机：<b>' + ols[i].Mobile + '</b><br/>明细：' + ols[i].Details + '<br/>' + ols[i].Address;
+            marker.on('click', markerClick);            
+            markers.push(marker);
+            //marker.emit('click', { target: marker });
+        }
+        for (var j = 0, marker1; j < wls.length; j++) {
+            var marker1 = new AMap.Marker({
+                icon: '/Content/images/c.gif',
+                position: wls[j].Pos,
+                map: map
+            });
+            marker1.content = '姓名：<b>' + wls[j].Title + '</b><br/>电话：<b>' + wls[j].Phone + '</b><br/>订单数：<b>'+wls[j].OrderCount+'</b>';
+            marker1.on('click', markerClick1);
+            //marker1.emit('click', { target: marker1 });
+        }
+        function markerClick1(e) {
+            infoWindow.setContent(e.target.content);
+            infoWindow.open(map, e.target.getPosition());
+        }
+        function markerClick(e) {
+            infoWindow.setContent(e.target.content);
+            infoWindow.open(map, e.target.getPosition());
+        }
+        addCluster();
+        // 添加点聚合
+        function addCluster() {
+            if (cluster) {
+                cluster.setMap(null);
+            }
+            map.plugin(["AMap.MarkerClusterer"], function() {
+                cluster = new AMap.MarkerClusterer(map, markers);
+            });
+        }
+        map.setFitView();
+    </script>
+</body>
+</html>

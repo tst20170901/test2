@@ -1,0 +1,38 @@
+﻿@{
+    Layout = "~/Areas/BusinessManger/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    <table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    常用功能
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                个人信息
+            </th>
+            <td>
+                <a href="@Url.Action("EditPassword", "UsersAdmin")">修改密码</a>&nbsp;&nbsp;<a href="@Url.Action("EditInfo", "UsersAdmin")">基本信息</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商品管理
+            </th>
+            <td>
+                <a href="@Url.Action("CategoryList", "UsersAdmin")">商品分类</a>&nbsp;&nbsp;<a href="@Url.Action("ProductList", "UsersAdmin")">商品管理</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                订单管理
+            </th>
+            <td>
+                <a href="@Url.Action("OrdersList", "UsersAdmin")">订单管理</a>
+            </td>
+        </tr>
+    </table>
+}

@@ -1,0 +1,15 @@
+﻿@model Models.Art_Common
+@{Layout = "~/Views/Shared/Templates.cshtml";}
+@section body{
+   <div class="sm">
+    <div class="wcon">
+        <div class="wconbd">
+            <h1 class="tit">@ViewBag.dq@Model.Title</h1>
+            <div class="msg">
+                发布者：@Model.Author &nbsp;&nbsp;&nbsp;发布时间：@Model.CDate.ToString() &nbsp;&nbsp;&nbsp;阅读：<span style="color: #F00">@Model.Hit.ToString()</span>次
+            </div>
+            <div class="txtbd">@Html.Raw(Model.Body)</div>
+        </div>
+    </div>
+</div>
+}

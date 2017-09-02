@@ -1,0 +1,116 @@
+﻿@model Models.Business_Types
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link href="@Url.Content("~/Content/css/uploadify.css")" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        //防止chrome缓存jquery.uploadify.js文件，而引起chrome崩溃
+        document.write("<script type='text/javascript' src='/Scripts/jquery.uploadify.js?" + new Date() + "'></s" + "cript>");
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            $("#uploadify").uploadify({
+                'formData': { 'loginid': '@WorkContext.LoginID', 'password': '@WorkContext.Password' },
+                'swf': '/Content/flash/uploadify.swf',
+                'uploader': '/Tools/Upload?operation=img',
+                'buttonText': '上传图片',
+                'height': 24,
+                'width': 80,
+                'fileTypeDesc': 'Image Files',
+                'fileTypeExts': '*.jpg;*.jpeg;*.png;*.gif;*.jpg;',
+                'fileSizeLimit': '900000',
+                'auto': true,
+                'multi': false,
+                'removeTimeout': 2,
+                'onUploadSuccess': function (file, data, response) {
+                    if (data == "-1")
+                        alert('上传图片不能为空');
+                    else if (data == "-2")
+                        alert('上传图片的类型不允许');
+                    else {
+                        $(".uploadPreview").empty().append("<img width=\"88\" height=\"88\" src=\"" + data + "\"  />");
+                        $("#Img").val(data);
+                        $(".upload span[htmlFor='Img']").empty();
+                    }
+                }
+            });
+        });
+        function checkForm() {
+            if ($("#TypeName").val() == "") {
+                alert("分类名称不能为空！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改分类
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                分类名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.TypeName, new { @class = "txt", style = "width:200px" })@Html.ValidationMessageFor(x => x.TypeName)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                所属分类
+            </th>
+            <td>
+                <select class="ddl" id="ParentID" name="ParentID">
+                    <option @if (0 == Model.ParentID) { <text> selected="selected" </text>  } value="0">顶层分类</option>
+                    @foreach (Models.Business_Types item in ViewData["busitypeList"] as List<Models.Business_Types>)
+                    {
+                        <option @if (item.ID == Model.ParentID) { <text> selected="selected" </text>  } value="@item.ID">@Html.Raw(AliceDAL.Common.GetHtmlBS(item.Layer - 1))@item.TypeName</option>
+                    }
+                </select>@Html.ValidationMessageFor(x => x.ParentID)
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 分类缩略图
+             </th>
+             <td>
+                 <div class="upload">
+                     <div class="uploadPreview">
+                         <img width="88" height="88" src="@Model.Img" alt="暂无图片" title="暂无图片" />
+                     </div>
+                     <div class="uploadProgressBar" id="uploadify-queue">
+                     </div>
+                     <div class="uploadBut">
+                         <input type="file" name="uploadify" id="uploadify" />
+                     </div>
+                     @Html.HiddenFor(model => model.Img)
+                     <div style="position: absolute; top: 30px; left: 180px;">
+                     </div>
+                 </div>
+             </td>
+         </tr>
+        <tr>
+            <th>
+                排序ID
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>}}

@@ -1,0 +1,68 @@
+﻿@model Web.Models.CouponIndexModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1s")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#isonwork").change(function () {
+                if (this.checked) {
+                    $.post("/BearClient/PlateWork", { OnWork: 0 }, function (data) {
+                        showToast("开启后，其他用户可查询到该手机号码");
+                    }, "json");
+                } else {
+                    $.post("/BearClient/PlateWork", { OnWork: 10 }, function (data) {
+                        showToast("关闭后，其他用户不可查询到该手机号码");
+                    }, "json");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="toppanel">
+        <div style="padding-top:50px;text-align:center;">
+            <img src="/Content/bearmall/images/avart.png" width="50" height="50" />
+            <p class="userinfoname">@(WorkContext.Data1 == "" ? (Model.OrderInfo == null ? "" : Model.OrderInfo.UserName) : WorkContext.Data1)的账户</p>
+        </div>
+        <div class="yue">
+            <p style="text-align:center">帐户余额（元）<br />@Model.Money</p>
+        </div>
+        <div class="chongzhi">
+            <a href="@Url.Action("Index", "VipCardList")">充值</a>
+        </div>
+    </div>
+    <div class="h10p g"></div>
+    <div class="userinfolist">
+        <a href="@Url.Action("OrderList", "BearClient")"><i class="o"></i>我的订单</a>
+        <a href="@Url.Action("List", "Chargelist")"><i class="j"></i>消费记录</a>
+        <a href="tel:0318-8888235"><i class="d"></i>联系我们</a>
+        <a href="@Url.Action("ListMoveCar", "Chargelist")"><i class="j"></i>移车记录</a>
+        <a href="@Url.Action("Index", "Login")"><i class="tc"></i>退出登录</a>
+        <div>
+            <i class="d"></i>开启查询<div class="weui_cell_swith">
+                @if (ViewBag.IsCheck <= 0)
+                {
+                    <input class="chk_3" type="checkbox" id="isonwork" checked="checked" /><label for="isonwork"></label>
+                }
+                else
+                {
+                    <input class="chk_3" type="checkbox" id="isonwork" /><label for="isonwork"></label>
+                }
+            </div>
+
+        </div>
+    </div>
+    @Html.Partial("menu", "4")
+</body>
+</html>

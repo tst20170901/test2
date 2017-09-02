@@ -1,0 +1,68 @@
+﻿@model List<Models.Art_Common_Types>
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                分类管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn"><span><b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                刷新</b></span></a><div class="tools_separator">
+                </div>
+            <a title="新增" class="tools_btn" onclick="Add('/AliceChopper/NewsType/Add?ParentID=@AliceDAL.UrlParam.GetStringValue("ParentID")');">
+                <span><b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                    新增</b></span></a><div class="tools_separator">
+                    </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn"><span><b
+                    style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                离开</b></span></a><div class="tools_separator">
+                </div>
+        </div>
+        <div id="articles">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        ID
+                    </th>
+                    <th scope="col">
+                        分类名称
+                    </th>
+                    <th scope="col">
+                        排序
+                    </th>
+                    <th scope="col">
+                        管理操作
+                    </th>
+                </tr>
+                @foreach (Models.Art_Common_Types item in Model)
+                {
+                    <tr class="gvRow">
+                        <td style="text-align: left; text-indent: 2em; width: 100px">
+                            @item.Path
+                        </td>
+                        <td align="left">
+                            @if (item.Layer == 1)
+                            {<div class="c1">@item.TypeName</div>}
+                            else
+                            {<div style="text-indent:@{@item.Layer}em">@item.TypeName</div>}
+                        </td>
+                        <td align="center" style="width: 120px">
+                            @item.SortID
+                        </td>
+                        <td align="center" style="width: 120px">
+                            @Html.ActionLink("编辑", "Edit", new { tid = item.ID, ParentID = @AliceDAL.UrlParam.GetStringValue("ParentID") }, new { @class = "abtn edit" })
+                            @Html.ActionLink("删除", "Delete", new { tid = item.ID }, new { @class = "abtn delete" })
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+}

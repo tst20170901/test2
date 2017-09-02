@@ -1,0 +1,38 @@
+﻿@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+    <style type="text/css">
+        html, body {
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","BearMall")" class="back"></a><span>商家分类</span></div>
+    <div class="container">
+        <ul class="classlist">
+            @{ List<Models.Business_Types> list = DAL.Business_Types.List().FindAll(x => x.ParentID == 0);
+             for (int i = 0; i < list.Count; i++)
+             {
+                <li>
+                    <a href="/BearMall/BusinessType?bid=@list[i].ID.ToString()">
+                        <img src="@list[i].Img" />
+                        <p>@list[i].TypeName</p>
+                    </a>
+                </li>
+             }
+            }
+        </ul>
+        <div class="clearfix"></div>
+    </div>
+    @Html.Partial("menu", "1")
+</body>
+</html>

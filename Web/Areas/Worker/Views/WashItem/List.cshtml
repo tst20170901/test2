@@ -1,0 +1,130 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                服务项目管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="新增" class="tools_btn" onclick="Add('/AliceChopper/WashItem/Add');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        新增
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("List", "WashItem", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                项目名称
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <td>
+                                <input type="submit" id="btnSearch" class="btnSearch" value="搜索" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        项目名称
+                    </th>
+                    <th scope="col">
+                        价格
+                    </th>
+                    <th scope="col">
+                        排序
+                    </th>
+                    <th scope="col">
+                        状态
+                    </th>
+                    <th scope="col">
+                        添加时间
+                    </th>
+                    <th scope="col">
+                        编辑操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td align="left">
+                            &nbsp;&nbsp;@item["Title"].ToString()
+                        </td>
+                        <td align="center">
+                            @item["Price"].ToString()
+                        </td>
+                        <td style="width: 200px">
+                            @item["SortID"].ToString()
+                        </td>
+                        <td style="width: 60px;text-align:center">
+                            @if (item["ItemState"].ToString() == "0")
+                            {
+                                <text><span style="color:#F00">禁用</span></text>
+                            }
+                            else
+                            {
+                                <text>正常</text>
+                            }
+
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @AliceDAL.DataType.ConvertToDateTimeStr(item["CDate"])
+                        </td>
+                        <td align="center" style="width: 180px">
+                            @Html.ActionLink("编辑", "Edit", new { fid = item["ID"] }, new { @class = "abtn edit" })
+                            @if (item["ItemState"].ToString() == "0")
+                            {
+                                @Html.ActionLink("启用", "ChangeState", new { fid = item["ID"] }, new { @class = "abtn edit" })
+                            }
+                            else
+                            {
+                                @Html.ActionLink("禁用", "ChangeState", new { fid = item["ID"] }, new { @class = "abtn edit" })
+                            }
+                            @Html.ActionLink("删除", "Delete", new { fid = item["ID"] }, new { @class = "abtn delete", @onclick = "return confirm('删除后不可恢复，确定？');" })
+
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

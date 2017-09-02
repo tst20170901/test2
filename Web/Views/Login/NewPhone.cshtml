@@ -1,0 +1,245 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <style type="text/css">
+        html, body {
+            background: #253D69;
+            font-size: 18px;
+        }
+
+        .phone {
+            margin: auto;
+            width: 15.2rem;
+        }
+
+            .phone .phone-send {
+                width: 15.2rem;
+                margin: auto;
+                background: #253D69;
+                height: 10rem;
+                margin-top: -.5rem;
+                margin-left: .3rem;
+                position: relative;
+            }
+
+        #easy-login {
+            position: relative;
+            width: 11rem;
+            height: 5rem;
+            top: .5rem;
+            left: 2rem;
+        }
+
+        .EasyLogin_Mobile_Mobile {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .EasyLogin_row {
+            width: 100%;
+            height: 2.5rem;
+        }
+
+        .EasyLogin_Mobile_tit {
+            display: none;
+        }
+
+        input[name=mobile] {
+            position: absolute;
+            top: .2rem;
+            height: 2.3rem;
+            left: .5rem;
+            width: 9.6rem;
+            border: none;
+            padding: 0;
+            font-size: .7rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+
+        .EasyLogin_send {
+            position: absolute;
+            top: -.15rem;
+            color: #fff;
+            left: 6rem;
+            text-decoration: none;
+            -webkit-transform: scale(.7,.7);
+            transform: scale(.7,.7);
+            width: 5rem;
+            text-align: center;
+            height: 2.9rem;
+            line-height: 2.9rem;
+            background-color: #D3648F;
+            border-radius: .4rem;
+            font-size: .8rem;
+        }
+
+        .EasyLogin_row {
+            width: 100%;
+            height: 2.5rem;
+        }
+
+        input[name=code] {
+            position: absolute;
+            top: 2.85rem;
+            width: 9.6rem;
+            border: none;
+            height: 2.3rem;
+            font-size: .7rem;
+            left: .5rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+
+        .phone .phone-send .get-now {
+            position: absolute;
+            width: 8rem;
+            height: 2.1rem;
+            top: 6.6rem;
+            left: 3.5rem;
+            background-color: #ffcf0e;
+            border-radius: .3rem;
+            text-align: center;
+            line-height: 2.1rem;
+            font-size: .7rem;
+        }
+
+        .rules {
+            padding: 10px 20px;
+            color: #ccc;
+        }
+
+            .rules .rules-title {
+                margin-left: 2rem;
+                font-size: .7rem;
+                border-bottom: solid .05rem;
+                margin-right: 2rem;
+                margin-top: 1rem;
+                margin-bottom: .5rem;
+            }
+
+            .rules .rules-content {
+                margin-left: 2rem;
+                margin-right: 1rem;
+                font-size: .6rem;
+            }
+    </style>
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#mobile").val() == "") {
+                showToast("手机号不能为空！");
+                return;
+            } else if ($("#code").val() == "") {
+                showToast("验证码不能为空！");
+                return;
+            } else {
+                $.post("/Login/NewPhone", { LoginID: $("#mobile").val(), password: $("#code").val() }, function (data) {
+                    showToast(data.msg);
+                    if (data.msg == "OK") {
+                        location.href = data.url;
+                    }
+                });
+            }
+        }
+    </script>
+
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken();
+        <div style="position:relative">
+            <img src="@Url.Content("~/Content/bear/images/xc.jpg")" style="width:100%;height:auto" />
+        </div>
+        <div class="phone">
+            <div class="phone-send">
+                <div id="easy-login">
+                    <div>
+                        <div class="EasyLogin_Mobile_Mobile">
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">手机号</div>
+                                <input name="mobile" placeholder="请输入手机号" type="tel" id="mobile" maxlength="11">
+                                <a class="J_send EasyLogin_send" href="javascript:void(0);" onclick="sendmessage()" id="sendmsg">发送验证码</a>
+                            </div>
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">验证码</div>
+                                <input name="code" placeholder="请输入验证码" type="number" id="code" maxlength="4">
+                                <input type="hidden" value="1" name="channel">
+                                <input type="hidden" value="304" name="type">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="get-now" id="send" onclick="checkForm()">领30元优惠券</a>
+            </div>
+        </div>
+        @*<div class="rules"><div class="rules-title">活动规则</div><div class="rules-content">1.用户输入手机号，通过验证后，即可领取电影选座抵用券；新用户23.9元，老用户5元，数量有限，抢完为止；<br>2.新用户领券成功后，进入电影频道在线选座购票，24.9元《卧虎藏龙》专场购买影票可使用23.9元抵用券，立享1元看电影特权（新用户指在大众点评没有消费行为的用户）；<br>3.同一个用户仅能领取1次抵用券，若产生退款，过期等情况，将无法再次领取（同一用户名、手机号、设备、支付账号、银行卡号等均认为同一用户）；<br>4.该电影选座抵用券仅限大众点评最新版APP使用；<br>5.若出现违背上述活动规则、恶意刷单、作弊购买等非正常方式参与活动的行为，大众点评有权取消订单，回收您的所得特权，同时取消您的活动参与资格；<br>6.本活动仅限标有“卧虎24.9元”标签的特定场次参与，最终解释权归大众点评电影频道所有。</div></div>*@
+        <div style="position:relative">
+            <img src="@Url.Content("~/Content/bear/images/bottom.jpg")" style="width:100%;height:auto" />
+        </div>
+        <script type="text/javascript">
+            var countdown = 90;
+            var ttt;
+            function sendmessage() {
+                if ($("#mobile").val() == "") {
+                    showToast("手机号不能为空！");
+                    return;
+                }
+                settime();
+            }
+
+            function settime() {
+                if (countdown == 0) {
+                    $("#sendmsg").attr("onclick", "sendmessage()");
+                    $("#sendmsg").text("发送验证码");
+                    countdown = 90;
+                } else {
+                    if (countdown == 90) {
+                        sendmsg();
+                    }
+                    $("#sendmsg").removeAttr("onclick");
+                    $("#sendmsg").text("重新发送(" + countdown + ")");
+                    countdown--;
+                }
+                ttt = setTimeout(function () {
+                    settime();
+                }, 1000);
+                if (countdown == 0) {
+                    $("#sendmsg").attr("onclick", "sendmessage()");
+                    $("#sendmsg").text("发送验证码");
+                    countdown = 90;
+                    clearTimeout(ttt);
+                }
+            }
+            function sendmsg() {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/Login/NewPhoneSendMsg/",
+                    data: { loginID: $("#mobile").val() },
+                    success: function (data) {
+                        showToast(data.msg);
+                    },
+                    error: function (error) {
+                        showToast("网络错误，请重试");
+                    }
+                });
+            }
+        </script>
+    }
+</body>
+</html>

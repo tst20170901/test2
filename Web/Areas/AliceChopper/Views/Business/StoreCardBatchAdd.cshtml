@@ -1,0 +1,108 @@
+﻿@model Web.Areas.AliceChopper.Models.StoreCardBatchModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        function randomString() {
+            var $chars = "ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678";/****默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1****/
+            var maxPos = $chars.length;
+            var pwd = "";
+            for (i = 0; i < 6; i++) {
+                pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            $("#CardPwd").val(pwd);
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    批量添加储值卡
+                </h1>
+            </td>
+        </tr>
+        <tr><td colspan="2" style="color:#F00">卡号具有唯一性，且不能多于10位，故单次添加卡不能多于10000张，并且当天分多次添加时请依次累加，如第一次添加1000，则序号为1~1000；第二次添加时，则从1001开始。若当天添加超过10000张，请修改前缀以保证唯一性！</td></tr>
+        <tr>
+            <th>
+                卡号前缀
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardNoPrefix, new { @class = "txt" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.CardNoPrefix)</span>前缀为年月日，若要修改，建议日期累加。
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡号起始
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardNoStart, new { @class = "txt", @maxlength = "4", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                卡号结尾
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.CardNoEnd, new { @class = "txt", @maxlength = "4", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')" })
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 卡名称
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.Title, new { @class = "txt" })
+             </td>
+         </tr>
+        <tr>
+            <th>
+                储值金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Price, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家
+            </th>
+            <td>
+                <select class="ddl" id="BusinessID" name="BusinessID">
+                    <option @if (0 == Model.BusinessID) { <text> selected="selected" </text>             } value="0">选择商家</option>
+                    @{
+List<Models.BD_Business> list = ViewData["businessList"] as List<Models.BD_Business>;
+if (list != null)
+{
+    foreach (Models.BD_Business item in list)
+    {
+        <option @if (item.ID == Model.BusinessID) { <text> selected="selected" </text>             } value="@item.ID">@item.BusinessName</option>
+    }
+
+}
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.SMSContent, new { style = "width:400px;height:100px" })<span style="color: #f00">*【小熊洗车】不能删除，不允许手动换行。</span>
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+    </table> }
+}

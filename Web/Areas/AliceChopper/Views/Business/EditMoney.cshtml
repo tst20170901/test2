@@ -1,0 +1,73 @@
+﻿@model Web.Areas.AliceChopper.Models.BD_BusinessModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改余额
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家ID
+            </th>
+            <td>
+                @Html.DisplayFor(x => x.ID)<span style="color: #f00">*此修改涉及用户余额变动，请慎重修改，以免引起不必要纠纷</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家帐号
+            </th>
+            <td>
+                @Html.DisplayFor(x => x.LoginID)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家名称
+            </th>
+            <td>
+                @Html.DisplayFor(x => x.BusinessName)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家余额
+            </th>
+            <td>
+                @Html.DisplayFor(model => model.Wallet, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                变动金额
+            </th>
+            <td>
+                @Html.TextBoxFor(model => model.Money, new { @class = "txt" })<span style="color: #f00">*正值为增加金额，负值为减少金额</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                修改原因
+            </th>
+            <td>
+                @Html.TextBoxFor(model => model.Remark, new { @class = "txt" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Remark)</span>必填
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+    </table> }
+}

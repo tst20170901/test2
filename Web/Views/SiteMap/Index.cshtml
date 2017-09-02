@@ -1,0 +1,26 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <link type="text/css" href="@Url.Content("~/Content/xiaoxiong/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/xiaoxiong/css/main.css")" rel="stylesheet" />
+</head>
+<body>
+    <div class="sm">
+        <div class="all-city">
+            <h2>
+                按照拼音首字母选择</h2>
+            <a href="http://www.xiaoxiongxiche.com" style="font-size:14px;font-weight:700" title="@ViewBag.Title">返回首页</a>
+            <dl>
+                @Html.Raw(ViewBag.Citys)
+            </dl>
+        </div>
+    </div>
+</body>
+</html>

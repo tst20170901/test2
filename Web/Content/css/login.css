@@ -1,0 +1,27 @@
+@charset "utf-8";
+html{height:100%;overflow:hidden;background:url(../images/login.jpg) top repeat}
+body{margin:0px;padding:0px;font-family:"Microsoft Yahei","\5b8b\4f53","微软雅黑","黑体",Arial, Helvetica, Verdana, sans-serif;color:#000;overflow:hidden;background:url(../images/login.jpg) top repeat}
+body a{outline:none;blr:expression(this.onFocus=this.blur())}
+img{border:0px}
+a:link{color:#222;text-decoration:none}
+a:visited{color:#222;text-decoration:none}
+a:hover{color:#222;text-decoration:none}
+a:active{color:#222;text-decoration:none}
+.logo{width:593px;height:70px;background:url(../images/logo.png) no-repeat center;margin:auto;margin-top:100px}
+.login{width:400px;height:300px;margin:auto;margin-top:50px;background:url(../images/bg.png) no-repeat center}
+.username{border:0;height:35px;width:300px;background:transparent;background: url(../images/ipt1.png) no-repeat scroll 0 0 transparent}
+.userpwd{border:0;height:35px;width:300px;background:transparent;background: url(../images/ipt1.png) no-repeat scroll 0 0 transparent}
+.uintput{border:0;line-height:18px;font-size:14px;height:18px;_height:17px;width:284px;padding:8px;background:transparent}
+.login .uintput:focus{background:url(../images/ipt.png) no-repeat;_background-attachment:fixed}
+.login-con{width:356px;margin:auto}
+.lt{font-size:14px;line-height:40px;text-align:right;padding-right:10px}
+.validate{float:left;width:215px;border:0;height:35px;background:transparent;background: url(../images/va1.png) no-repeat scroll 0 0 transparent}
+.valipt{border:0;line-height:18px;font-size:14px;height:18px;_height:17px;width:199px;padding:8px;background:transparent}
+.valipt:focus{background:url(../images/va.png) no-repeat;_background-attachment:fixed}
+.valimg{float:left;margin-left:5px;width:80px;height:35px}
+.btn{display:block;width:114px;height:38px;overflow:hidden;background:url(../images/btn1.png) no-repeat center}
+.btn:hover{background:url(../images/btn2.png) no-repeat center}
+.btn:active{background:url(../images/btn3.png) no-repeat center}
+.hp{height:80px;clear:both;overflow:hidden}
+#msg{color:#F00}
+

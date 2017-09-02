@@ -1,0 +1,142 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                洗车工管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="新增" class="tools_btn" onclick="Add('/AliceChopper/WorkShop/Add');">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/application_add.png")') 50% 4px no-repeat;">
+                        新增
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("List", "WorkShop", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            <th>
+                                洗车工名称
+                            </th>
+                            <td>
+                                @Html.TextBox("txtTitle", AliceDAL.UrlParam.GetStringValue("txtTitle"), new { @class = "txt", style = "width:100px" })
+                            </td>
+                            <td>
+                                <input type="submit" id="btnSearch" class="btnSearch" value="搜索" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        姓名
+                    </th>
+                    <th scope="col">
+                        手机
+                    </th>
+                    <th scope="col">
+                        状态
+                    </th>
+                    <th scope="col">
+                        服务距离
+                    </th>
+                    <th scope="col">
+                        服务地区
+                    </th>
+                    <th scope="col">
+                        位置发送
+                    </th>
+                    <th scope="col">
+                        添加时间
+                    </th>
+                    <th scope="col">
+                        编辑操作
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    Models.WorkShopState wss = (Models.WorkShopState)AliceDAL.DataType.ConvertToInt(item["WorkState"].ToString());
+                    <tr class="gvRow">
+                        <td align="left">
+                            &nbsp;&nbsp;@item["Title"].ToString()
+                        </td>
+                        <td style="width:160px">
+                            @item["Mobile"].ToString()
+                        </td>
+                        <td style="width:100px">
+                            @switch (wss)
+                            {
+                                case Models.WorkShopState.Close:
+                                    @:停工
+                                    break;
+                                case Models.WorkShopState.Open:
+                                @:空闲
+                                    break;
+                                case Models.WorkShopState.Busy:
+                                @:忙碌
+                                    break;
+                                case Models.WorkShopState.Rest:
+                                @:休息
+                                    break;
+                                default:
+                                    break;
+                            }
+                        </td>
+                        <td align="center">
+                            @item["WorkRadius"].ToString() 米
+                        </td>
+                        <td style="width: 200px">
+                            @item["Province"].ToString()@item["City"].ToString()@item["District"].ToString()
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @AliceDAL.DataType.ConvertToDateTimeStr(item["ReDate"])
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @AliceDAL.DataType.ConvertToDateTimeStr(item["CDate"])
+                        </td>
+                        <td align="center" style="width: 120px">
+                            @Html.ActionLink("编辑", "Edit", new { fid = item["ID"] }, new { @class = "abtn edit" })
+                            @Html.ActionLink("删除", "Delete", new { fid = item["ID"] }, new { @class = "abtn delete" })
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,19 @@
+﻿@model String
+<div class="bottommenu">
+    <nav>
+        <ul class="box">
+            <li>
+                <a href="/BearMall/" @{if (Model == "1" || String.IsNullOrEmpty(Model)) { <text> class="on" </text>   }}><i class="icon iconfont">&#xe602;</i>首页</a>
+            </li>
+            <li>
+                <a href="/VipCardList/" @{if (Model == "2" || String.IsNullOrEmpty(Model)) { <text> class="on" </text> }}><i class="icon iconfont">&#xe603;</i>充值</a>
+            </li>
+            <li>
+                <a href="/BearClient/OrderList/" @{if (Model == "3" || String.IsNullOrEmpty(Model)) { <text> class="on" </text> }}><i class="icon iconfont">&#xe600;</i>订单</a>
+            </li>
+            <li>
+                <a href="/BearClient/UserInfo/" @{if (Model == "4" || String.IsNullOrEmpty(Model)){ <text> class="on" </text>}}><i class="icon iconfont">&#xe601;</i>我的</a>
+            </li>
+        </ul>
+    </nav>
+</div>

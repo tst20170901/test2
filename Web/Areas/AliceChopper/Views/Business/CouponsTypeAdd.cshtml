@@ -1,0 +1,71 @@
+﻿@model Web.Areas.AliceChopper.Models.CouponsTypeModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加优惠券
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Price, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                有效期
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Period, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px", maxlength = "4`" }) 天<span style="color: #f00">*有效期自发券之日起。</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                商家
+            </th>
+            <td>
+                <select class="ddl" id="BusinessID" name="BusinessID">
+                    <option @if (0 == Model.BusinessID) { <text> selected="selected" </text>   } value="0">选择商家</option>
+                    @{
+List<Models.BD_Business> list = ViewData["businessList"] as List<Models.BD_Business>;
+if (list != null)
+{
+    foreach (Models.BD_Business item in list)
+    {
+        <option @if (item.ID == Model.BusinessID) { <text> selected="selected" </text>   } value="@item.ID">@item.BusinessName</option>
+    }
+
+}
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" />
+            </td>
+        </tr>
+    </table> }
+}

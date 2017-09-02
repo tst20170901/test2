@@ -1,0 +1,92 @@
+﻿@model Models.AB_SinglePage
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script src="@Url.Content("~/Content/kindeditor/kindeditor-min.js")" type="text/javascript"></script>
+    <script type="text/javascript">
+        KindEditor.ready(function (K) {
+            var options = {
+                uploadJson: '/Content/kindeditor/asp.net/upload_json.ashx',
+                fileManagerJson: '/Content/kindeditor/asp.net/file_manager_json.ashx',
+                afterBlur: function () { editor.sync(); },
+                allowFileManager: true
+            };
+            window.editor = K.create('#Body', options);
+        });
+    </script>
+    <script type="text/javascript">
+
+        function checkform() {
+            if ($("#Title").val() == "") {
+                alert("请输入单页名称！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加单页</h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                单页名称
+            </th>
+            <td>@Html.TextBoxFor(x => x.Title, new { @class = "txt", style = "width:580px" })
+                <span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                网页标题
+            </th>
+            <td>@Html.TextBoxFor(model => model.TitleWeb, new { @class = "txt", style = "width:580px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                网页关键字
+            </th>
+            <td>@Html.TextBoxFor(model => model.KeyWords, new { @class = "txt", style = "width:580px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                网页描述
+            </th>
+            <td>@Html.TextBoxFor(model => model.Description, new { @class = "txt", style = "width:580px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                排序ID
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                单页详情
+            </th>
+            <td>
+                @Html.TextAreaFor(model => model.Body, new { style = "width: 99%;height: 300px; visibility: hidden;" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checkform();" />
+            </td>
+        </tr>
+    </table> }
+}

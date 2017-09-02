@@ -1,0 +1,63 @@
+﻿<div class="h40p"></div>
+<div class="bottomarraw"></div>
+<div class="copyright">
+    <div class="sm">
+        @Html.Partial("SubWeb")
+        <div class="qcode">
+            <img src="/Content/xiaoxiong/images/qcode.jpg" width="138" height="138" alt="@ViewBag.Title" title="@ViewBag.Title" />
+            <p>微信公众号：xxxc-2015</p>
+        </div>
+        <div class="footmsg">
+            <ul class="botmenu">
+                <li><a href="/">小熊首页</a></li>
+                <li class="spit">|</li>
+                <li>@Html.ActionLink("下单流程", "", "About", new { id = "7" }, new { })</li>
+                <li class="spit">|</li>
+                <li>@Html.ActionLink("免责声明", "", "About", new { id = "9" }, new { })</li>
+                <li class="spit">|</li>
+                <li>@Html.ActionLink("诚聘英才", "", "About", new { id = "10" }, new { })</li>
+                <li class="spit">|</li>
+                <li>@Html.ActionLink("加入我们", "", "About", new { id = "5" }, new { })</li>
+                <li class="spit">|</li>
+                <li>@Html.ActionLink("联系我们", "", "About", new { id = "11" }, new { })</li>
+            </ul>
+            <div class="logobottom">
+                小熊洗车——专属您的移动洗车顾问<p>咨询热线：0318-8888235</p>
+                <p>地址：@AliceDAL.IniHelper.GetValue("WebInfo", "Address")</p>
+                <p>版权所有：@AliceDAL.IniHelper.GetValue("WebInfo", "CompanyName") &nbsp;&nbsp;&nbsp;技术支持：北京祥云智锐科技有限公司</p>
+                <p style="display:none">
+                    @{DataTable dt = DAL.PageModel.DateList("Links", "LinkType=1", "ID", 0); if (dt != null)
+                    {
+                        foreach (DataRow item in dt.Rows)
+                        {
+                            <a href="@item["Url"].ToString()" target="_blank" style="color:#FFF">@item["Title"].ToString()</a> @:&nbsp;
+                  }
+                    }}
+                </p>
+                <script>
+                    var _hmt = _hmt || [];
+                    (function () {
+                        var hm = document.createElement("script");
+                        hm.src = "//hm.baidu.com/hm.js?c81865ecf24118f64607e30f92a33450";
+                        var s = document.getElementsByTagName("script")[0];
+                        s.parentNode.insertBefore(hm, s);
+                    })();
+                </script>
+            </div>
+
+        </div>
+        <div class="fn-clear"></div>
+    </div>
+</div>
+<style type="text/css">
+    .leftQRcode {
+        position: fixed;
+        bottom: 16px;
+        right: 20px;
+    }
+</style>
+<div class="leftQRcode">
+    <div class="leftQRcode_img">
+        <img src="/Content/images/QRcode_zhaoshangjiameng.png" style="width:130px; height:390px" />
+    </div>
+</div>

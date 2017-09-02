@@ -1,0 +1,130 @@
+﻿@model Web.Areas.AliceChopper.Models.ChargeForUserModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#Mobile").val() == "") {
+                alert("手机号码不能为空！");
+                return false;
+            } else if ($("#Code").val() == "") {
+                alert("验证码不能为空！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    手动充值
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机号码
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Mobile, new { @class = "txt", style = "width:200px" }) <input id="btnSure" class="abtn" type="button" value="验证码" onclick="sendmessage(this)" /><span style="color: #f00">*@Html.ValidationMessageFor(model => model.Mobile)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                验证码
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Code, new { @class = "txt", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                充值金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Money, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Money)</span>
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                赠送金额
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Money1, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Money)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                短信内容
+            </th>
+            <td>
+                @Html.TextAreaFor(x => x.Content, new { style = "width:400px;height:100px" }) 【小熊洗车】不能删除，不允许手动换行。<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Content)</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>
+        <script type="text/javascript">
+            var countdown = 90;
+            var ttt;
+            function sendmessage(val) {
+                if ($("#Mobile").val() == "") {
+                    alert("手机号不能为空！");
+                    return;
+                }
+                settime(val);
+            }
+
+            function settime(val) {
+                if (countdown == 0) {
+                    val.removeAttribute("disabled");
+                    val.value = "验证码";
+                    countdown = 90;
+
+                } else {
+                    if (countdown == 90) {
+                        sendmsg();
+                    }
+                    val.setAttribute("disabled", true);
+                    val.value = "重新发送(" + countdown + ")";
+                    val.style.color = "#000000";
+                    countdown--;
+                }
+                ttt = setTimeout(function () {
+                    settime(val)
+                }, 1000);
+                if (countdown == 0) {
+                    val.removeAttribute("disabled");
+                    val.value = "验证码";
+                    countdown = 90;
+                    clearTimeout(ttt);
+                }
+            }
+            function sendmsg() {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/AliceChopper/ChargeType/SendMsg/",
+                    data: { loginID: $("#Mobile").val() },
+                    success: function (data) {
+                        alert(data.msg);
+                    },
+                    error: function (error) {
+                        alert("网络错误，请重试");
+                    }
+                });
+            }
+        </script>
+    }}

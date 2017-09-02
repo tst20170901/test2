@@ -1,0 +1,135 @@
+﻿@model Web.Areas.UsersManger.Models.BD_UserCarModel
+@{
+    Layout = "~/Areas/UsersManger/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        var models = null;
+        function init_models() {
+            if (models) {
+                show_brand();
+            } else {
+                $.ajax({
+                    type: "GET",
+                    dataType: "json",
+                    url: "/CarModelAPI/CarModel/",
+                    success: function (data) {
+                        models = data;
+                        show_brand();
+                    },
+                    error: function () {
+                        alert("网络错误，请重试");
+                    }
+                });
+            }
+        }
+        function show_brand() {
+            $("#BrandID option").remove();
+            $("#BrandID").append("<option value='0'>请选择</option>");
+            for (var k in models) {
+                $("#BrandID").append("<option value='" + models[k].id + "'>" + models[k].name + "</option>");
+            }
+            $("select[name='BrandID']").change(function () {
+                var selectedProvince = $(this).val();
+                $("#Brand").val($(this).find("option:selected").text());
+                $("#ModelID option").remove();
+                $("#ModelID").append("<option value='0'>请选择</option>");
+                for (var s in models[selectedProvince - 1].models) {
+                    $("#ModelID").append("<option value='" + models[selectedProvince - 1].models[s].id + "'>" + models[selectedProvince - 1].models[s].name + "</option>");
+                }
+            });
+            $("select[name='ModelID']").change(function () {               
+                $("#ModelStr").val($(this).find("option:selected").text());
+            });
+        }
+
+        function checklogin() {
+            if ($("#Plate").val() == "") {
+                window.alert("请输入车牌号！");
+                return false;
+            }
+            return true;
+        }
+        $(document).ready(function () {
+            init_models();
+        });
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改车辆
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                车牌号
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Plate, new { @class = "txt" })
+                <span style="color: #f00">*@Html.ValidationMessage("errormsg")</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                品牌系列
+            </th>
+            <td>
+                <select class="ddl" id="BrandID" name="BrandID">
+                    <option @if (0 == Model.BrandID) { <text> selected="selected" </text>       } value="0">请选择</option>
+                </select>
+                <select class="ddl" id="ModelID" name="ModelID">
+                    <option @if (0 == Model.ModelID) { <text> selected="selected" </text>        } value="0">请选择</option>
+                </select>
+                @Html.Hidden("Brand", Model.Brand)
+                @Html.Hidden("ModelStr", Model.ModelStr)
+            </td>
+        </tr>
+         <tr>
+             <th>车辆分组</th>
+             <td>
+                 <select class="ddl" id="CarGroup" name="CarGroup">
+                     <option @if (String.IsNullOrEmpty(Model.CarGroup)) { <text> selected="selected" </text> } value="">选择分组</option>
+                     @{
+System.Data.DataTable dt = ViewData["cartypeList"] as System.Data.DataTable;
+if (dt != null && dt.Rows.Count > 0)
+{
+    foreach (System.Data.DataRow item in dt.Rows)
+    {
+     <option @if (item["TypeName"].ToString() == Model.CarGroup) { <text> selected="selected" </text> } value="@item["TypeName"].ToString()">@item["TypeName"].ToString()</option>
+    }
+}}
+                 </select>
+             </td>
+         </tr>
+
+        <tr>
+            <th>
+                颜色
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Color, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                姓名
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.UserName, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checklogin();" />
+            </td>
+        </tr>
+    </table> }
+}

@@ -1,0 +1,80 @@
+﻿@model Web.Areas.AliceChopper.Models.BD_UserModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="@Url.Content("~/Scripts/my97datepicker/WdatePicker.js")"></script>
+    <script type="text/javascript">
+        function checklogin() {
+            if ($("#LoginID").val() == "") {
+                window.alert("请输入手机号码！");
+                return false;
+            } else if ($("#Password").val() == "") {
+                window.alert("请输入密码！");
+                return false;
+            } else if ($("#RePassword").val() == "") {
+                window.alert("请输入重复密码！");
+                return false;
+            } else if ($("#RePassword").val() != $("#Password").val()) {
+                window.alert("两次密码输入不一致！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加会员
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                手机号码
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.LoginID, new { @class = "txt" })
+                <span style="color: #f00">*@Html.ValidationMessageFor(model => model.LoginID)</span>手机号码具有唯一性，不可更改
+            </td>
+        </tr>
+        <tr>
+            <th>
+                姓名
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.UserName, new { @class = "txt" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                密码
+            </th>
+            <td>
+                @Html.PasswordFor(model => model.Password, new { @class = "txt" })
+                <span style="color: #f00">*</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                重复密码
+            </th>
+            <td>
+                @Html.PasswordFor(model => model.RePassword, new { @class = "txt" })
+                <span style="color: #f00">*</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" value="确定" type="submit" onclick="return checklogin();" />
+            </td>
+        </tr>
+    </table> }
+}

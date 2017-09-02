@@ -1,0 +1,82 @@
+﻿@model DataTable
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276&plugin=AMap.MouseTool"></script>
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css" />
+    <style type="text/css">
+        .amap-marker-label{}
+    </style>
+}
+@section body{
+    <div id="container"></div>
+    <script type="text/javascript">
+        var map, geolocation;
+        map = new AMap.Map('container', {
+            resizeEnable: true, zoom: 11
+        });
+        map.plugin(["AMap.ToolBar"], function () {
+            map.addControl(new AMap.ToolBar());
+        });
+        map.plugin('AMap.Geolocation', function () {
+            geolocation = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+                maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+                convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+                showButton: true,        //显示定位按钮，默认：true
+                buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+                buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+                showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+                panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
+                zoomToAccuracy: false      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+            map.addControl(geolocation);
+            AMap.event.addListener(geolocation, 'complete', function (e) {
+                map.setCenter(e.position);
+            });//返回定位信息
+        });
+        geolocation.getCurrentPosition();
+        @if (Model != null)
+        {
+            foreach (System.Data.DataRow item in Model.Rows)
+            {
+                string s = item["Points"].ToString();
+                if (!String.IsNullOrEmpty(s)&&s.Split(';').Length>=3)
+                {
+                        <text>var polygonArr@(item["ID"].ToString()) = new Array();</text>
+                        foreach (string items in s.Split(';'))
+                        {
+                            <text>polygonArr@(item["ID"].ToString()).push([@items]);</text>
+                        }
+                        <text>
+                        var polygons@(item["ID"].ToString()) = new AMap.Polygon({
+                            path: polygonArr@(item["ID"].ToString()),
+                            strokeColor: "#FF33FF",
+                            strokeOpacity: 1,
+                            strokeWeight: 1,
+                            fillColor: "#1791fc",
+                            fillOpacity: 0.35
+                        });
+                        polygons@(item["ID"].ToString()).setMap(map);
+                        </text>
+                }
+               <text>
+                    var marker@(item["ID"].ToString()) = new AMap.Marker({
+                        position: [@item["CenterLng"].ToString(),@item["CenterLat"].ToString()]
+                    });
+                    marker@(item["ID"].ToString()).setTitle('@item["Title"].ToString()');
+                    marker@(item["ID"].ToString()).setMap(map);
+                    marker@(item["ID"].ToString()).setLabel({
+                        offset: new AMap.Pixel(20, 20),
+                        content: "@item["Title"].ToString()"
+                    });
+               </text>
+            }
+        }
+
+
+    </script>
+}

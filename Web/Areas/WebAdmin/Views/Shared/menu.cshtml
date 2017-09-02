@@ -1,0 +1,79 @@
+﻿<link type="text/css" href="@Url.Content("~/Content/bear/css/menu.css")" rel="stylesheet" />
+<div class="nav4">
+    <nav>
+        <div id="nav4_ul" class="nav_4">
+            <ul class="box">
+                <li>
+                    <a href="@Url.Action("Index", "UsersAdmin")" class=""><span style="color: #EF4540">地图抢单</span></a>
+                </li>
+                <li>
+                    <a href="javascript:void(0);"><span id="myorder" style="position:relative">我的订单<i></i></span></a>
+                    <dl>
+                        <dd><a href="@Url.Action("OrdersList1", "Orders")"><span>工作中</span></a></dd>
+                        <dd><a href="@Url.Action("OrdersList2", "Orders")"><span>已完成</span></a></dd>
+                        <dd><a href="@Url.Action("OrdersAccounting", "UsersAdmin")"><span>订单统计</span></a></dd>
+                    </dl>
+                </li>
+                <li>
+                    <a href="javascript:void(0);"><span>我的帐户</span></a>
+                    <dl>
+                        <dd><a href="@Url.Action("IsFirstOrder", "UsersAdmin")"><span>车牌检测</span></a></dd>
+                        <dd><a href="@Url.Action("WebInit", "UsersAdmin")"><span>控制面板</span></a></dd>
+                        <dd><a href="@Url.Action("Login", "Account")"><span>重新登录</span></a></dd>
+                    </dl>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="nav4_masklayer" class="masklayer_div on">&nbsp;</div>
+</div>
+<audio id="ring" loop="loop" src="/Content/bear/images/ring1.mp3"></audio>
+
+<script src="@Url.Content("~/Scripts/ss.js")"></script>
+<script type="text/javascript">
+    nav4.bindClick(document.getElementById("nav4_ul").querySelectorAll("li>a"), document.getElementById("nav4_masklayer"));
+</script>
+
+<div id="amap" style="display:none"></div>
+<script type="text/javascript">
+    var map1, geolocation1;
+    map1 = new AMap.Map('amap', {
+        resizeEnable: true
+    });
+    map1.plugin('AMap.Geolocation', function () {
+        geolocation1 = new AMap.Geolocation({
+            enableHighAccuracy: true,//是否使用高精度定位，默认:true
+            timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+            maximumAge: 0,           //定位结果缓存0毫秒，默认：0
+            convert: true,           //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+            showButton: true,        //显示定位按钮，默认：true
+            buttonPosition: 'LB',    //定位按钮停靠位置，默认：'LB'，左下角
+            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+            showMarker: true,        //定位成功后在定位到的位置显示点标记，默认：true
+            showCircle: true,        //定位成功后用圆圈表示定位精度范围，默认：true
+            panToLocation: false,     //定位成功后将定位到的位置作为地图中心点，默认：true
+            zoomToAccuracy: false      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+        });
+        map1.addControl(geolocation1);
+        AMap.event.addListener(geolocation1, 'complete', function (e) {
+            map1.setCenter(e.position);
+            check_location1(e);
+        });//返回定位信息
+    });
+    geolocation1.getCurrentPosition();
+    function check_location1(e) {
+        //alert("a");
+        $.post("/WebWorker/UsersAdmin/PostLocation", { lng: e.position.getLng(), lat: e.position.getLat() }, function (data) {
+            if (data.code == "1") {
+                var audioEle = $("#ring")[0];
+                audioEle.play(); //播放
+                $("#myorder i").show();
+            } else {
+                $("#myorder i").hidden();
+            }
+        }, "json");
+    }
+    var g = window.setInterval(function () {
+        geolocation1.getCurrentPosition();
+    }, 10000);
+</script>

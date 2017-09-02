@@ -1,0 +1,97 @@
+﻿@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>工作状态</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/worker.css?v=1")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/worker.js?v=3")"></script>
+    <style type="text/css">
+        html, body {
+            background: #f1f1f5;
+        }
+    </style>
+    <script type="text/javascript">
+        function check() {
+            $("#msguser").html("");
+            if ($("#plate").val() == "") {
+                showToast("车牌号不能为空！");
+                return;
+            } else {
+                $.post("/WebWorker/Account/CheckOrder", { Plate: $("#plate").val() }, function (data) {
+                    var v = "";
+                    if (data.code == "0") {
+                        v = "<p class='r'>" + data.msg + "</p>";
+                    }
+                    if (data.data) {
+                        v += "<p class='r'>该车辆最新订单信息：</p>";
+                        v += "<p>姓名：" + data.data["UserName"] + "</p>";
+                        v += "<p>车牌号：" + data.data["Plate"] + "</p>";
+                        v += "<p>车型：" + data.data["BrandShow"] + "</p>";
+                        v += "<p>颜色：" + data.data["Color"] + "</p>";
+                        v += "<p>服务项目：" + data.data["WashItem"] + "</p>";
+                        v += "<p>地址：" + data.data["Address"] + "</p>";
+                        v += "<p>服务项目：" + data.data["WashItem"] + "</p>";
+                        v += "<p>订单状态：" + data.data["OrderState"] + "</p>";
+                        v += "<p>订单日期：" + data.data["CDate"] + "</p>";
+                        if (data.data["WorkName"]) {
+                            v += "<p>洗车工：" + data.data["WorkName"] + "</p>";
+                            v += "<p>联系电话：" + data.data["WorkMobile"] + "</p>";
+                        }
+                    }
+                    $("#msguser").html(v);
+                }, "json");
+            }
+        }
+        function checkno() {
+            $("#msguser").html("");
+            if ($("#wokeshopno").val() == "") {
+                showToast("员工编号或手机号不能为空！");
+                return;
+            } else {
+                $.post("/WebWorker/Account/CheckWorkShopID", { WorkShopNo: $("#wokeshopno").val() }, function (data) {
+                    var v = "";
+                    if (data.code == "0") {
+                        v = "<p class='r'>" + data.msg + "</p>";
+                    }
+                    if (data.data) {
+                        v += "<p class='r'>该洗车工最新工作中订单信息：</p>";
+                        v += "<p>洗车工：" + data.data["WorkName"] + "</p>";
+                        v += "<p>联系电话：" + data.data["WorkMobile"] + "</p>";
+                        v += "<p>工作状态：" + data.data["WorkState"] + "</p>";
+                        v += "<p>姓名：" + data.data["UserName"] + "</p>";
+                        v += "<p>车牌号：" + data.data["Plate"] + "</p>";
+                        v += "<p>车型：" + data.data["BrandShow"] + "</p>";
+                        v += "<p>颜色：" + data.data["Color"] + "</p>";
+                        v += "<p>服务项目：" + data.data["WashItem"] + "</p>";
+                        v += "<p>地址：" + data.data["Address"] + "</p>";
+                        v += "<p>服务项目：" + data.data["WashItem"] + "</p>";
+                        v += "<p>订单状态：" + data.data["OrderState"] + "</p>";
+                        v += "<p>订单日期：" + data.data["CDate"] + "</p>";
+                    }
+                    $("#msguser").html(v);
+                }, "json");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="bluehead"><span>工作状态</span><a href="@Url.Action("CheckOrder", "Account")" class="finish">刷新</a></div>
+    <div class="txtcon">
+        <div style="margin-left:10px;margin-right:10px"><input type="text" name="plate" id="plate" value="" placeholder="请输入车牌号" class="txt-input" maxlength="7" /></div>
+        <div class="h10p"></div>
+        <a id="btnCheck" class="btnnormal" href="javascript:void(0)" onclick="check()">检测</a>
+    </div>
+    <div class="txtcon">
+        <div style="margin-left:10px;margin-right:10px"><input type="text" name="wokeshopno" id="wokeshopno" value="" placeholder="请输入员工编号或手机号" class="txt-input" maxlength="20" /></div>
+        <div class="h10p"></div>
+        <a id="btnCheck" class="btnnormal" href="javascript:void(0)" onclick="checkno()">检测</a>
+    </div>
+    <div class="usermsg" id="msguser">
+
+    </div>
+</body>
+</html>

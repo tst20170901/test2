@@ -1,0 +1,124 @@
+﻿@model Models.Wash_Item
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#Title").val() == "") {
+                alert("项目名称不能为空！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    添加服务项目
+                </h1>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                项目名称
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Title, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+            </td>
+        </tr>
+        @{
+        if (WorkContext.RoleID == 1)
+        {
+            <text>
+                <tr>
+                    <th>
+                        分公司
+                    </th>
+                    <td>
+                        <select class="ddl" id="BranID" name="BranID">
+                            <option @if (0 == Model.BranID) { <text> selected="selected" </text>      } value="0">请选择</option>
+                            @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == Model.BranID) { <text> selected="selected" </text>      } value="@item.ID">@item.Title</option>
+    }
+}
+                            }
+                        </select>
+                    </td>
+                </tr></text>
+        }
+        else
+        {
+            <text>
+                <tr>
+                    <th>分公司</th>
+                    <td>
+                        @WorkContext.Branch.Title
+                        <input type="hidden" name="BranID" value="@WorkContext.BranchID">
+                    </td>
+                </tr>
+            </text>
+        }
+        }
+        <tr>
+            <th>
+                服务价格
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.Price, new { @class = "txt", style = "width:200px" })
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 工人提点
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.WorkPrice, new { @class = "txt", style = "width:200px" })
+             </td>
+         </tr>
+        <tr>
+            <th>
+                线上线下
+            </th>
+            <td>
+                <select class="ddl" id="Online" name="Online">
+                    <option @if (10 == Model.Online) { <text> selected="selected" </text>   } value="10">线上</option>
+                    <option @if (20 == Model.Online) { <text> selected="selected" </text>   } value="20">线下</option>
+                    <option @if (30 == Model.Online) { <text> selected="selected" </text>   } value="30">通用</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                排序
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+            </td>
+        </tr>
+        <tr>
+            <th>
+                分组
+            </th>
+            <td>
+                @Html.TextBoxFor(x => x.IsMust, new { @class = "txt", maxlength = "1", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })<span style="color: #f00">同一分组只能选一个</span>
+            </td>
+        </tr>
+        <tr>
+            <th>
+
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>}}

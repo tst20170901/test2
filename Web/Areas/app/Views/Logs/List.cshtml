@@ -1,0 +1,129 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/my97datepicker/WdatePicker.js")"></script>
+}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                操作记录管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("List", "Logs", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {<table border="0" class="frm-find" style="height: 45px;">
+                    <tr>
+                        <th>
+                            登录名：
+                        </th>
+                        <td>
+                            @Html.TextBox("LoginID", AliceDAL.UrlParam.GetStringValue("LoginID"), new { @class = "txt1", style = "width:100px" })
+                    </td>
+                    <th>
+                        昵称：
+                    </th>
+                    <td>
+                        @Html.TextBox("NickName", AliceDAL.UrlParam.GetStringValue("NickName"), new { css = "txt1", style = "width:100px" })
+                </td>
+                <th>
+                    操作描述：
+                </th>
+                <td>
+                    @Html.TextBox("Desc", AliceDAL.UrlParam.GetStringValue("Desc"), new { css = "txt1", style = "width:150px" })
+            </td>
+            <th>
+                开始时间：
+            </th>
+            <td>
+                @Html.TextBox("StartTime", AliceDAL.UrlParam.GetStringValue("StartTime"), new { css = "txt1", style = "width:130px", onfocus = "WdatePicker({el:'StartTime'})" })
+        </td>
+        <th>
+            结束时间：
+        </th>
+        <td>
+            @Html.TextBox("EndTime", AliceDAL.UrlParam.GetStringValue("EndTime"), new { css = "txt1", style = "width:130px", onfocus = "WdatePicker({el:'EndTime'})" })
+    </td>
+    <td>
+        <input id="btnSearch" type="submit" class="btnSearch" value="搜 索" />
+    </td>
+</tr>
+</table>
+                }
+            </div>
+        </div>
+        <div id="articles">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        ID
+                    </th>
+                    <th scope="col">
+                        登录名
+                    </th>
+                    <th scope="col">
+                        昵称
+                    </th>
+                    <th scope="col">
+                        操作描述
+                    </th>
+                    <th scope="col">
+                        操作IP
+                    </th>
+                    <th scope="col">
+                        操作时间
+                    </th>
+                </tr>
+                @foreach (DataRow item in Model.Page)
+                {
+                    <tr class="gvRow">
+                        <td style="width: 100px">
+                            @item["ID"].ToString()
+                        </td>
+                        <td align="left" style="width: 100px">
+                            &nbsp;@item["LoginID"].ToString()
+                        </td>
+                        <td align="center" style="width: 120px">
+                            @item["NickName"].ToString()
+                        </td>
+                        <td align="left" style="text-indent: 1em">
+                            @item["Description"].ToString()
+                        </td>
+                        <td style="width: 100px">
+                            @item["IP"].ToString()
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @item["CDate"].ToString()
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,37 @@
+﻿@model Models.Pro_Case
+@{Layout = null;}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=11")" rel="stylesheet" />
+    <style type="text/css">
+        html, body {
+            background: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="head"><a href="@AliceDAL.Common.GetUrlReferrer()" class="back"></a><span>商品详情</span></div>
+    @if (Model != null)
+    {
+        <div class="probd">@Model.Body</div>
+    }
+    @if (Model != null && Model.ProType!=1)
+    {
+        <div class="buybtn"><div class="buybtncon"><a href="@Url.Action("ProductOrder", "Product", new { pid = Model.ID.ToString() })">立即购买</a></div></div>
+    }    
+    @Html.Partial("menu", "1")
+    <script src="/Scripts/jquery-2.1.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".probd img").css("width","100%");
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+﻿@model Web.Models.UserConsumerListModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>消费记录-小熊洗车</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=1")" rel="stylesheet" />
+</head>
+<body>
+    <div class="head"><a href="@Url.Action("Index","Chargelist")" class="back"></a><span>消费记录</span></div>
+    @if (Model.List != null)
+    {
+        <div id="orderinfo">
+            <div class="edocell2">
+                <div class="edo_hd1">钱包余额</div>
+                <div class="edo_bd1">
+                    <p>@(WorkContext.wallet.Money1 + WorkContext.wallet.Money2)</p>
+                </div>
+            </div>
+            @foreach (Models.BD_Consumer item in Model.List)
+            {<div class="edocell3">
+                <div class="edocell_item">
+                    @if (item.Money > 0)
+                    { <span class="gr">@item.Money</span>}
+                    else
+                    {<span class="red">@item.Money</span>}
+                </div>
+                <div class="edocell_item">
+                    @item.Remark
+                </div>
+                <div class="edocell_item">
+                    <span style="float:right">@AliceDAL.DataType.ConvertToDateTimeStr(item.CDate.ToString())</span>
+                </div>
+            </div>
+
+            }
+        </div>
+    }@Html.Partial("menu", "1")
+</body>
+</html>

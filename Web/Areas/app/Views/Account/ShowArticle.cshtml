@@ -1,0 +1,60 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <link type="text/css" href="@Url.Content("~/Content/css/base.css")" rel="stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <style type="text/css">
+        html, body {
+            font-family: STHeiti,'Microsoft YaHei',Helvetica,Arial,sans-serif;
+        }
+
+        .title {
+            color: #3A3A3A;
+            font-size: 2em;
+            font-weight: 700;
+            line-height: 2em;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .msg {
+            border: 1px solid #E9E9E9;
+            line-height: 30px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .txtbd {
+            padding: 10px 20px;
+            font-size: 1.2em;
+        }
+
+        table {
+            display: block;
+            width: 100%;
+            clear: both;
+        }
+
+        td {
+            min-width: 16%;
+        }
+
+        img {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="txtbd">@Html.Raw(Model.Body)</div>
+</body>
+</html>

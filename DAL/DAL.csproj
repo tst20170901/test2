@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2E6C6186-F41D-46CE-9D93-C33B96194732}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>DAL</RootNamespace>
+    <AssemblyName>DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AB_SinglePage.cs" />
+    <Compile Include="Edo_ConfigKV.cs" />
+    <Compile Include="Edo_CheckLogs.cs" />
+    <Compile Include="NoticeLogs.cs" />
+    <Compile Include="Pro_Orders.cs" />
+    <Compile Include="Business_Types.cs" />
+    <Compile Include="VipCardOrdersActions.cs" />
+    <Compile Include="VipCardOrders.cs" />
+    <Compile Include="BD_BearAdminActions.cs" />
+    <Compile Include="BD_BusiAction.cs" />
+    <Compile Include="BD_Business.cs" />
+    <Compile Include="BD_BearActionsAllot.cs" />
+    <Compile Include="ChargeType.cs" />
+    <Compile Include="BD_Consumer.cs" />
+    <Compile Include="CarGroup.cs" />
+    <Compile Include="VipCard.cs" />
+    <Compile Include="VipType.cs" />
+    <Compile Include="StoreCard.cs" />
+    <Compile Include="Reviews.cs" />
+    <Compile Include="UserCar.cs" />
+    <Compile Include="Wash_Item.cs" />
+    <Compile Include="UserOrderActions.cs" />
+    <Compile Include="Orders.cs" />
+    <Compile Include="Art_Common.cs" />
+    <Compile Include="Art_Common_Types.cs" />
+    <Compile Include="Coupons.cs" />
+    <Compile Include="OrderActions.cs" />
+    <Compile Include="BD_Users.cs" />
+    <Compile Include="BD_Admin.cs" />
+    <Compile Include="CouponsType.cs" />
+    <Compile Include="Common\PageModel.cs" />
+    <Compile Include="Common\SQLHelper.cs" />
+    <Compile Include="Flash.cs" />
+    <Compile Include="FlashType.cs" />
+    <Compile Include="Links.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BD_Logs.cs" />
+    <Compile Include="Pro_Case.cs" />
+    <Compile Include="Pro_Types.cs" />
+    <Compile Include="CarModels.cs" />
+    <Compile Include="AdminOrders.cs" />
+    <Compile Include="BD_Branch.cs" />
+    <Compile Include="WorkShop.cs" />
+    <Compile Include="Supplier.cs" />
+    <Compile Include="Case.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AliceDAL\AliceDAL.csproj">
+      <Project>{72F9F6CE-9932-4B71-863E-DC6FFD63C1D5}</Project>
+      <Name>AliceDAL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\Models.csproj">
+      <Project>{FA8D4D3D-3809-4A72-8ABE-A6DCA219E0F9}</Project>
+      <Name>Models</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

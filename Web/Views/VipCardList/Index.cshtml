@@ -1,0 +1,129 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>小熊洗车</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bearmall/css/main.css?v=886")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script src="/Scripts/layer/layer.js"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <script src="@Url.Content("~/Scripts/bear.js?v=29")"></script>
+</head>
+<body>
+    <div id="orderinfo g">
+        <input id="lat" type="hidden" value="0" />
+        <input id="lng" type="hidden" value="0" />
+        <input id="branchid" type="hidden" value="0" />
+        <input id="userstate" type="hidden" value="noinit" />
+        <div class="head"><a href="@Url.Action("Index","BearClient")" class="back"></a><span>充值套餐</span></div>
+        <div class="edo_cells_title">点击选择套餐,请在<span style="color: #55c3f1">使用区域</span>购买会员卡，否则购买后无法使用</div>
+        <div class="edo_cells_title">当前定位：<span id="locmsg">自动定位中...</span><a href="javascript:showmapcard()" style="margin-left:10px">手动定位</a></div>
+        <div id="xianshi" style="display:none">
+            <div class="h10p g"></div>
+            <div class="edo_cells_title">限时抢购</div>
+            <div class="h10p g"></div>
+            <div id="xianshicard"></div>
+            <div class="h10p g"></div>
+            <div class="edorow g">
+                <a id="wxpay1" class="edo_btn" href="javascript:void(0)" onclick="cardorder()">微信支付</a>
+            </div>
+            <div class="h10p g"></div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edo_cells_title">在限售卡</div>
+        <div class="h10p g"></div>
+        <div>
+            <div id="load"></div>
+            <div id="cardlist">
+            </div>
+            <label class="edo_check_label1" for="999">
+                <input type="radio" class="edo_check1" name="typeid" checked="checked" id="999" value="999"><i class="edo_icon_checked"></i>
+                <input class="inpprice" id="price" name="price" type="text" placeholder="金额" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" maxlength="4" /> 元<span>任意金额</span>
+            </label>
+            <div class="worknobd">
+                <input class="edoui_input1" type="text" id="workno" name="workno" placeholder="请输入洗车工工号，没有请忽略" />
+            </div>
+            @*<label class="weui_cell weui_check_label" for="999">
+                    <div class="weui_cell_ft" style="width: 1.5em; padding-right: 10px">
+                        <input type="radio" class="weui_check" name="typeid" id="999" value="999">
+                        <span class="weui_icon_checked"></span>
+                    </div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <p>
+                            其他金额 &nbsp;&nbsp;<input class="inpprice" id="price" name="price" type="text" placeholder="金额" onkeyup="this.value=this.value.replace(/[^\d]/g,'')" maxlength="4" /> 元
+                        </p>
+                    </div>
+                    <div class="weui_cell_ft"><span style="font-size:12px">(其它金额)</span></div>
+                </label>*@
+        </div>
+        <div class="h10p g"></div>
+        <div class="edorow g">
+            <a id="wxpay" class="edo_btn" href="javascript:void(0)" onclick="cardorder()">微信支付</a>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edo_cells_title">会员卡充值</div>
+        <div class="h10p g"></div>
+        <div class="edocell2 w">
+            <div class="edo_hd2">卡<i style="width:2em"></i>号</div>
+            <div class="edo_bd2">
+                <input class="edoui_input" type="text" id="cardno" name="cardno" placeholder="请输入卡号" />
+            </div>
+        </div>
+        <div class="edocell2 w">
+            <div class="edo_hd2">密<i style="width:2em"></i>码</div>
+            <div class="edo_bd2">
+                <input class="edoui_input" type="password" id="cardpwd" name="cardpwd" placeholder="请输入密码" />
+            </div>
+        </div>
+        <div class="edocell2 w">
+            <div class="edo_hd2">车<i></i>牌<i></i>号</div>
+            <div class="edo_bd2">
+                <input class="edoui_input" type="text" id="plate" name="plate" placeholder="普通充值卡无需绑定车牌号" />
+            </div>
+        </div>
+        <div class="h10p g"></div>
+        <div class="edorow g">
+            <a id="vipcard" class="edo_btn" href="javascript:void(0)" onclick="vipex()">充值</a>
+        </div>
+    </div>
+    <div id="map">
+        <div id="mymap"></div>
+        <div id="mapmsg"></div>
+        <div id="mapaddress"></div>
+        <div id="mapmarker"><img src="/Content/bear/images/mapmarker.png" /></div>
+        <div id="mapdesc">
+            <div style="color:#F00;font-size:16px">重要提示</div>
+            <div>请在地图中调整并确认您的车辆位置，准确的位置有助于我们快速为您的爱车服务。</div>
+            <a href="javascript:void(0)" class="edo_btn" onclick="select_ok()">确认位置</a>
+        </div>
+    </div>
+    <script>
+        var map1, geolocation1;
+        //加载地图，调用浏览器定位服务
+        map1 = new AMap.Map('mymap', {
+            resizeEnable: true
+        });
+        map1.plugin('AMap.Geolocation', function () {
+            geolocation1 = new AMap.Geolocation({
+                enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+                zoomToAccuracy: true,    //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+            });
+            map1.addControl(geolocation1);
+            geolocation1.getCurrentPosition();
+            AMap.event.addListener(geolocation1, 'complete', onComplete);//返回定位信息
+        });
+        //解析定位结果
+        function onComplete(data) {
+            $("#lat").val(data.position.getLat());
+            $("#lng").val(data.position.getLng());
+            cardorder_preorder();
+        }
+    </script>
+    @Html.Partial("menu", "2")
+</body>
+</html>

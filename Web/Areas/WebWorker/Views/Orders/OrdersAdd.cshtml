@@ -1,0 +1,92 @@
+﻿@model Web.Areas.WebWorker.Models.OrderInfoModel
+@{Layout = null;}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>手动下单</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/worker.css?v=1")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/worker.js?v=3")"></script>
+    <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=313cf4ba8b1268a1443d2432b8fc8276"></script>
+    <style type="text/css">
+        html, body {
+            background: #f1f1f5;
+        }
+    </style>
+    <script>
+        function OrdersAdd() {
+            if ($("#mobile").val() == "") {
+                showToast("手机号不能为空！");
+                return;
+            } else if ($("#username").val() == "") {
+                showToast("昵称不能为空！");
+                return;
+            } else if ($("#plate").val() == "") {
+                showToast("车牌号不能为空！");
+                return;
+            }
+            var itemIds = new Array();
+            $("input[name='washitem']").each(function () {
+                if (this.checked) {
+                    itemIds.push($(this).attr('id'));
+                }
+            });
+            if (itemIds.length <= 0) { showToast('请选择服务项目！'); return; }
+            $("#btnSendMsg").removeAttr("onclick");
+            $.ajax({
+                type: 'post',
+                traditional: true,
+                dataType: "json",
+                async: false,
+                url: "/WebWorker/Orders/OrdersAdd/",
+                data: { mobile: $("#mobile").val(), plate: $("#plate").val(), username: $("#username").val(), 'itemIds': itemIds },
+                success: function (data) {
+                    showToast(data.msg);
+                    if (data.code=="1") {
+                        location.href = "/WebWorker/Orders/OrdersAdd";
+                    }
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div id="ordercon">
+        <div class="bluehead"><a href="@Url.Action("Index","UsersAdmin")" class="back"></a><span>手动下单</span><a href="@Url.Action("OrdersAdd", "Orders")" class="finish">刷新</a></div>
+        <div class="proItem">
+            <div class="bt">手机号码</div>
+            <input type="text" name="mobile" id="mobile" value="" placeholder="请输入手机号码" class="txt-input" maxlength="11" />
+            <div class="fn-clear"></div>
+        </div>
+        <div class="proItem">
+            <div class="bt">称呼</div>
+            <input type="text" name="username" id="username" value="" placeholder="请输入称呼" class="txt-input" maxlength="20" />
+            <div class="fn-clear"></div>
+        </div>
+        <div class="proItem">
+            <div class="bt">车牌号</div>
+            <input type="text" name="plate" id="plate" value="" placeholder="请输入车牌号" class="txt-input" maxlength="7" />
+            <div class="fn-clear"></div>
+        </div>
+        <div class="proItem">
+            <div class="bt">服务项目</div>
+            @if (Model.WashItems != null)
+            {
+                foreach (Models.Wash_Item item in Model.WashItems)
+                {
+                    if (item.SortID != 999)
+                    {
+                        <label for="@(item.ID)" style="font-size:16px;line-height:2em;margin-right:10px"><input name="washitem" type="checkbox" value="@item.Price" id="@item.ID" style="vertical-align:middle;" />@(item.Title)(@item.Price)</label>
+                    }
+                }
+            }
+            <div class="fn-clear"></div>
+        </div>
+        <a id="btnSendMsg" class="btnnormal" href="javascript:void(0)" onclick="OrdersAdd()">提交</a>
+        @Html.Partial("menu")
+    </div>
+</body>
+</html>

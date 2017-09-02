@@ -1,0 +1,39 @@
+﻿@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section body{
+    <table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    常用功能
+                </h1>
+            </td>
+        </tr>
+
+        <tr>
+            <th>
+                开户
+            </th>
+            <td>
+                <a href="@Url.Action("Add", "Member")">普通会员</a>&nbsp;&nbsp;<a href="@Url.Action("BigAdd", "Member")">大客户</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                充值
+            </th>
+            <td>
+                <a href="@Url.Action("ChargeForUser", "ChargeType")">手动充值</a>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                下单
+            </th>
+            <td>
+                <a href="@Url.Action("OrdersAdd", "Orders")">手动下单</a>
+            </td>
+        </tr>
+    </table>
+}

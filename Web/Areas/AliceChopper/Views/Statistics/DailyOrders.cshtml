@@ -1,0 +1,220 @@
+﻿@model Web.Areas.Models.ListModel
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{<link type="text/css" href="@Url.Content("~/Content/css/grid.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/my97datepicker/WdatePicker.js")"></script>}
+@section body{
+    <div class="bdcon">
+        <div class="btnbartitle">
+            <div>
+                订单管理
+            </div>
+        </div>
+        <div class="tools_bar">
+            <a title="刷新当前页面" onclick="Replace();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/arrow_refresh.png")') 50% 4px no-repeat;">
+                        刷新
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+            <a title="关闭当前窗口" onclick="ThisCloseTab();" class="tools_btn">
+                <span>
+                    <b style="background: url('@Url.Content("~/Content/images/16/back.png")') 50% 4px no-repeat;">
+                        离开
+                    </b>
+                </span>
+            </a><div class="tools_separator">
+            </div>
+        </div>
+        <div class="btnbarcontetn" style="margin-top: 1px; background: #fff">
+            <div>
+                @using (Html.BeginForm("DailyOrders", "Statistics", new RouteValueDictionary { { "id", "" } }, FormMethod.Get))
+                {
+                    <table border="0" class="frm-find" style="height: 45px;">
+                        <tr>
+                            @{
+                    if (WorkContext.RoleID == 1)
+                    {
+                        <text>
+                            <th>
+                                分公司
+                            </th>
+                            <td>
+                                <select class="ddl" id="BranchID" name="BranchID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>                             } value="0">请选择</option>
+                                    @{
+List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+if (list != null)
+{
+    foreach (Models.BD_Branch item in list)
+    {
+        <option @if (item.ID == AliceDAL.UrlParam.GetIntValue("BranchID")) { <text> selected="selected" </text>                             } value="@item.ID">@item.Title</option>
+    }
+}
+                                    }
+                                </select>
+                            </td></text>
+                    }
+                            }
+                            <th>日期</th>
+                            <td>
+                                @Html.TextBox("txtSDate", AliceDAL.UrlParam.GetStringValue("txtSDate"), new { css = "txt1", style = "width:130px", onfocus = "WdatePicker({el:'txtSDate'})" })
+                            </td>
+                            <th>洗车工</th>
+                            <td>
+                                <select class="ddl" id="WorkerID" name="WorkerID">
+                                    <option @if (0 == AliceDAL.UrlParam.GetIntValue("WorkerID")) { <text> selected="selected" </text>   } value="0">选择洗车工</option>
+                                    @foreach (System.Data.DataRow item in (ViewData["WorkerListchild"] as System.Data.DataTable).Rows)
+                                    {
+                                        <option @if (item["ID"].ToString() == AliceDAL.UrlParam.GetIntValue("WorkerID").ToString()) { <text> selected="selected" </text>  } value="@item["ID"].ToString()">@AliceDAL.HzToPz.ShouPin(item["Title"].ToString().Substring(0, 1))@item["Title"].ToString() (@item["OrderCount"].ToString())</option>
+                                    }
+                                </select>
+                            </td>
+                            <th>
+                                状态
+                            </th>
+                            <td>
+                                <select class="ddl" id="ddlState" name="ddlState">
+                                    @{
+                                        <option @if ("70" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="70">洗车完成</option>
+                                        <option @if ("10" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="10">支付完成</option>
+                                        <option @if ("30" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="30">派单完成</option>
+                                        <option @if ("50" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="50">洗车开始</option>
+                                        <option @if ("150" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="150">全部订单</option>
+                                        <option @if ("0" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="0">等待支付</option>
+                                        <option @if ("90" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="90">已取消</option>
+                                        <option @if ("110" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="110">已删除</option>
+                                        <option @if ("130" == AliceDAL.UrlParam.GetStringValue("ddlState")) { <text> selected="selected" </text>          } value="130">已作废</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                <input type="submit" id="btnSearch" name="btnSearch" class="btnSearch" value="搜索" />
+                                <input type="submit" id="btnSearch1" name="btnSearch" class="btnSearch" value="导出表格" />
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </div>
+        </div>
+        <div class="dgvlist">
+            <table class="gv" cellspacing="0" id="gv" style="border-collapse: collapse;">
+                <tr class="gvHeader" style="white-space: nowrap;">
+                    <th scope="col">
+                        订单号
+                    </th>
+                    <th scope="col">
+                        车主姓名
+                    </th>
+                    <th scope="col">
+                        电话
+                    </th>
+                    <th scope="col">
+                        车牌号
+                    </th>
+                    <th scope="col">
+                        车型
+                    </th>
+                    <th scope="col">
+                        服务项目
+                    </th>
+                    <th scope="col">
+                        地址
+                    </th>
+                    <th scope="col">
+                        实收金额
+                    </th>
+                    <th scope="col">
+                        下单方式
+                    </th>
+                    <th scope="col">
+                        洗车工
+                    </th>
+                    <th scope="col">
+                        完成情况
+                    </th>
+                    <th scope="col">
+                        备注
+                    </th>
+                </tr>
+                @for (int i = 0; i < Model.Page.Count; i++)
+                {
+                    Models.UserOrderState uos = (Models.UserOrderState)AliceDAL.DataType.ConvertToInt(Model.Page[i]["OrderState"].ToString());
+                    <tr class="gvRow">
+                        <td style="width:60px;text-align:center">
+                            @((Model.Page.CurrentPageIndex - 1) * 10 + i + 1)
+                        </td>
+                        <td style="width:80px">
+                            @Model.Page[i]["UserName"].ToString()
+                        </td>
+                        <td style="width: 100px">
+                            @Model.Page[i]["Mobile"].ToString()
+                        </td>
+                        <td style="width: 80px">
+                            @Model.Page[i]["Plate"].ToString()
+                        </td>
+                        <td style="width: 200px">
+                            @Model.Page[i]["BrandShow"].ToString()
+                        </td>
+                        <td align="center" style="width: 150px">
+                            @Web.Units.Comm.GetItemNoPrice(Model.Page[i]["ID"].ToString())
+                        </td>
+                        <td align="center">
+                            @Model.Page[i]["Address"].ToString()
+                        </td>
+                        <td align="center" style="width: 80px">
+                            @Model.Page[i]["Amount"].ToString()
+                        </td>
+                        <td align="center" style="width: 80px">
+                            @(Model.Page[i]["Data3"].ToString() == "" ? "线上" : @Model.Page[i]["Data3"].ToString())
+                        </td>
+                        <td align="center" style="width: 60px">
+                            @Web.Units.Comm.GetWorkName(Model.Page[i]["WorkID"].ToString())
+                        </td>
+                        <td align="center" style="width: 60px">
+                            @switch (uos)
+                            {
+                                case Models.UserOrderState.WaitPaying:
+                                    @:等待
+                                            break;
+                                case Models.UserOrderState.Payed: @:
+                                            <span style="color:#047548">支付</span>
+                                            break;
+                                case Models.UserOrderState.Assigned:
+                                @:<span style="color:#ff6a00">派单</span>
+                                    break;
+                                case Models.UserOrderState.Started:
+                                @:<span style="color:#b6ff00">开始</span>
+                                    break;
+                                case Models.UserOrderState.Finished:
+                                @:<span style="color:#00F">完成</span>
+                                    break;
+                                case Models.UserOrderState.Canceled:
+                                @:<span style="color:#CCC">取消</span>
+                                    break;
+                                case Models.UserOrderState.Deleted:
+                                @:<span style="color:#CCC">删除</span>
+                                    break;
+                                case Models.UserOrderState.Void:
+                                @:<span style="color:#CCC">作废</span>
+                            break;
+                                default:
+                            break;
+                            }
+                        </td>
+                        <td>
+                            @(Model.Page[i]["DiscountDes"].ToString() != "" ? Model.Page[i]["DiscountDes"].ToString() + ":" + Model.Page[i]["DiscountAmount"].ToString() : "")
+                        </td>
+                    </tr>
+                }
+            </table>
+            <div>
+                @Html.Pager(Model.Page, new PagerOptions { PageIndexParameterName = "page", PagerItemsSeperator = "", CurrentPagerItemWrapperFormatString = "<span class=\"current\">{0}</span>", ShowPageIndexBox = true, PageIndexBoxType = PageIndexBoxType.DropDownList, ShowGoButton = false }, new { id = "badoopager" })
+                @{Html.RegisterMvcPagerScriptResource();}
+            </div>
+        </div>
+    </div>
+}

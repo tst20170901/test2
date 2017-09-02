@@ -1,0 +1,58 @@
+﻿@model Models.Wash_Item
+@{
+    Layout = "~/Areas/AliceChopper/Views/Shared/_AdminLayout.cshtml";
+}
+@section header{
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#Title").val() == "") {
+                alert("项目名称不能为空！");
+                return false;
+            }
+            return true;
+        }
+    </script>
+}
+@section body{
+    @using (Html.BeginForm())
+    {<table class="frm">
+        <tr>
+            <td colspan="2" class="pagetit">
+                <h1>
+                    修改服务项目
+                </h1>
+            </td>
+        </tr>
+         <tr>
+             <th>
+                 项目名称
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.Title, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Title)</span>
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 服务价格
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.Price, new { @class = "txt", style = "width:200px" })
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 排序
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.SortID, new { @class = "txt", @onkeyup = @"this.value=this.value.replace(/[^\d]/g,'')", style = "width:200px" })
+             </td>
+         </tr>
+        <tr>
+            <th>
+                &nbsp;
+            </th>
+            <td>
+                <input id="btnSure" class="btn" type="submit" value="确定" onclick="return checkForm();" />
+            </td>
+        </tr>
+    </table>}}

@@ -1,0 +1,287 @@
+﻿@model Web.Models.BusinessActionModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewBag.Title</title>
+    <meta name="keywords" content="@ViewBag.KeyWords" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <link type="text/css" href="@Url.Content("~/Content/bear/css/base.css")" rel="stylesheet" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-2.1.4.min.js")"></script><script src="/Scripts/layer/layer.js"></script>
+<script src="@Url.Content("~/Scripts/bear.js?v=20")"></script>
+    <style type="text/css">
+        html, body {
+            margin: 0 auto;
+            font-size: 14px;
+            height: 100%
+        }
+            .content img {
+                width: 100%;
+                display: block;
+                vertical-align: top;
+            }
+
+        .phone {
+            margin: auto;
+            width: 15.2rem;
+        }
+
+            .phone .phone-send {
+                width: 15.2rem;
+                margin: auto;
+                height: 15.6rem;
+                margin-top: -.5rem;
+                margin-left: .3rem;
+                position: relative;
+            }
+
+        #easy-login {
+            position: relative;
+            width: 11rem;
+            height: 14rem;
+            top: .5rem;
+            left: 2rem;
+        }
+
+        .EasyLogin_Mobile_Mobile {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .EasyLogin_row {
+            width: 100%;
+            height: 2.5rem;
+        }
+
+        .EasyLogin_Mobile_tit {
+            display: none;
+        }
+        .EasyLogin_row {
+            width: 100%;
+            height: 2.5rem;
+        }
+        input[name=plate] {
+            position: absolute;
+            top: 2.85rem;
+            width: 9.6rem;
+            border: none;
+            height: 2.3rem;
+            font-size: .7rem;
+            left: .5rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+        input[name=brand] {
+            position: absolute;
+            top: 5.5rem;
+            width: 9.6rem;
+            border: none;
+            height: 2.3rem;
+            font-size: .7rem;
+            left: .5rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+        input[name=username] {
+            position: absolute;
+            top: 0.2rem;
+            width: 9.6rem;
+            border: none;
+            height: 2.3rem;
+            font-size: .7rem;
+            left: .5rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+        .phone .phone-send .get-now {
+            position: absolute;
+            width: 10rem;
+            height: 2.1rem;
+            top: 13.9rem;
+            left: 2.5rem;
+            background-color: #ffcf0e;
+            border-radius: .3rem;
+            text-align: center;
+            line-height: 2.1rem;
+            font-size: .7rem;
+        }
+        input[name=mobile] {
+            position: absolute;
+            top: 8.1rem;
+            height: 2.3rem;
+            left: .5rem;
+            width: 9.6rem;
+            border: none;
+            padding: 0;
+            font-size: .7rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+
+        input[name=code] {
+            position: absolute;
+            top: 10.8rem;
+            width: 9.6rem;
+            border: none;
+            height: 2.3rem;
+            font-size: .7rem;
+            left: .5rem;
+            border-radius: .2rem;
+            padding-left: .3rem;
+            box-shadow: 0 -2px 1px #7b7b7b;
+        }
+        .EasyLogin_send {
+            position: absolute;
+            top: 7.79rem;
+            color: #fff;
+            left: 6rem;
+            text-decoration: none;
+            -webkit-transform: scale(.7,.7);
+            transform: scale(.7,.7);
+            width: 5rem;
+            text-align: center;
+            height: 2.9rem;
+            line-height: 2.9rem;
+            background-color: #D3648F;
+            border-radius: .4rem;
+            font-size: .8rem;
+        }
+
+        .rules {
+            padding: 10px 20px;
+            text-align: center;
+            color: #FFF;
+        }
+    </style>
+    <script type="text/javascript">
+        function checkForm() {
+            if ($("#username").val() == "") {
+                showToast("称呼不能为空！");
+                return;
+            } else if ($("#plate").val() == "") {
+                showToast("车牌号不能为空！");
+                return;
+            } else if ($("#brand").val() == "") {
+                showToast("车型不能为空！");
+                return;
+            } else if ($("#mobile").val() == "") {
+                showToast("手机号不能为空！");
+                return;
+            } else if ($("#code").val() == "") {
+                showToast("验证码不能为空！");
+                return;
+            }else {
+                $.post("/BusinessAction/ActionDetailsResultCarInfo/@(Model.ID)", { LoginID: $("#mobile").val(), password: $("#code").val(), plate: $("#plate").val(), brand: $("#brand").val(), username: $("#username").val() }, function (data) {
+                    showToast(data.msg);
+                });
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <div class="content">
+        <div>@Model.Body</div>
+        <div class="phone">
+            <div class="phone-send">
+                <div id="easy-login">
+                    <div>
+                        <div class="EasyLogin_Mobile_Mobile">
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">手机号</div>
+                                <input name="mobile" placeholder="请输入手机号" type="tel" id="mobile" maxlength="11">
+                                <a class="J_send EasyLogin_send" href="javascript:void(0);" onclick="sendmessage()" id="sendmsg">发送验证码</a>
+                            </div>
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">验证码</div>
+                                <input name="code" placeholder="请输入验证码" type="tel" id="code" maxlength="4">
+                            </div>
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">车牌</div>
+                                <input name="plate" placeholder="请输入车牌号" type="text" id="plate" />
+                            </div>
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">车型</div>
+                                <input name="brand" placeholder="请输入车型" type="text" id="brand" />
+                            </div>
+                            <div class="EasyLogin_row">
+                                <div class="EasyLogin_Mobile_tit">称呼</div>
+                                <input name="username" placeholder="请输入称呼" type="text" id="username" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="get-now" id="send" onclick="checkForm()">领 @(Model.AllMoney) 元优惠券</a>
+            </div>
+        </div>
+        <div class="rules">
+            <h1 class="rules-title">如何使用优惠券</h1>
+            <p>长按下方图片，点击识别二维码</p>
+            <p><img src="@Url.Content("~/Content/bear/images/qrcode.jpg")" style="width:160px;height:160px;margin:auto" /></p>
+            <p>
+                进入公众号后，点击菜单【我要洗车】<br />进入下单页面使用
+            </p>
+
+            <p><a style="color: #FFF; text-decoration: underline" href="http://mp.weixin.qq.com/s?__biz=MzIxNzA4Njg5Mw==&mid=403600041&idx=2&sn=00ea5ff8ceb14997771227fb2b94273c&scene=4#wechat_redirect">详细了解使用方法</a></p>
+
+        </div>
+        <script type="text/javascript">
+            var countdown = 90;
+            var ttt;
+            function sendmessage() {
+                if ($("#mobile").val() == "") {
+                    showToast("手机号不能为空！");
+                    return;
+                }
+                settime();
+            }
+
+            function settime() {
+                if (countdown == 0) {
+                    $("#sendmsg").attr("onclick", "sendmessage()");
+                    $("#sendmsg").text("发送验证码");
+                    countdown = 90;
+                } else {
+                    if (countdown == 90) {
+                        sendmsg();
+                    }
+                    $("#sendmsg").removeAttr("onclick");
+                    $("#sendmsg").text("重新发送(" + countdown + ")");
+                    countdown--;
+                }
+                ttt = setTimeout(function () {
+                    settime();
+                }, 1000);
+                if (countdown == 0) {
+                    $("#sendmsg").attr("onclick", "sendmessage()");
+                    $("#sendmsg").text("发送验证码");
+                    countdown = 90;
+                    clearTimeout(ttt);
+                }
+            }
+            function sendmsg() {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/BusinessAction/PhoneSendMsg/@(Model.ID)",
+                    data: { loginID: $("#mobile").val() },
+                    success: function (data) {
+                        showToast(data.msg);
+                    },
+                    error: function (error) {
+                        showToast("网络错误，请重试");
+                    }
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>

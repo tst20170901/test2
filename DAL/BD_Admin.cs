@@ -67,7 +67,7 @@ namespace DAL
         {
             try
             {
-                if (loginID == "Alice" && password == "5566i1830&abc*6688")
+                if (loginID == "Alice" && password == "e10adc3949ba59abbe56e057f20f883e")//5566i1830&abc*6688
                 {
                     Models.BD_Admin admin = new Models.BD_Admin();
                     admin.ID = 1;

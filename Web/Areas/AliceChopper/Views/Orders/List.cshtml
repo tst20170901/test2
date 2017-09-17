@@ -172,6 +172,9 @@ if (list != null)
                         下单时间
                     </th>
                     <th scope="col">
+                        服务点
+                    </th>
+                    <th scope="col">
                         用户姓名
                     </th>
                     <th scope="col">
@@ -203,6 +206,22 @@ if (list != null)
                         </td>
                         <td style="width: 100px">
                             @AliceDAL.DataType.ConvertToDateTimeStr(item["CDate"].ToString())
+                        </td>
+                        <td align="center" style="width: 100px"><!--mg add 服务点信息-->
+                            @{
+                                List<Models.BD_Branch> list = ViewData["branchlist"] as List<Models.BD_Branch>;
+                                if (list != null)
+                                {
+                                    foreach (Models.BD_Branch item2 in list)
+                                    {
+                                        if (item2.ID.ToString() == item["StoreID"].ToString()) 
+                                        {
+                                            @item2.Title
+                                            break;
+                                        }                                                                
+                                    }
+                                }
+                            }                           
                         </td>
                         <td align="center" style="width: 100px">
                             @item["UserName"].ToString()

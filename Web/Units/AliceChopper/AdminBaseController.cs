@@ -97,16 +97,28 @@ namespace Web.Units
             admin.RoleID = int.Parse(c.Values["RoleID"]);
             admin.BranchID = int.Parse(c.Values["BranchID"]);
             admin.NickName = c.Values["NickName"];
-            admin.Data1 = c.Values["Data1"];
-            admin.Data2 = c.Values["Data2"];
-            admin.Data3 = c.Values["Data3"];
-            admin.Data4 = c.Values["Data4"];
-            admin.Data5 = c.Values["Data5"];
-            admin.Data6 = c.Values["Data6"];
-            admin.Data7 = c.Values["Data7"];
-            admin.Data8 = c.Values["Data8"];
-            admin.Data9 = c.Values["Data9"];
-            admin.Data10 = c.Values["Data10"];
+            ////admin.Data1 = c.Values["Data1"];//mg del
+            ////admin.Data2 = c.Values["Data2"];
+            ////admin.Data3 = c.Values["Data3"];
+            ////admin.Data4 = c.Values["Data4"];
+            ////admin.Data5 = c.Values["Data5"];
+            ////admin.Data6 = c.Values["Data6"];
+            ////admin.Data7 = c.Values["Data7"];
+            ////admin.Data8 = c.Values["Data8"];
+            ////admin.Data9 = c.Values["Data9"];
+            ////admin.Data10 = c.Values["Data10"];
+
+            admin.Data1 = "";
+            admin.Data2 = "";
+            admin.Data3 = "";
+            admin.Data4 = "";
+            admin.Data5 = "";
+            admin.Data6 = "";
+            admin.Data7 = "";
+            admin.Data8 = "";
+            admin.Data9 = "";
+            admin.Data10 = "";
+
             return admin;
         }
         public void LoadBranch()

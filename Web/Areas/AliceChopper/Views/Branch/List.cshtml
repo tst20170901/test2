@@ -71,6 +71,17 @@
                     <th scope="col">
                         名称
                     </th>
+
+                    <th scope="col">
+                        是否使用小熊账号支付
+                    </th>
+                    <th scope="col">
+                        商户支付账号
+                    </th>
+                    <th scope="col">
+                        商户支付密钥
+                    </th>
+
                     <th scope="col">
                         订单峰值
                     </th>
@@ -96,6 +107,31 @@
                         <td align="left">
                             &nbsp;&nbsp;@item["Title"].ToString()
                         </td>
+
+                        <!-- mg add begin -->
+                        <td style="width:60px">
+                            @if(item["IsXiaoXiongPay"].ToString() == "")
+                            { 
+                                <text><span style="color:#F00">未设置</span></text>
+                            }
+                            else if (item["IsXiaoXiongPay"].ToString() == "0")
+                            {
+                                <text><span style="color:#00F">否</span></text>
+                            }
+                            else
+                            {
+                                <text><span style="color:#0F0">是</span></text>
+                            }
+                        </td>
+                        <td style="width:180px">
+                            @item["MerchantPaymentAccount"].ToString()
+                        </td>
+                        <td style="width:180px">
+                            @item["MerchantPaymentKey"].ToString()
+                        </td>
+                        <!-- mg add end -->
+
+
                         <td style="width:120px">
                             @item["OrderCount"].ToString()
                         </td>

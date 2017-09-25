@@ -53,6 +53,25 @@ namespace Web.Areas.AliceChopper.Controllers
             model.Mobile = model.Mobile ?? "";
             model.StateMsg = model.StateMsg ?? "";
             model.OrderCount = model.OrderCount <= 0 ? 10 : model.OrderCount;
+
+
+            //mg add 实现商户不同账号支付
+            if (model.IsXiaoXiongPay == -1)
+            {
+                ModelState.AddModelError("Title", "请选择是否使用小熊账号支付交易");
+                return View(model);
+            }
+
+            if (model.IsXiaoXiongPay == 1)
+            {
+                if (model.MerchantPaymentAccount == "" || model.MerchantPaymentKey == "")
+                {
+                    ModelState.AddModelError("Title", "请输入商户支付账号和密钥");
+                    return View(model);
+                }
+            }
+
+
             string result = DAL.BD_Branch.Add(model);
             if (result == "exists title")
             {

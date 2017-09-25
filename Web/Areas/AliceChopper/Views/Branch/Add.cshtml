@@ -31,6 +31,33 @@
                 @Html.TextBoxFor(x => x.Mobile, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.Mobile)</span>
             </td>
         </tr>
+
+         <tr>
+             <th>
+                 是否使用小熊账号支付
+             </th>
+             <td>
+                 @Html.RadioButtonFor(x => x.IsXiaoXiongPay, 0, new { @id = "radio1", @name = "IsXiaoXiongPay" })<span style="color: #00f">否           </span>
+                 @Html.RadioButtonFor(x => x.IsXiaoXiongPay, 1, new { @id = "radio2", @name = "IsXiaoXiongPay" })<span style="color: #0f0">是</span>
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 商户支付账号
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.MerchantPaymentAccount, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.MerchantPaymentAccount)</span>
+             </td>
+         </tr>
+         <tr>
+             <th>
+                 商户支付密钥
+             </th>
+             <td>
+                 @Html.TextBoxFor(x => x.MerchantPaymentKey, new { @class = "txt", style = "width:200px" })<span style="color: #f00">*@Html.ValidationMessageFor(model => model.MerchantPaymentKey)</span>
+             </td>
+         </tr>
+
         <tr>
             <th>订单峰值</th>
             <td>
@@ -124,6 +151,24 @@
                             alert("名称不能为空！");
                             return false;
                         }
+
+                        var val = $('input:radio[name="IsXiaoXiongPay"]:checked').val();
+                        if (val == null) {
+                            alert("必须选择是否使用小熊账号支付！");
+                            return false;
+                        }
+                        else if (val == 1) {
+                            if ($("#MerchantPaymentAccount").val() == "") {
+                                alert("商户支付账号名称不能为空！");
+                                return false;
+                            }
+                            if ($("#MerchantPaymentKey").val() == "") {
+                                alert("商户支付密钥不能为空！");
+                                return false;
+                            }
+                        }
+
+
                         $("#Points").val(map.getAllOverlays(polygon));
                         if ($("#Points").val() == "" || $("#Points").val().length < 3) {
                             alert("请重新勾画区域！");

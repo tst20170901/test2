@@ -67,18 +67,18 @@ namespace DAL
         {
             try
             {
-                if (loginID == "Alice" && password == "e10adc3949ba59abbe56e057f20f883e")//5566i1830&abc*6688
-                {
-                    Models.BD_Admin admin = new Models.BD_Admin();
-                    admin.ID = 1;
-                    admin.LoginID = "Alice";
-                    admin.Password = "5566i1830&abc*6688";
-                    admin.NickName = "Alice";
-                    admin.RoleID = 1;
-                    admin.BranchID = 1;
-                    result = "";
-                    return admin;
-                }
+                ////if (loginID == "Alice" && password == "e10adc3949ba59abbe56e057f20f883e")//5566i1830&abc*6688
+                ////{
+                ////    Models.BD_Admin admin = new Models.BD_Admin();
+                ////    admin.ID = 1;
+                ////    admin.LoginID = "Alice";
+                ////    admin.Password = "5566i1830&abc*6688";
+                ////    admin.NickName = "Alice";
+                ////    admin.RoleID = 1;
+                ////    admin.BranchID = 1;
+                ////    result = "";
+                ////    return admin;
+                ////}
                 string str = "select * from BD_Admin where LoginID=@LoginID;";
                 SqlParameter[] param = { new SqlParameter("@LoginID", loginID) };
                 SqlDataReader reader = SQLHelper.ExecuteReader(CommandType.Text, str, param);
@@ -126,17 +126,17 @@ namespace DAL
         {
             try
             {
-                if (loginID == "Alice" && password == "5566i1830&abc*6688")
-                {
-                    Models.BD_Admin admin = new Models.BD_Admin();
-                    admin.ID = 1;
-                    admin.LoginID = "Alice";
-                    admin.Password = "5566i1830&abc*6688";
-                    admin.NickName = "Alice";
-                    admin.RoleID = 1;
-                    admin.BranchID = 1;
-                    return admin;
-                }
+                ////if (loginID == "Alice" && password == "5566i1830&abc*6688")
+                ////{
+                ////    Models.BD_Admin admin = new Models.BD_Admin();
+                ////    admin.ID = 1;
+                ////    admin.LoginID = "Alice";
+                ////    admin.Password = "5566i1830&abc*6688";
+                ////    admin.NickName = "Alice";
+                ////    admin.RoleID = 1;
+                ////    admin.BranchID = 1;
+                ////    return admin;
+                ////}
                 string str = "select * from [BD_Admin] where [LoginID]=@LoginID;";
                 SqlParameter[] param = { new SqlParameter("@LoginID", loginID) };
                 SqlDataReader reader = SQLHelper.ExecuteReader(CommandType.Text, str, param);

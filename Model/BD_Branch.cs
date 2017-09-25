@@ -62,5 +62,19 @@ namespace Models
         /// CDate
         /// </summary>
         public DateTime CDate { get; set; }
+        
+        /// <summary>
+        /// 是否使用小熊公众号支付//mg add
+        /// </summary>
+        public int IsXiaoXiongPay { get; set; }
+        /// <summary>
+        /// 商户支付账号//mg add
+        /// </summary>
+        public string MerchantPaymentAccount { get; set; }
+        /// <summary>
+        /// 商户支付密钥//mg add
+        /// </summary>
+        public string MerchantPaymentKey { get; set; }
+
     }
 }

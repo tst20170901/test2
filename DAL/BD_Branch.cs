@@ -19,7 +19,9 @@ namespace DAL
                              "end " +
                              "else " +
                              "begin " +
-                                "UPDATE [BD_Branch] set [Title]=@Title,[Mobile]=@Mobile,[Province]=@Province,[City]=@City,[CityCode]=@CityCode,[District]=@District,[Adcode]=@Adcode,[CenterLng]=@CenterLng,[CenterLat]=@CenterLat,[Points]=@Points,[StateMsg]=@StateMsg,[OrderCount]=@OrderCount where ID=@ID;" +
+                                "UPDATE [BD_Branch] set [Title]=@Title,[Mobile]=@Mobile,[Province]=@Province,[City]=@City,[CityCode]=@CityCode," +
+                                "[District]=@District,[Adcode]=@Adcode,[CenterLng]=@CenterLng,[CenterLat]=@CenterLat,[Points]=@Points,[StateMsg]=@StateMsg," +
+                                "[OrderCount]=@OrderCount, [IsXiaoXiongPay]=@IsXiaoXiongPay, [MerchantPaymentAccount]=@MerchantPaymentAccount, [MerchantPaymentKey]=@MerchantPaymentKey where ID=@ID;" +
                                 "SELECT 'ok';" +
                              "end";
                 SqlParameter[] parameters = {
@@ -35,7 +37,10 @@ namespace DAL
                                                 new SqlParameter("@District", SqlDbType.NVarChar,50),
                                                 new SqlParameter("@Adcode", SqlDbType.VarChar,10),
                                                 new SqlParameter("@StateMsg",SqlDbType.NVarChar,1000),
-                                                new SqlParameter("@OrderCount",SqlDbType.Int,4)
+                                                new SqlParameter("@OrderCount",SqlDbType.Int,4),
+                                                new SqlParameter("@IsXiaoXiongPay",SqlDbType.Int,4),
+                                                new SqlParameter("@MerchantPaymentAccount",SqlDbType.NVarChar,100),
+                                                new SqlParameter("@MerchantPaymentKey",SqlDbType.NVarChar,200)
                                             };
                 parameters[0].Value = model.ID;
                 parameters[1].Value = model.CenterLng;
@@ -50,6 +55,11 @@ namespace DAL
                 parameters[10].Value = model.Adcode;
                 parameters[11].Value = model.StateMsg;
                 parameters[12].Value = model.OrderCount;
+
+                parameters[13].Value = model.IsXiaoXiongPay;
+                parameters[14].Value = model.MerchantPaymentAccount;
+                parameters[15].Value = model.MerchantPaymentKey;
+
                 CacheManager.Remove(CacheKeys.BRANCHLIST);
                 return SQLHelper.ExecuteScalar(CommandType.Text, sql, parameters).ToString();
             }
@@ -69,7 +79,8 @@ namespace DAL
                              "end " +
                              "else " +
                              "begin " +
-                                "DECLARE @oid int;INSERT INTO [BD_Branch] ([CenterLng],[CenterLat],[Points],[Title],[Mobile],[Province],[City],[CityCode],[District],[Adcode],[StateMsg],[OrderCount]) VALUES (@CenterLng,@CenterLat,@Points,@Title,@Mobile,@Province,@City,@CityCode,@District,@Adcode,@StateMsg,@OrderCount);" +
+                                "DECLARE @oid int;INSERT INTO [BD_Branch] ([CenterLng],[CenterLat],[Points],[Title],[Mobile],[Province],[City],[CityCode],[District],[Adcode],[StateMsg],[OrderCount],[IsXiaoXiongPay],[MerchantPaymentAccount],[MerchantPaymentKey])" +
+                                " VALUES (@CenterLng,@CenterLat,@Points,@Title,@Mobile,@Province,@City,@CityCode,@District,@Adcode,@StateMsg,@OrderCount,@IsXiaoXiongPay,@MerchantPaymentAccount,@MerchantPaymentKey);" +
                                 "SET @oid=SCOPE_IDENTITY();SELECT @oid AS 'oid';" +
                              "end";
 
@@ -85,7 +96,10 @@ namespace DAL
                                                 new SqlParameter("@District", SqlDbType.NVarChar,50),
                                                 new SqlParameter("@Adcode", SqlDbType.VarChar,10),
                                                 new SqlParameter("@StateMsg",SqlDbType.NVarChar,1000),
-                                                new SqlParameter("@OrderCount",SqlDbType.Int,4)
+                                                new SqlParameter("@OrderCount",SqlDbType.Int,4),
+                                                new SqlParameter("@IsXiaoXiongPay",SqlDbType.Int,4),
+                                                new SqlParameter("@MerchantPaymentAccount",SqlDbType.NVarChar,100),
+                                                new SqlParameter("@MerchantPaymentKey",SqlDbType.NVarChar,100)
                                             };
                 parameters[0].Value = model.CenterLng;
                 parameters[1].Value = model.CenterLat;
@@ -99,6 +113,11 @@ namespace DAL
                 parameters[9].Value = model.Adcode;
                 parameters[10].Value = model.StateMsg;
                 parameters[11].Value = model.OrderCount;
+
+                parameters[12].Value = model.IsXiaoXiongPay;
+                parameters[13].Value = model.MerchantPaymentAccount;
+                parameters[14].Value = model.MerchantPaymentKey;
+
                 CacheManager.Remove(CacheKeys.BRANCHLIST);
                 return SQLHelper.ExecuteScalar(CommandType.Text, sql, parameters).ToString();
             }
@@ -130,6 +149,10 @@ namespace DAL
                     bb.StateMsg = row["StateMsg"].ToString();
                     bb.OrderCount = DataType.ConvertToInt(row["OrderCount"].ToString());
                     bb.BranchState = DataType.ConvertToInt(row["BranchState"].ToString());
+
+                    bb.IsXiaoXiongPay = DataType.ConvertToInt(row["IsXiaoXiongPay"].ToString());
+                    bb.MerchantPaymentAccount = row["MerchantPaymentAccount"].ToString();
+                    bb.MerchantPaymentKey = row["MerchantPaymentKey"].ToString();
                 }
                 return bb;
             }
@@ -203,7 +226,7 @@ namespace DAL
             try
             {
                 string sql = "select top 100 * from [BD_Branch] where CityCode=@CityCode";
-                SqlParameter[] parameters = { new SqlParameter("@CityCode", SqlDbType.NVarChar, 10)};
+                SqlParameter[] parameters = { new SqlParameter("@CityCode", SqlDbType.NVarChar, 10) };
                 parameters[0].Value = co;
                 DataTable dt = SQLHelper.ExecuteDataTable(CommandType.Text, sql, parameters);
                 return dt;

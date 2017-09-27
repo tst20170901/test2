@@ -69,6 +69,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\RouteDebug.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -79,16 +80,24 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Abstractions" />
-    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Abstractions">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Routing">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
@@ -3393,6 +3402,10 @@
       <Project>{FA8D4D3D-3809-4A72-8ABE-A6DCA219E0F9}</Project>
       <Name>Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\swiftpass.utils\swiftpass.utils.csproj">
+      <Project>{44a03c15-b331-454d-a65e-ec292f483f6a}</Project>
+      <Name>swiftpass.utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\AliceChopper\Views\AliceAdmin\Index.cshtml" />
@@ -3687,6 +3700,7 @@
     <Content Include="Areas\BusinessManger\Views\Orders\ProOrderList.cshtml" />
     <Content Include="Areas\AliceChopper\Views\ChargeType\ProOrdersActionList.cshtml" />
     <Content Include="Areas\AliceChopper\Views\Statistics\CheckLogsList.cshtml" />
+    <Content Include="App_Data\config.properties" />
     <None Include="Content\images\color\Thumbs.db" />
     <Content Include="Areas\AliceChopper\Views\Shared\_AdminLayout.cshtml" />
     <Content Include="Areas\AliceChopper\Views\AliceAdmin\WebInfo.cshtml" />
@@ -3733,6 +3747,7 @@
     <Content Include="Views\Login\Index.cshtml" />
     <Content Include="Views\Chargelist\Index.cshtml" />
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\xiaoxiong2.pubxml" />
     <None Include="Properties\PublishProfiles\配置文件1.pubxml" />
     <Content Include="Views\Login\Reg.cshtml" />
     <Content Include="Views\WeiXinPay\Pay.cshtml" />
